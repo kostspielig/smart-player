@@ -3,7 +3,7 @@
 __id__ = "$Id: Cell.py $"
 __version__ = "$Revision: 1 $"
 __date__ = "$Date: 16/04/2010 Fri $"
-__author__ = "Maria Carrasco Rodriguez y Francisco Manuel Herrero PŽrez"
+__author__ = "Maria Carrasco Rodriguez y Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
@@ -40,8 +40,3 @@ class Cell():
         self.faceRiver = []
         self.faceRoad = []
 
-    def __set_attr__(self,name,value):
-        if hasattr(self,name):
-            set(self,name,value) 
-        else:
-            raise AttributeError("You cannot add attributes to %s" % self)

@@ -3,7 +3,7 @@
 __id__ = "$Id: MechFile.py $"
 __version__ = "$Revision: 1 $"
 __date__ = "$Date: 17/04/2010 Sat  $"
-__author__ = "María Carrasco Rodríguez y Francisco Manuel Herrero Pérez"
+__author__ = "Maria Carrasco Rodriguez y Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
@@ -33,7 +33,7 @@ class MechFile:
         self.actualMech = None
         self.mechSet = []
         
-    def readMechFile (fileName):
+    def readMechFile (self, fileName):
         """ 
         Read mechs from a specified file 
         
@@ -47,18 +47,14 @@ class MechFile:
             print "The file "+ fileName+ " does not exist"
             return -1
 
-        try:
-            file.readline() != "metchsSBT\n" # Read Magic Number : metchsSBT
-        except:
-            print "Incorrect File \n"
-            return -2
+        file.readline() # Read Magic Number : metchsSBT
 
-        self.actualMech = int( re.findall(r'[0-9]+', s)[0] )
         self.mechNumber = int ( file.readline() )
-        
+        self.actualMech = int( re.findall(r'[0-9]+', s)[0] )
 
+        
         for i in range(self.mechNumber):
-            m = Mech()
+            m = Mech.Mech()
             m.playerNumber = int ( file.readline() )
             m.operative = bool ( file.readline() )
             m.disconnected = bool ( file.readline() )

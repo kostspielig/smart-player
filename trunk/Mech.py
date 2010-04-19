@@ -12,7 +12,7 @@ NAME = """
 __id__ = "$Id: Mech.py $"
 __version__ = "$Revision: 1 $"
 __date__ = "$Date: 17/04/2010 Sat  $"
-__author__ = "Maria Carrasco Rodriguez y Francisco Manuel Herrero PŽrez"
+__author__ = "Maria Carrasco Rodriguez , Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
@@ -49,9 +49,12 @@ class Mech:
         self.stick = None
         self.stickType = None # [0,1]
         self.armorPoints = []
+        
         for i in range(11):
             self.armorPoints.append(None)
+        
         self.internalStructurePoints = []
+        
         for j in range(8):
             self.internalStructurePoints.append(None)
         ##### Just for some BattleMechs- Actual #####
@@ -63,11 +66,15 @@ class Mech:
         self.wounds = None
         self.conscious = None
         self.impactedSlots = []
+        
         for k  in range(78):
             self.impactedSlots.append(None)
+        
         self.locationsGunFired = []
+        
         for l in range(8):
             self.locationsGunFired.append(None)
+        
         self.ammunitionNumber = None
         self.ammunition = []
         self.ammunition.append(None) # location of the ammunition

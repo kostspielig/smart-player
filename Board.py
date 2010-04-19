@@ -4,7 +4,7 @@
 __id__ = "$Id: Board.py $"
 __version__ = "$Revision: 1 $"
 __date__ = "$Date: 16/04/2010 Fri  $"
-__author__ = "María Carrasco Rodríguez y Francisco Manuel Herrero Pérez"
+__author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
@@ -35,7 +35,7 @@ class Board:
         self.heith = None
         self.cellArray = []
         
-    def readBoard (fileName):
+    def readBoard (self, fileName):
         """ 
         Reads a board from a specified file 
         
@@ -43,25 +43,19 @@ class Board:
             * fileName -- Path to the file containing the board description
         
         """
-        
         try:
-        	file = open(fileName, "r")
+            file = open(fileName, "r")
         except IOError:
             print "The file "+ fileName+ " does not exist"
             return -1
-
-        try:
-            file.readline() != "mapaSBT\n" # Read Magic Number : mapaSBT\n
-        except:
-            print "Incorrect File \n"
-            return -2
         
-        cell = Cell()
+        file.readline() #Leer mapaSBT
+        cell = Cell.Cell()
    
-        self.width = file.readline()
-        self.heith = file.readline()
+        self.width = int( file.readline() )
+        self.heith = int( file.readline() )
         
-        cellNumber = range(self.width*self.heith)
+        cellNumber = range(self.width * self.heith)
         faceParams = range (6)
         for x in cellNumber:
             cell.level = int( file.readline() )

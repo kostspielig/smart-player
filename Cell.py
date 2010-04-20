@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 __id__ = "$Id: Cell.py $"
-__version__ = "$Revision: 1 $"
+__version__ = "$Revision: 2 $"
 __date__ = "$Date: 16/04/2010 Fri $"
 __author__ = "Maria Carrasco Rodriguez y Francisco Manuel Herrero Perez"
 __license__ = "GPL"

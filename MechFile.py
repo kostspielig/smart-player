@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 __id__ = "$Id: MechFile.py $"
-__version__ = "$Revision: 1 $"
+__version__ = "$Revision: 2 $"
 __date__ = "$Date: 17/04/2010 Sat  $"
-__author__ = "Maria Carrasco Rodriguez y Francisco Manuel Herrero Perez"
+__author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
@@ -56,15 +56,16 @@ class MechFile:
         for i in range(self.mechNumber):
             m = Mech.Mech()
             m.playerNumber = int ( file.readline() )
-            m.operative = bool ( file.readline() )
-            m.disconnected = bool ( file.readline() )
-            m.blocked = bool ( file.readline() )
-            m.ground = bool ( file.readline() )
+            m.operative = str2bool ( file.readline() )
+            m.disconnected = str2bool ( file.readline() )
+            m.blocked = str2bool ( file.readline() )
+            m.ground = str2bool ( file.readline() )
             m.cell = int ( file.readline() )
             m.facingSide = int ( file.readline() )
+            m.facingTorsoSide = int ( file.readline() )
             m.temp = int ( file.readline() )
-            m.burning = bool ( file.readline() )
-            m.stick = bool ( file.readline() )
+            m.burning = str2bool ( file.readline() )
+            m.stick = str2bool ( file.readline() )
             m.stickType = int ( file.readline() )
             for j in range(11):
                 m.armorPoints[j] = int ( file.readline() )
@@ -78,18 +79,68 @@ class MechFile:
                 m.radiatorsOn = int ( file.readline() )
                 m.radiatorsOff = int ( file.readline() )
                 m.wounds = int ( file.readline() )
-                m.conscious = bool ( file.readline() )
+                m.conscious = str2bool ( file.readline() )
                 for l in range(78):
-                    m.impactedSlots[l] = bool(file.readline())
+                    m.impactedSlots[l] = str2bool(file.readline())
                 for n in range(8):
-                    m.locationsGunFired[n] = bool( file.readline() )
+                    m.locationsGunFired[n] = str2bool( file.readline() )
                 m.ammunitionNumber = int ( file.readline() )
+                ##Para cada una de las municiones preparadas para ser expulsadas
+
             ## End
-            for l in range(mechNumber):
-                m.narc[l] = bool( file.readline() )
-            for h in range(mechNumber):
-                m.inarc[h] = bool( file.readline() )
+            m.narc = str2bool( file.readline() )
+            m.inarc = str2bool( file.readline() )
 
             ## Add a new mech to the mechSet
             self.mechSet.append(m)
             m = None
+        file.close()
+
+               
+    def printMechFile (self, filename = "out.txt"):
+        f = open (filename, "w")
+        f.write ("mechsSBT\n")
+        f.write ( str( self.mechNumber )+"\n")
+        
+        for i in range(self.mechNumber):
+            
+            f.write (str( mechSet[i].playerNumber ) +"\n")
+            f.write (str( mechSet[i].operative ) +"\n")
+            f.write (str( mechSet[i].disconnected ) +"\n")
+            f.write (str( mechSet[i].blocked  ) +"\n")
+            f.write (str( mechSet[i].ground ) +"\n")
+            f.write (str( mechSet[i].cell  ) +"\n")
+            f.write (str( mechSet[i].facingSide  ) +"\n")
+            f.write (str( mechSet[i].facingTorsoSide  ) +"\n")
+            f.write (str( mechSet[i].temp  ) +"\n")
+            f.write (str( mechSet[i].burning  ) +"\n")
+            f.write (str( mechSet[i].stick  ) +"\n")
+            f.write (str( mechSet[i].stickType  ) +"\n")
+            for j in range(11):
+                f.write (str( mechSet[i].armorPoints[j] ) +"\n")
+            for k in range(8):
+                f.write (str( mechSet[i].internalStructurePoints[k] ) +"\n")
+            ## Is the actual battleMech??
+            if self.actualMech == mechSet[i].playerNumber:
+                f.write (str( mechSet[i].walk ) +"\n")
+                f.write (str( mechSet[i].run ) +"\n")
+                f.write (str( mechSet[i].jump ) +"\n")
+                f.write (str( mechSet[i].radiatorsOn ) +"\n")
+                f.write (str( mechSet[i].radiatorsOff ) +"\n")
+                f.write (str( mechSet[i].wounds ) +"\n")
+                f.write (str( mechSet[i].conscious  ) +"\n")
+                for l in range(78):
+                    f.write (str( mechSet[i].impactedSlots[l] ) +"\n")
+                for n in range(8):
+                    f.write (str( mechSet[i].locationsGunFired[n] ) +"\n")
+                f.write (str( mechSet[i].ammunitionNumber 
+                ##Para cada una de las municiones preparadas para ser expulsadas
+
+            ## End
+            f.write (str( mechSet[i].narc ) +"\n")
+            f.write (str( mechSet[i].inarc ) +"\n")
+
+        f.close()
+
+def str2bool(string):
+    return string.strip().lower() in ('yes', '1', 'true')

@@ -50,7 +50,7 @@ class MechFile:
         file.readline() # Read Magic Number : metchsSBT
 
         self.mechNumber = int ( file.readline() )
-        self.actualMech = int( re.findall(r'[0-9]+', s)[0] )
+        self.actualMech = int( re.findall(r'[0-9]+', fileName)[0] )
 
         
         for i in range(self.mechNumber):
@@ -60,7 +60,7 @@ class MechFile:
             m.disconnected = str2bool ( file.readline() )
             m.blocked = str2bool ( file.readline() )
             m.ground = str2bool ( file.readline() )
-            m.cell = int ( file.readline() )
+            m.cell = str ( file.readline()[0:-2] )
             m.facingSide = int ( file.readline() )
             m.facingTorsoSide = int ( file.readline() )
             m.temp = int ( file.readline() )
@@ -86,10 +86,17 @@ class MechFile:
                     m.locationsGunFired[n] = str2bool( file.readline() )
                 m.ammunitionNumber = int ( file.readline() )
                 ##Para cada una de las municiones preparadas para ser expulsadas
-
+                if m.ammunitionNumber > 0:
+                    for p in range(m.ammunitionNumber):
+                        # Location of the ammunition
+                        m.ammunition[p].append(file.readline()[0:-2]) 
+                        # Ammunition slot inside the location
+                        m.ammunition[p].append(file.readline()[0:-2]) 
             ## End
-            m.narc = str2bool( file.readline() )
-            m.inarc = str2bool( file.readline() )
+            for o in range(self.mechNumber):
+                m.narc.append( str2bool( file.readline() ) )
+            for r in range(self.mechNumber):
+                m.inarc.append( str2bool( file.readline() ) )
 
             ## Add a new mech to the mechSet
             self.mechSet.append(m)
@@ -104,44 +111,55 @@ class MechFile:
         
         for i in range(self.mechNumber):
             
-            f.write (str( mechSet[i].playerNumber ) +"\n")
-            f.write (str( mechSet[i].operative ) +"\n")
-            f.write (str( mechSet[i].disconnected ) +"\n")
-            f.write (str( mechSet[i].blocked  ) +"\n")
-            f.write (str( mechSet[i].ground ) +"\n")
-            f.write (str( mechSet[i].cell  ) +"\n")
-            f.write (str( mechSet[i].facingSide  ) +"\n")
-            f.write (str( mechSet[i].facingTorsoSide  ) +"\n")
-            f.write (str( mechSet[i].temp  ) +"\n")
-            f.write (str( mechSet[i].burning  ) +"\n")
-            f.write (str( mechSet[i].stick  ) +"\n")
-            f.write (str( mechSet[i].stickType  ) +"\n")
+            f.write (str( self.mechSet[i].playerNumber ) +"\n")
+            f.write (str( self.mechSet[i].operative ) +"\n")
+            f.write (str( self.mechSet[i].disconnected ) +"\n")
+            f.write (str( self.mechSet[i].blocked  ) +"\n")
+            f.write (str( self.mechSet[i].ground ) +"\n")
+            f.write (str( self.mechSet[i].cell  ) +"\n")
+            f.write (str( self.mechSet[i].facingSide  ) +"\n")
+            f.write (str( self.mechSet[i].facingTorsoSide  ) +"\n")
+            f.write (str( self.mechSet[i].temp  ) +"\n")
+            f.write (str( self.mechSet[i].burning  ) +"\n")
+            f.write (str( self.mechSet[i].stick  ) +"\n")
+            f.write (str( self.mechSet[i].stickType  ) +"\n")
             for j in range(11):
-                f.write (str( mechSet[i].armorPoints[j] ) +"\n")
+                f.write (str( self.mechSet[i].armorPoints[j] ) +"\n")
             for k in range(8):
-                f.write (str( mechSet[i].internalStructurePoints[k] ) +"\n")
+                f.write (str( self.mechSet[i].internalStructurePoints[k] ) +"\n")
             ## Is the actual battleMech??
-            if self.actualMech == mechSet[i].playerNumber:
-                f.write (str( mechSet[i].walk ) +"\n")
-                f.write (str( mechSet[i].run ) +"\n")
-                f.write (str( mechSet[i].jump ) +"\n")
-                f.write (str( mechSet[i].radiatorsOn ) +"\n")
-                f.write (str( mechSet[i].radiatorsOff ) +"\n")
-                f.write (str( mechSet[i].wounds ) +"\n")
-                f.write (str( mechSet[i].conscious  ) +"\n")
+            if self.actualMech == self.mechSet[i].playerNumber:
+                f.write (str( self.mechSet[i].walk ) +"\n")
+                f.write (str( self.mechSet[i].run ) +"\n")
+                f.write (str( self.mechSet[i].jump ) +"\n")
+                f.write (str( self.mechSet[i].radiatorsOn ) +"\n")
+                f.write (str( self.mechSet[i].radiatorsOff ) +"\n")
+                f.write (str( self.mechSet[i].wounds ) +"\n")
+                f.write (str( self.mechSet[i].conscious  ) +"\n")
                 for l in range(78):
-                    f.write (str( mechSet[i].impactedSlots[l] ) +"\n")
+                    f.write (str( self.mechSet[i].impactedSlots[l] ) +"\n")
                 for n in range(8):
-                    f.write (str( mechSet[i].locationsGunFired[n] ) +"\n")
-                f.write (str( mechSet[i].ammunitionNumber 
+                    f.write (str( self.mechSet[i].locationsGunFired[n] ) +"\n")
+                f.write (str( self.mechSet[i].ammunitionNumber  ) +"\n")
                 ##Para cada una de las municiones preparadas para ser expulsadas
+                if self.mechSet[i].ammunitionNumber > 0:
+                    for p in range(self.mechSet[i].ammunitionNumber):
+                        # Location of the ammunition
+                        f.write (str( self.mechSet[i].ammunition[p]) +"\n")
+                        # Ammunition slot inside the location
+                        f.write (str( self.mechSet[i].ammunition[p]) +"\n")
+                        
+            ## End
+            for o in range(self.mechNumber):
+                f.write (str( self.mechSet[i].narc[o] ) +"\n")
+                
+            for r in range(self.mechNumber):
+                f.write (str( self.mechSet[i].inarc[r] ) +"\n")
+                
 
             ## End
-            f.write (str( mechSet[i].narc ) +"\n")
-            f.write (str( mechSet[i].inarc ) +"\n")
 
         f.close()
 
 def str2bool(string):
     return string.strip().lower() in ('yes', '1', 'true')
--

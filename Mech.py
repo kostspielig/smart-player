@@ -81,8 +81,8 @@ class Mech(object):
         self.ammunition.append(None) # location of the ammunition
         self.ammunition.append(None) # slot in the location
         ##### End #####
-        self.__narc = None
-        self.__inarc = None
+        self.narc = []
+        self.inarc = []
 
     def getPlayerNumber (self):
         return self.__playerNumber
@@ -143,7 +143,7 @@ class Mech(object):
         return self.__cell
 
     def setCell (self, cell):
-        if isinstance(cell, int):
+        if isinstance(cell, str):
             self.__cell = cell
         else:
             print "Error, incorrect cell!"
@@ -294,7 +294,7 @@ class Mech(object):
 
 
     def getAmmunitionNumber (self):
-        return self.__AmmunitionNumber
+        return self.__ammunitionNumber
 
     def setAmmunitionNumber (self, ammunitionNumber):
         if isinstance(ammunitionNumber, int) and ammunitionNumber >= 0:
@@ -304,23 +304,4 @@ class Mech(object):
     ammunitionNumber = property(getAmmunitionNumber, setAmmunitionNumber)
 
 
-    def getNarc (self):
-        return self.__narc
-
-    def setNarc (self, narc):
-        if isinstance(narc, bool):
-            self.__narc = narc
-        else:
-            print "Error, incorrect narc!"
-    narc = property(getNarc, setNarc)
-
-    def getiNarc (self):
-        return self.__inarc
-
-    def setiNarc (self, inarc):
-        if isinstance(inarc, bool):
-            self.__inarc = inarc
-        else:
-            print "Error, incorrect iNarc!"
-    inarc = property(getiNarc, setiNarc)
-
+   

@@ -144,3 +144,4 @@ class MechFile:
 
 def str2bool(string):
     return string.strip().lower() in ('yes', '1', 'true')
+-

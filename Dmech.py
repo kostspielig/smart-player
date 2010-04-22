@@ -83,26 +83,6 @@ class Dmech(object):
         self.__jumpPoints = None
         self.__radiatorsType = None # 0-simple or 1-double
         
-    def getLevel (self):
-        return self.__level
-
-    def setLevel (self, level):
-        if isinstance(level, int):
-            self.__level = level
-        else:
-            print "Error, incorrect level!"
-    level = property(getLevel, setLevel)
-
-    def getLevel (self):
-        return self.__level
-
-    def setLevel (self, level):
-        if isinstance(level, int):
-            self.__level = level
-        else:
-            print "Error, incorrect level!"
-    level = property(getLevel, setLevel)
-
     def getName (self):
         return self.__name
 

@@ -25,7 +25,6 @@ __)|||(_| |  |_|   | (_| / (/_ |
 """
 
 import Dmech
-import re
 
 class DefMech:
     
@@ -48,8 +47,66 @@ class DefMech:
             print "The file "+ fileName+ " does not exist"
             return -1
 
+        m = Dmech()
+        
         file.readline() # Read Magic Number : defmetchSBT
 
-        self.name = str ( file.readline() )[0:-2]
-        self.model = str ( file.readline() )[0:-2]
-        self.actualMech = int( re.findall(r'[0-9]+', fileName)[0] )
+        m.name = str ( file.readline() )[0:-2]
+        m.model = str ( file.readline() )[0:-2]
+        m.ton = int ( file.readline() )
+        m.power = int ( file.readline() )
+        m.internalRadiators = int ( file.readline() )
+        m.radiators = int ( file.readline() )
+        m.masc = str2bool ( file.readline() )
+        m.dacmtd = str2bool ( file.readline() )
+        m.dacmti = str2bool ( file.readline() )
+        m.dacmtc = str2bool ( file.readline() )
+        m.heat = int ( file.readline() )
+        m.arms = str2bool ( file.readline() )
+        m.lShoulder = str2bool ( file.readline() )
+        m.lArm = str2bool ( file.readline() )
+        m.lForearm = str2bool ( file.readline() )
+        m.lHand = str2bool ( file.readline() )
+        m.rShoulder = str2bool ( file.readline() )
+        m.rArm = str2bool ( file.readline() )
+        m.rForearm = str2bool ( file.readline() )
+        m.rHand = str2bool ( file.readline() )
+        m.lArmArmor = int ( file.readline() )
+        m.lTorsoArmor = int ( file.readline() )
+        m.lLegArmor = int ( file.readline() )
+        m.rLegArmor = int ( file.readline() )
+        m.rTorsoArmor = int ( file.readline() )
+        m.rArmArmor = int ( file.readline() )
+        m.cTorsoArmor = int ( file.readline() )
+        m.headArmor = None
+        m.lBackTorsoArmor = int ( file.readline() )
+        m.rBackTorsoArmor =  int ( file.readline() )
+        m.cBackTorsoArmor = int ( file.readline() )
+        m.lInternalArmPoints = int ( file.readline() )
+        m.lInternalTorsoPoints = int ( file.readline() )
+        m.lInternalLegPoints = int ( file.readline() )
+        m.rInternalLegPoints = int ( file.readline() )
+        m.rInternalTorsoPoints = int ( file.readline() )
+        m.rInternalArmPoints = int ( file.readline() )
+        m.cInternalTorsoPoints = int ( file.readline() )
+        m.internalHeadPoints = int ( file.readline() )
+        m.equippedComponentsNumber = int ( file.readline() )
+        for x in range(19):
+            m.equippedComponents.append( )
+        m.weaponsNumber =  int ( file.readline() )
+        m.actuatorsNumber = int ( file.readline() )
+        
+        m.walkPoints = int ( file.readline() )
+        m.runPoints = int ( file.readline() )
+        m.jumpPoints = int ( file.readline() )
+        m.radiatorsType = int ( file.readline() )
+
+
+def str2bool(string):
+    if string.strip().lower() in ('yes', '1', 'true', 'si'):
+        return True
+    elif string.strip().lower() in ('no', '0', 'false'):
+        return False
+    else:
+        return "Error: Not boolean"
+

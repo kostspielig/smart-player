@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 __id__ = "$Id: Dmech.py $"
-__version__ = "$Revision: 1 $"
+__version__ = "$Revision: 2 $"
 __date__ = "$Date: 22/04/2010 Thu $"
 __author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
@@ -24,6 +24,7 @@ __)|||(_| |  |_|   | (_| / (/_ |
 
 """
 
+import Location
 
 class Dmech(object):
     
@@ -68,15 +69,16 @@ class Dmech(object):
         self.__cInternalTorsoPoints = None
         self.__internalHeadPoints = None
         self.__equippedComponentsNumber = None
-        self.equippedComponents = []
-        for x in range(19):
-            self.equippedComponents.append(None)
+        self.component = []
+
+
         self.__weaponsNumber = None
         self.__actuatorsNumber = None
-        self.actuators = []
-        for y in range():
-            self.actuators.append(None)
-        ### para cada localización....
+        self.actuator = []
+
+        self.location = []
+        for i in range(8):
+            self.location[i] = Location()
 
         self.__walkPoints = None
         self.__runPoints = None

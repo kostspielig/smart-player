@@ -30,7 +30,7 @@ class Component(object):
     def __init__(self):
         self.__code = None 
         self.__name = None
-        self.__class = None 
+        self.__type = None 
         self.__weaponInBack = None
         self.__itemLocation = None
         self.__secondaryItemLocation = None
@@ -68,15 +68,15 @@ class Component(object):
             print "Error, incorrect name!"
     name = property(getName, setName)
 
-    def getClass (self):
-        return self.__class
+    def getType (self):
+        return self.__type
 
-    def setClass (self, class):
-        if isinstance(class, int):
-            self.__class = class
+    def setType (self, type):
+        if isinstance(type, int):
+            self.__type = type
         else:
-            print "Error, incorrect class!"
-    class = property(getClass, setClass)
+            print "Error, incorrect type!"
+    type = property(getType, setType)
 
     def getWeaponInBack (self):
         return self.__weaponInBack

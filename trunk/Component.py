@@ -44,7 +44,8 @@ class Component(object):
         self.__longDistance = None
         self.__operativeTeam = None
         self.__weaponCode = None #if ammunition
-        self.__amount = None
+        self.__amount = None 
+        # in leeme.txt is supposed to be a bool, however some vals are cluster?
         self.__specialAmmunition = None
         self.__triggerSwitch = None
 
@@ -62,7 +63,7 @@ class Component(object):
         return self.__name
 
     def setName (self, name):
-        if isinstance(name, int):
+        if isinstance(name, str):
             self.__name = name
         else:
             print "Error, incorrect name!"
@@ -72,7 +73,7 @@ class Component(object):
         return self.__type
 
     def setType (self, type):
-        if isinstance(type, int):
+        if isinstance(type, str):
             self.__type = type
         else:
             print "Error, incorrect type!"
@@ -82,7 +83,7 @@ class Component(object):
         return self.__weaponInBack
 
     def setWeaponInBack (self, weaponInBack):
-        if isinstance(weaponInBack, int):
+        if isinstance(weaponInBack, bool):
             self.__weaponInBack = weaponInBack
         else:
             print "Error, incorrect weaponInBack!"
@@ -112,7 +113,7 @@ class Component(object):
         return self.__weaponType
 
     def setWeaponType (self, weaponType):
-        if isinstance(weaponType, int):
+        if isinstance(weaponType, str):
             self.__weaponType = weaponType
         else:
             print "Error, incorrect weaponType!"
@@ -192,7 +193,7 @@ class Component(object):
         return self.__operativeTeam
 
     def setOperativeTeam (self, operativeTeam):
-        if isinstance(operativeTeam, int):
+        if isinstance(operativeTeam, bool):
             self.__operativeTeam = operativeTeam
         else:
             print "Error, incorrect operativeTeam!"
@@ -223,7 +224,7 @@ class Component(object):
         return self.__specialAmmunition
 
     def setSpecialAmmunition (self, specialAmmunition):
-        if isinstance(specialAmmunition, int):
+        if isinstance(specialAmmunition, str):
             self.__specialAmmunition = specialAmmunition
         else:
             print "Error, incorrect specialAmmunition!"

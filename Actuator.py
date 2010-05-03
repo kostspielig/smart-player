@@ -49,7 +49,7 @@ class Actuator(object):
         return self.__name
 
     def setName (self, name):
-        if isinstance(name, int):
+        if isinstance(name, str):
             self.__name = name
         else:
             print "Error, incorrect name!"
@@ -69,7 +69,7 @@ class Actuator(object):
         return self.__operative
 
     def setOperative (self, operative):
-        if isinstance(operative, int):
+        if isinstance(operative, bool):
             self.__operative = operative
         else:
             print "Error, incorrect operative!"
@@ -84,7 +84,3 @@ class Actuator(object):
         else:
             print "Error, incorrect impactsNumber!"
     impactsNumber = property(getImpactsNumber, setImpactsNumber)
-
-
-   
-

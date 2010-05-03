@@ -162,4 +162,10 @@ class MechFile:
         f.close()
 
 def str2bool(string):
-    return string.strip().lower() in ('yes', '1', 'true')
+    if string.strip().lower() in ('yes', '1', 'true', 'si'):
+        return True
+    elif string.strip().lower() in ('no', '0', 'false'):
+        return False
+    else:
+        return "Error: Not boolean"
+

@@ -78,7 +78,7 @@ class Dmech(object):
 
         self.location = []
         for i in range(8):
-            self.location[i] = Location()
+            self.location.append( Location.Location())
 
         self.__walkPoints = None
         self.__runPoints = None

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 __id__ = "$Id: DefMech.py $"
-__version__ = "$Revision: 1 $"
+__version__ = "$Revision: 2 $"
 __date__ = "$Date: 22/04/2010 Thu $"
 __author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
@@ -32,9 +32,7 @@ import Slot
 class DefMech:
     
     def __init__ (self):
-        self.mechNumber = None
-        self.actualMech = None
-        self.mechSet = []
+       self.mech = Dmech.Dmech()
         
     def readDefMech (self, fileName):
         """ 
@@ -50,9 +48,9 @@ class DefMech:
             print "The file "+ fileName+ " does not exist"
             return -1
 
-        m = Dmech()
+        m = Dmech.Dmech()
         
-        file.readline() # Read Magic Number : defmetchSBT
+        file.readline() # Read Magic Number : defmechSBT
 
         m.name = str ( file.readline() )[0:-2]
         m.model = str ( file.readline() )[0:-2]
@@ -81,7 +79,7 @@ class DefMech:
         m.rTorsoArmor = int ( file.readline() )
         m.rArmArmor = int ( file.readline() )
         m.cTorsoArmor = int ( file.readline() )
-        m.headArmor = None
+        m.headArmor = int ( file.readline() )
         m.lBackTorsoArmor = int ( file.readline() )
         m.rBackTorsoArmor =  int ( file.readline() )
         m.cBackTorsoArmor = int ( file.readline() )
@@ -95,7 +93,7 @@ class DefMech:
         m.internalHeadPoints = int ( file.readline() )
         m.equippedComponentsNumber = int ( file.readline() )
         for x in range (m.equippedComponentsNumber):
-            m.component.append(Component() )
+            m.component.append(Component.Component() )
             m.component[x].code = int ( file.readline() )
             m.component[x].name = str ( file.readline() )[0:-2]
             m.component[x].type = str ( file.readline() )[0:-2]
@@ -113,13 +111,13 @@ class DefMech:
             m.component[x].operativeTeam = str2bool ( file.readline() )
             m.component[x].weaponCode = int ( file.readline() )
             m.component[x].amount = int ( file.readline() )
-            m.component[x].specialAmmunition = str2bool ( file.readline() )
+            m.component[x].specialAmmunition = str ( file.readline() )[0:-2]
             m.component[x].triggerSwitch = int ( file.readline() )
 
         m.weaponsNumber =  int ( file.readline() )
         m.actuatorsNumber = int ( file.readline() )
         for p in range(m.actuatorsNumber):
-            m.actuator.append(Actuator())
+            m.actuator.append(Actuator.Actuator())
             m.actuator[p].code = int ( file.readline() )
             m.actuator[p].name = str ( file.readline() )[0:-2]
             m.actuator[p].itemLocation = int ( file.readline() )
@@ -128,19 +126,110 @@ class DefMech:
         for v in range(8):
             m.location[v].slotNumber = int ( file.readline() )
             for w in range(m.location[v].slotNumber):
-                m.slot.append(Slot())
-                m.slot[v].type =  str ( file.readline() )[0:-2]
-                m.slot[v].amount = int ( file.readline() )
-                m.slot[v].code = int ( file.readline() )
-                m.slot[v].name =  str ( file.readline() )[0:-2]
-                m.slot[v].componentIndex = int ( file.readline() )
-                m.slot[v].actuatorIndex = int ( file.readline() )
-                m.slot[v].ammunitionDamage = int ( file.readline() )
+                m.location[v].slot.append(Slot.Slot())
+                m.location[v].slot[w].type = str ( file.readline() )[0:-2]
+                m.location[v].slot[w].amount = int ( file.readline() )
+                m.location[v].slot[w].code = int ( file.readline() )
+                m.location[v].slot[w].name =  str ( file.readline() )[0:-2]
+                m.location[v].slot[w].componentIndex = int ( file.readline() )
+                m.location[v].slot[w].actuatorIndex = int ( file.readline() )
+                m.location[v].slot[w].ammunitionDamage = int ( file.readline() )
                 
         m.walkPoints = int ( file.readline() )
         m.runPoints = int ( file.readline() )
         m.jumpPoints = int ( file.readline() )
         m.radiatorsType = int ( file.readline() )
+
+        self.mech = m
+
+
+    def printDefMech (self, filename = "out.txt"):
+        f = open (filename, "w")
+        f.write ("defmechSBT\n")
+        f.write ( str( self.mech.name )+"\n")
+        f.write ( str( self.mech.model )+"\n")
+        f.write ( str( self.mech.ton  )+"\n")
+        f.write ( str( self.mech.power )+"\n")
+        f.write ( str( self.mech.internalRadiators )+"\n")
+        f.write ( str( self.mech.radiators )+"\n")
+        f.write ( str( self.mech.masc )+"\n")
+        f.write ( str( self.mech.dacmtd )+"\n")
+        f.write ( str( self.mech.dacmti )+"\n")
+        f.write ( str( self.mech.dacmtc )+"\n")
+        f.write ( str( self.mech.heat  )+"\n")
+        f.write ( str( self.mech.arms  )+"\n")
+        f.write ( str( self.mech.lShoulder )+"\n")
+        f.write ( str( self.mech.lArm  )+"\n")
+        f.write ( str( self.mech.lForearm )+"\n")
+        f.write ( str( self.mech.lHand  )+"\n")
+        f.write ( str( self.mech.rShoulder )+"\n")
+        f.write ( str( self.mech.rArm  )+"\n")
+        f.write ( str( self.mech.rForearm  )+"\n")
+        f.write ( str( self.mech.rHand  )+"\n")
+        f.write ( str( self.mech.lArmArmor  )+"\n")
+        f.write ( str( self.mech.lTorsoArmor )+"\n")
+        f.write ( str( self.mech.lLegArmor  )+"\n")
+        f.write ( str( self.mech.rLegArmor  )+"\n")
+        f.write ( str( self.mech.rTorsoArmor )+"\n")
+        f.write ( str( self.mech.rArmArmor  )+"\n")
+        f.write ( str( self.mech.cTorsoArmor )+"\n")
+        f.write ( str( self.mech.headArmor  )+"\n")
+        f.write ( str( self.mech.lBackTorsoArmor  )+"\n")
+        f.write ( str( self.mech.rBackTorsoArmor  )+"\n")
+        f.write ( str( self.mech.cBackTorsoArmor  )+"\n")
+        f.write ( str( self.mech.lInternalArmPoints  )+"\n")
+        f.write ( str( self.mech.lInternalTorsoPoints )+"\n")
+        f.write ( str( self.mech.lInternalLegPoints  )+"\n")
+        f.write ( str( self.mech.rInternalLegPoints  )+"\n")
+        f.write ( str( self.mech.rInternalTorsoPoints )+"\n")
+        f.write ( str( self.mech.rInternalArmPoints  )+"\n")
+        f.write ( str( self.mech.cInternalTorsoPoints )+"\n")
+        f.write ( str( self.mech.internalHeadPoints  )+"\n")
+        f.write ( str( self.mech.equippedComponentsNumber )+"\n")
+        for x in range (self.mech.equippedComponentsNumber):
+            f.write ( str( self.mech.component[x].code  )+"\n")
+            f.write ( str( self.mech.component[x].name  )+"\n")
+            f.write ( str( self.mech.component[x].type  )+"\n")
+            f.write ( str( self.mech.component[x].weaponInBack )+"\n")
+            f.write ( str( self.mech.component[x].itemLocation  )+"\n")
+            f.write ( str( self.mech.component[x].secondaryItemLocation )+"\n")
+            f.write ( str( self.mech.component[x].weaponType )+"\n")
+            f.write ( str( self.mech.component[x].heat  )+"\n")
+            f.write ( str( self.mech.component[x].harm  )+"\n")
+            f.write ( str( self.mech.component[x].shotsPerTurn  )+"\n")
+            f.write ( str( self.mech.component[x].minimumDistance )+"\n")
+            f.write ( str( self.mech.component[x].shortDistance  )+"\n")
+            f.write ( str( self.mech.component[x].mediumDistance  )+"\n")
+            f.write ( str( self.mech.component[x].longDistance )+"\n")
+            f.write ( str( self.mech.component[x].operativeTeam )+"\n")
+            f.write ( str( self.mech.component[x].weaponCode )+"\n")
+            f.write ( str( self.mech.component[x].amount  )+"\n")
+            f.write ( str( self.mech.component[x].specialAmmunition )+"\n")
+            f.write ( str( self.mech.component[x].triggerSwitch  )+"\n")
+
+        f.write ( str( self.mech.weaponsNumber  )+"\n")
+        f.write ( str( self.mech.actuatorsNumber  )+"\n")
+        for p in range(self.mech.actuatorsNumber):
+            f.write ( str( self.mech.actuator[p].code  )+"\n")
+            f.write ( str( self.mech.actuator[p].name  )+"\n")
+            f.write ( str( self.mech.actuator[p].itemLocation )+"\n")
+            f.write ( str( self.mech.actuator[p].operative  )+"\n")
+            f.write ( str( self.mech.actuator[p].impactsNumber )+"\n")
+        for v in range(8):
+            f.write ( str( self.mech.location[v].slotNumber  )+"\n")
+            for w in range(self.mech.location[v].slotNumber):
+                f.write ( str( self.mech.location[v].slot[w].type  )+"\n")
+                f.write ( str( self.mech.location[v].slot[w].amount )+"\n")
+                f.write ( str( self.mech.location[v].slot[w].code  )+"\n")
+                f.write ( str( self.mech.location[v].slot[w].name  )+"\n")
+                f.write ( str( self.mech.location[v].slot[w].componentIndex )+"\n")
+                f.write ( str( self.mech.location[v].slot[w].actuatorIndex  )+"\n")
+                f.write ( str( self.mech.location[v].slot[w].ammunitionDamage  )+"\n")
+                
+        f.write ( str( self.mech.walkPoints )+"\n")
+        f.write ( str( self.mech.runPoints  )+"\n")
+        f.write ( str( self.mech.jumpPoints  )+"\n")
+        f.write ( str( self.mech.radiatorsType )+"\n")
 
 
 def str2bool(string):

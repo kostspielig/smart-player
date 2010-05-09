@@ -67,15 +67,15 @@ class Options:
         self.ammunitionExplosion = str2bool( file.readline() )
         self.offRadiators = str2bool( file.readline() )
         self.timeLimitCheck = str2bool( file.readline() )
-        self.timeLimit = str2int (file.readline() )
+        self.timeLimit = int (file.readline() )
      
         file.close()
 
     def printOptions (self, fileName= "out.txt"):
 
-        file = open(fileName, "w")
+        f = open(fileName, "w")
                     
-        file.write("configSBT\n")# Read Magic Number : configSBT
+        f.write("configSBT\n")# Read Magic Number : configSBT
 
         f.write (str( self.fire ) +"\n")
         f.write (str( self.wind ) +"\n")
@@ -93,7 +93,12 @@ class Options:
         f.write (str( self.timeLimitCheck ) +"\n") 
         f.write (str( self.timeLimit ) +"\n")
      
-        file.close()
+        f.close()
 
 def str2bool(string):
-    return string.strip().lower() in ('yes', '1', 'true')
+    if string.strip().lower() in ('yes', '1', 'true', 'si'):
+        return True
+    elif string.strip().lower() in ('no', '0', 'false'):
+        return False
+    else:
+        return "Error: Not boolean"

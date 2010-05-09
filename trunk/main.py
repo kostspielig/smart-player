@@ -54,7 +54,7 @@ def main():
 
     # Reading defMechs
     defM = []
-    for x in mechs.mechNumber:
+    for x in range(mechs.mechNumber):
         M = DefMech.DefMech()
         M.readDefMech("defmechJ" + str(playerNumber) + "-" + str(x) + ".sbt")
         defM.append(M)

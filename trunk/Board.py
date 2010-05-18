@@ -30,8 +30,8 @@ import Cell
 class Board(object):
     
     def __init__ (self):
-        self.__width = None
-        self.__height = None
+        self.__width = 0
+        self.__height = 0
         self.cellArray = []
         
     def getWidth(self):
@@ -74,10 +74,12 @@ class Board(object):
         self.__width = int( file.readline() )
         self.__height = int( file.readline() )
         
-        cellNumber = range(self.width * self.height)
+        cellNumber = range(self.__width * self.__height)
         faceParams = range (6)
         for x in cellNumber:
             cell = Cell.Cell()       
+            cell.x = (x%self.__height) + 1
+            cell.y = (x//self.__height) + 1
             cell.level = int( file.readline() )
             cell.ground = int( file.readline() )
             cell.objects = int( file.readline() )

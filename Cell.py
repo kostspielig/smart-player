@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+ 
 __id__ = "$Id: Cell.py $"
 __version__ = "$Revision: 2 $"
 __date__ = "$Date: 16/04/2010 Fri $"
@@ -28,9 +28,22 @@ __)|||(_| |  |_|   | (_| / (/_ |
 class Cell(object):
     
     def __init__(self):
+        self.__x = None
+        self.__y = None
         self.__level = None
-        self.__ground = None
-        self.__objects = None
+        self.__ground = None # 0 Terreno abierto
+                             # 1 Terreno pavimentado
+                             # 2 Agua
+                             # 3 Terreno pantanoso
+        self.__objects = None # 0 escombros
+                              # 1 bosque ligero - hasta 12 m altura
+                              # 2 bosque denso - 12 m, movimiento dificil
+                              # 3 edificio ligero
+                              # 4 edificio medio
+                              # 5 edificio pesado
+                              # 6 edificio reforzado - cualquier peso
+                              # 7 bunker
+                              # 255 NADA - ningun objeto
         self.__fce = None
         self.__collapsedBuilding = None
         self.__fire = None
@@ -39,6 +52,26 @@ class Cell(object):
         self.faceRiver = []
         self.faceRoad = []
         
+    def getX (self):
+        return self.__x
+
+    def setX (self, x):
+        if isinstance(x, int):
+            self.__x = x
+        else:
+            print "Error, incorrect x!"
+    x = property(getX, setX)
+
+    def getY (self):
+        return self.__y
+
+    def setY (self, y):
+        if isinstance(y, int):
+            self.__y = y
+        else:
+            print "Error, incorrect y!"
+    y = property(getY, setY)
+
     def getLevel (self):
         return self.__level
 

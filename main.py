@@ -81,8 +81,6 @@ if __name__ == "__main__":
 
 def movement ():
     print "Movement"
-    raw_input()
-    print "Movement END"
 
 def reaction ():
     print "Reaction"

@@ -40,12 +40,12 @@ class Mech(object):
         self.__playerNumber = None
         self.__operative = None
         self.__disconnected = None
-        self.__blocked = None
+        self.__blocked = None # atascado en terreno pantanoso
         self.__ground = None
         self.__cell = None
         self.__facingSide = None # [1..6]
         self.__facingTorsoSide = None
-        self.__temp = None
+        self.__temp = None # Temperature level
         self.__burning = None
         self.__stick = None
         self.__stickType = None # (0,1)

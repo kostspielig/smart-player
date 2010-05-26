@@ -27,6 +27,7 @@ __)|||(_| |  |_|   | (_| / (/_ |
 
 import Cell
 from math import fabs
+from pathfinder import Pos
 
 class Board(object):
     
@@ -72,16 +73,18 @@ class Board(object):
         
         file.readline() #Leer mapaSBT
    
-        self.__width = int( file.readline() )
         self.__height = int( file.readline() )
+        self.__width = int( file.readline() )
         
         self.map = [[0] * self.__width for i in range(self.__height)]
         cellNumber = range(self.__width * self.__height)
         faceParams = range (6)
         for x in cellNumber:
             cell = Cell.Cell()       
-            cell.x = (x%self.__height) + 1
-            cell.y = (x//self.__height) + 1
+            col =(x%self.__height)
+            fil = (x//self.__height)
+            cell.x = col + 1
+            cell.y = fil + 1
             cell.level = int( file.readline() )
             cell.ground = int( file.readline() )
             cell.objects = int( file.readline() )
@@ -97,7 +100,7 @@ class Board(object):
             for y in faceParams:
                 cell.faceRoad.append(str2bool( file.readline()) )
           	
-            self.map[cell.x-1][cell.y-1] =cell
+            self.map[col][fil] =cell
             cell = None
           
         file.close()
@@ -138,63 +141,93 @@ class Board(object):
     def move_cost(self, c1, c2):
         """ Compute the cost of movement from one coordinate c1 to
             another c2. 
-            
-            The cost is the Euclidean distance.
         """
+        p1 = c1.pos
+        p2 = c2.pos
         face = 0
         costFace = 0
         costCell = 0
-        #return sqrt((c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2) 
-        x = - (c1[0] - c2[0])
-        y = - (c1[1] - c2[1])
-        
-        # Which side is facing the other node??
-        if (x == 0 and y == -1): # N
-            face = 0
-        elif (x == 1 and y == -1): # NE
-            face = 1
-        elif (x == 1 and y == 0): # SE
-            face = 2
-        elif (x == 0 and y == 1): # S
-            face = 3
-        elif (x == -1 and y == 0): # SO
-            face = 4
-        elif (x == -1 and y == -1): # NO
-            face = 5
+        #return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) 
+        y = - (p1[0] - p2[0])
+        x = - (p1[1] - p2[1])
+        if ((p1[1]+1)%2 == 1): #columnas impares
+            # Which side is facing the other node??
+            if (x == 0 and y == -1): # N
+                face = 0
+            elif (x == 1 and y == -1): # NE
+                face = 1
+            elif (x == 1 and y == 0): # SE
+                face = 2
+            elif (x == 0 and y == 1): # S
+                face = 3
+            elif (x == -1 and y == 0): # SO
+                face = 4
+            elif (x == -1 and y == -1): # NO
+                face = 5
+        else: #columnas pares
+            if (x == 0 and y == -1): # N
+                face = 0
+            elif (x == 1 and y == 0): # NE
+                face = 1
+            elif (x == 1 and y == 1): # SE
+                face = 2
+            elif (x == 0 and y == 1): # S
+                face = 3
+            elif (x == -1 and y == 1): # SO
+                face = 4
+            elif (x == -1 and y == 0): # NO
+                face = 5
         # Total cost of changing the facing side
         costFace = fabs(c1.face - face) 
+        print "face: " + str(face)
             
-        if (self.mapa[c2[0]-1][c2[1]-1].ground == 2): # Agua
-            if (self.mapa[c2[0]-1][c2[1]-1].level == 1):
+        obj = self.map[p2[0]][p2[1]].objects
+        if (self.map[p2[0]][p2[1]].ground == 2): # Agua
+            print "waterrrr"
+            if (self.map[p2[0]][p2[1]].level == -1):
                 costCell = 2
-            elif (self.mapa[c2[0]-1][c2[1]-1].level >= 2):
+            elif (self.map[p2[0]][p2[1]].level <= -2):
                 costCell = 4
-        elif (self.mapa[c2[0]-1][c2[1]-1].objets == (3 or 0 or 1)): # Escombros o edif pequeños o bosque ligero
+        elif ( (obj == 3) or (obj== 0) or (obj==1) ): # Escombros o edif pequenios o bosque ligero
+            print "BOSKE LIGERO"
             costCell = 2
-        elif (self.mapa[c2[0]-1][c2[1]-1].objects == (4 or 2)): # edif medianos o bosque denso
+        elif ((obj == 4) or (obj == 2)): # edif medianos o bosque denso
+            print "BOSKEEEE DENSO"
             costCell = 3
-        elif (self.mapa[c2[0]-1][c2[1]-1].objects == 5): # edif grandes
+        elif (self.map[p2[0]][p2[1]].objects == 5): # edif grandes
             costCell = 4
-        elif (self.mapa[c2[0]-1][c2[1]-1].objects == 6): # edif reforzados
+        elif (self.map[p2[0]][p2[1]].objects == 6): # edif reforzados
             costCell = 5
+        else: 
+            costCell = 1
+            print "NOTHING"
+
+        print "result"
+        return (int(costFace+costCell), face)
 
     def successors (self, c, movType = 0):
         """ Compute the successors of coordinate 'c': all the 
             coordinates that can be reached by one step from 'c'.
         """
         slist = []
+        print str(c[0])+", "+str(c[1])+"level " + str(self.map[c[0]][c[1]].level)
         # Go over every cell attached
         for i in (-1,0,1):
             for j in (-1,0,1):
-                if (i == 1 and j == 1) or (i == 0 and j == 0) or (i == -1 and j == 1):
-                    continue
-                newi = (c[0] -1) +i
-                newj = (c[1] -1) +j
+                if ((c[1]+1)%2 == 0): #columnas pares
+                    if (i == -1 and j == -1) or (i == 0 and j == 0) or (i == 1 and j == -1):
+                        continue
+                else:
+                    if (i == 1 and j == 1) or (i == 0 and j == 0) or (j == 1 and i == -1):
+                        continue
+                newFil = (c[0]) +j
+                newCol = (c[1]) +i
+                print "i: "+str(newCol+1) + ", j: "+ str(newFil+1)
                 # Check if we dont try a position out of the board
-                if (0 <= newi <= self.__width -1 and 0 <= newj <= self.__height -1):
+                if (0 <= newFil <= self.__width -1 and 0 <= newCol <= self.__height -1):
                     #Checks whether the cell is correct
-                    if ():
-                        slist.append((newi+1, newj+1))
+                    if ( self.checkCell(c, (newFil,newCol), movType) ):
+                        slist.append((newFil, newCol))
 
         return slist
 
@@ -213,6 +246,15 @@ class Board(object):
             what = True
 
         return what
+
+
+    def heuristic_to_goal(self, c1, c2): 
+        """ Heuristic 1 - Manhatan
+            C1 and C1, Type Pos
+        """
+        return abs(c2.pos[0]-c1.pos[0]) + abs(c2.pos[1]-c1.pos[1])
+
+    
 
 def str2bool(string):
     if string.strip().lower() in ('yes', '1', 'true', 'si'):

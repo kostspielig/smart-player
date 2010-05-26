@@ -51,7 +51,7 @@ class PathFinder(object):
         # 
         closed_set = {} 
          
-        start_node = self._Node(start.pos, start.face) 
+        start_node = self._Node(start) 
         start_node.g_cost = 0 
         start_node.f_cost = self._compute_f_cost(start_node, goal) 
          
@@ -71,7 +71,7 @@ class PathFinder(object):
              
             for succ_coord in self.successors(curr_node.coord): 
                 succ_node = self._Node(succ_coord) 
-                (succ_node.g_cost, succ_node.face) = self._compute_g_cost(curr_node, succ_node) 
+                succ_node.g_cost = self._compute_g_cost(curr_node, succ_node) 
                 succ_node.f_cost = self._compute_f_cost(succ_node, goal) 
                  
                 if succ_node in closed_set: 
@@ -89,11 +89,10 @@ class PathFinder(object):
             self.move_cost(from_node.coord, to_node.coord)) 
  
     def _compute_f_cost(self, node, goal):
-        x = Pos(node.coord, node.face)
-        return node.g_cost + self._cost_to_goal(x, goal) 
+        return node.g_cost + self._cost_to_goal(node, goal) 
  
     def _cost_to_goal(self, node, goal):
-        return self.heuristic_to_goal(node, goal) 
+        return self.heuristic_to_goal(node.coord, goal) 
  
     def _reconstruct_path(self, node): 
         """ Reconstructs the path to the node from the start node 
@@ -107,7 +106,6 @@ class PathFinder(object):
          
         return reversed(pth) 
  
-
     class _Node(object): 
         """ Used to represent a node on the searched graph during 
             the A* search. 
@@ -123,7 +121,7 @@ class PathFinder(object):
             coordinate, which is assumed to be unique) and  
             comparison (based on f_cost) for sorting by cost. 
         """ 
-        def __init__(self, coord, face = 0, g_cost=None, f_cost=None, pred=None): 
+        def __init__(self, coord, g_cost=None, f_cost=None, pred=None, face = 0): 
             self.coord = coord 
             self.g_cost = g_cost 
             self.f_cost = f_cost 
@@ -145,26 +143,6 @@ class PathFinder(object):
         def __repr__(self): 
             return self.__str__() 
  
-class Pos(object):
-
-    def __init__(self, pos, face=0):
-        self.pos = pos
-        self.face = face 
-
-    def __eq__(self, other): 
-        return (self.pos == other.pos) and (self.face == other.face)
-         
-    def __cmp__(self, other): 
-        return cmp(self.face, other.face) 
-         
-    def __hash__(self): 
-        return hash(self.pos) 
- 
-    def __str__(self): 
-        return 'N(%s, %s) -> face: %s' % (self.pos[1]+1, self.pos[0]+1, self.face) 
- 
-    def __repr__(self): 
-        return self.__str__() 
  
 if __name__ == "__main__": 
     from gridmap import GridMap           

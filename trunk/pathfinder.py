@@ -1,7 +1,7 @@
 from priorityqueueset import PriorityQueueSet 
  
  
-class PathFinder(object): 
+class PathFinder(object):
     """ Computes a path in a graph using the A* algorithm. 
      
         Initialize the object and then repeatedly compute_path to  
@@ -63,8 +63,8 @@ class PathFinder(object):
             # the open set             
             # 
             curr_node = open_set.pop_smallest() 
-             
-            if curr_node.coord == goal: 
+            # If we reached the tarjet  Take care of END FACE 
+            if curr_node.coord == goal.pos: 
                 return self._reconstruct_path(curr_node) 
              
             closed_set[curr_node] = curr_node 
@@ -85,8 +85,10 @@ class PathFinder(object):
     ########################## PRIVATE ########################## 
      
     def _compute_g_cost(self, from_node, to_node):
-        return (from_node.g_cost +  
-            self.move_cost(from_node.coord, to_node.coord)) 
+        f = Pos(from_node.coord, from_node.face)
+        t = Pos(to_node.coord, to_node.face)
+        m_c = self.move_cost(f, t)
+        return (from_node.g_cost + m_c[0], m_c[1]) 
  
     def _compute_f_cost(self, node, goal):
         x = Pos(node.coord, node.face)
@@ -167,28 +169,41 @@ class Pos(object):
         return self.__str__() 
  
 if __name__ == "__main__": 
-    from gridmap import GridMap           
+    from Board import Board
+    #from gridmap import GridMap           
              
-    start = 0, 0 
-    goal = 1, 7 
+    #start = 0, 0 
+    #goal = 1, 7 
      
-    tm = GridMap(8, 8) 
-    for b in [  (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (2, 3), 
-                (2, 5), (2, 5), (2, 5), (2, 7)]: 
-        tm.set_blocked(b) 
+    #tm = GridMap(8, 8) 
+    #for b in [  (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (2, 3), 
+    #            (2, 5), (2, 5), (2, 5), (2, 7)]: 
+    #    tm.set_blocked(b) 
      
-    tm.printme() 
+    #tm.printme() 
      
-    pf = PathFinder(tm.successors, tm.move_cost, tm.move_cost) 
+    #pf = PathFinder(tm.successors, tm.move_cost, tm.move_cost) 
      
+    #import time 
+    #t = time.clock() 
+    #path = list(pf.compute_path(start, goal)) 
+    #print "Elapsed: %s" % (time.clock() - t) 
+     
+    #print path 
+     
+    start = 4,1
+    goal = 3,2
+
+    s = Pos(start, 0)
+    g = Pos(goal, 1)
+    tm = Board()
+    tm.readBoard("../ficheros2/manglar.sbt")
+
+    pf = PathFinder(tm.successors, tm.move_cost, tm.heuristic_to_goal)
+    
     import time 
     t = time.clock() 
-    path = list(pf.compute_path(start, goal)) 
+    path = list(pf.compute_path(s, g)) 
     print "Elapsed: %s" % (time.clock() - t) 
-     
-    print path 
-     
-    #~ import cProfile 
-    #~ cProfile.run("list(pf.compute_path(start, goal))") 
-     
-    
+
+    print path

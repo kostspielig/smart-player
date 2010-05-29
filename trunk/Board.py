@@ -99,7 +99,7 @@ class Board(object):
             
             for y in faceParams:
                 cell.faceRoad.append(str2bool( file.readline()) )
-          	
+          	 
             self.map[col][fil] =cell
             cell = None
           

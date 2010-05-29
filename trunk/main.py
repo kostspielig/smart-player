@@ -62,7 +62,6 @@ def main():
 
     # For each phase
     if phase == "Movimiento":
-        config.printOptions()
         movement()
     elif phase == "Reaccion":
         reaction ()
@@ -81,6 +80,13 @@ if __name__ == "__main__":
 
 def movement ():
     print "Movement"
+
+def printMovement(playerNumber):
+    filename = filename = "accionJ"+ str(playerNumber) +".sbt"
+    f = open (filename, "w")
+    f.write ("\n")
+
+    f.close()
 
 def reaction ():
     print "Reaction"

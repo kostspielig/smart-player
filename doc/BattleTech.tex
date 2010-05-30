@@ -20,8 +20,7 @@
 \usepackage{url}
 \usepackage{multirow}
 \usepackage{listings}  
-\lstloadlanguages{Java}  
-\lstset{language=Java,commentstyle=\emph}
+\lstset{language=Python,commentstyle=\emph}
 \usepackage{color} 
 \usepackage{colortbl}
 \lstset{language=SQL}
@@ -47,8 +46,6 @@
   \begin{center}
     \huge \textsf{\emph{ BattleTech}
       \\ \textbf{ Jugador Inteligente }}
-    
-
     % \large \textit{\@subtitle}
   \end{center}
   \hrule height 2pt
@@ -81,10 +78,65 @@
 {\bf BattleTech} es un juego de combates entre enormes máquinas de
 aspecto humanoide llamados {\it BattleMechs} (o más brevemente
 llamados Mechs). \\
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=7cm]{images/mech_super.jpg}
+\end{figure}
 
+\chapter{Descripción del Problema}
 
-\chapter {Algoritmo A*}
+\chapter {Movimiento}
+Uno de los mayores desafíos en el diseño de {\bf Inteligencia
+  Artificial} realista en juegos de ordenador es el movimiento del
+agente. Las estrategias de busqueda de caminos o {\it pathfinding} son
+empleados como centro de los sistemas de movimiento.\\
 
+Las estrategias de pathfinding debe encontrar un camino desde
+cualquier coordenada del mundo hasta otra. Dados los puntos origen y
+destino, encuentran intermedios que formen un camino a nuestro
+destino. Para esto debemos tomar algún tipo de estructura de datos
+para guiarnos en el movimiento. Esto nos lleva inevitablemente a
+utilizar recursos de CPU, especialmente cuando buscamos un camino que
+no existe.\\
+
+De entre todos los algoritmos que se usan actualmente, el más conocido
+y extensamente usado es el algoritmo A estrella {\bf A*}. \\
+
+Veamos una comparación de tres tipos distintos de algoritmos.
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{images/images5.jpg}\label{comp}
+  \caption{Comparación de algoritmos de búsqueda de caminos.}
+\end{figure}
+
+\begin{enumerate}
+\item {\bf Djkstra}. Este algoritmo empieza visitando los vértices del
+  grafo en el punto de partida. Luego va reiteradamente examinando los
+  vértices mas cercanos que aún no hayan sido examinados. Se expando
+  desde el nodo inicial hasta alcanzar el destino. Pero aunque esté
+  garantizado encontrar una solución óptima, comprueba demasiadas
+  casillas, por lo que hace un gasto de recursos enorme.\\
+  Para una implementación simple, tenemos un tiempo de ejecución $O(n^2)$
+\item {\bf Best First Search}. Es un algoritmo {\it Greedy} que
+  trabaja de una forma simmilar al algoritmo de Dijkstra, aunque este
+  presenta una ``heurística'' de como de lejos está nuestro
+  objetivo. Aunque no nos garantice encontrar la solución óptima, si
+  puede encontrar una solución apróximada en un tiempo mucho menor. El
+  mayor inconveniente con este algoritmo es que intenta moverse hacia
+  el objetivo aunque no sea el camino correcto -tal y como muestra la
+  figura \ref{comp}. Esto es debido a que sólo tiene en cuenta el
+  coste para llegar al objetivo, e ignora el coste del camino que
+  lleva hasta ese momento. Entonces intentará seguir aunque el camino
+  sea muy largo.\\
+  El tiempo de ejecución es $O(n)$.
+\item {\bf A*}. Este algoritmo fue desarrollado en 1968 para combinar
+  enfoques heurísticos como en {\it Best First Searh} y enfoques
+  formales como ocurre en {\it Dijkstra}. Aunque A* este enfocado
+  construido sobre la heurística -y aunque esta no proporciona ninguna
+  garantía-, A* puede garantizar el camino más corto.
+\end{enumerate}
+
+\section{Algoritmo A*}
 El algoritmo de búsqueda A* es un tipo de algoritmo de búsqueda en
 grafos. Se basa en encontrar, siempre y cuando se cumplan ciertas
 condiciones, el camino de menor coste entre un nodo origen y uno
@@ -120,13 +172,21 @@ abiertos, y en caso de que no sea un nodo objetivo, calcula la f(n) de
 todos sus hijos, los inserta en abiertos, y pasa el nodo evaluado a cerrados.
 
 
+
 \section {Implementación}
+
+%\begin{lstlisting}
+%\end{lstlisting}
 
 La implementación es genérica y no se basa en ningún juego en
 concreto. {\bf PathFinder} es una clase genérica que no tiene en
 cuenta como representes tu grafo ni como representes o como calcules
 el coste de moverte de un lugar a otro. Deja a gusto del programador
 especificar la información mediante el paso de funciones al constructor.
+
+\subsection{Pathfinder}
+
+\subsubsection{Sucesores o Hijos}
 
 ¿Cómo sabe {\it PathFinder} la forma de nuestro grafo? Sólo nos basta
 con especificarlo en la función {\bf successors}. Esta función
@@ -142,14 +202,93 @@ se puede llegar desde el nodo inicial en un solo paso.
 En nuestro ejemplo, los sucesores del nodo {\it 0103}, donde se encuentra
 nuestro personaje, son: {\it 0102, 0202, 0203, 0104}
 
+Ateniéndonos a las restricciones de {\it BattleTech}, vemos que
+tenemos que tener en cuenta varias cosas:
+
+\begin{itemize}
+\item La diferencia de altura entre dos casillas colindantes no puede
+  mayor a dos.
+\item Si corremos, la profundidad del agua tiene que ser menor a uno.
+\item En el caso de que andemos o corramos, debemos tener en cuenta si
+  la casilla esta incendiada. En tal caso el fuego puede provocar un
+  sobre calentamiento muy peligroso.
+\item El el movimiento hacia atrás el máximo desnivel permitido es uno.
+\end{itemize}
+
+Para comprobar todos estos casos hacemos uso de la función {\bf
+  checkCell(i,d, mov)}, donde {\bf i} es la casilla desde la que nos
+queremos mover, {\bf d} es la casilla a la que nos queremos mover y {\bf mov} es
+el tipo de movimiento a realizar.
+
+
+
+\subsection{Función de evaluación}
+
+\subsubsection{Función de coste}
+
+{\it PathFinder} también conoce el coste de cada movimiento ya que se
+lo estamos diciendo en la función {\bf move\_cost}. Esta función nos
+dice el coste real para movernos de un nodo a otro. 
+
+\subsubsection{Función heurística}
+
+La última función que pasamos como argumento a {\it PathFinder} es
+{\bf heuristic\_to\_goal}. Tal y como su nombre indica es la
+heurística o coste del movimiento estimado para ir de un nodo origen a
+un nodo destino.\\
+
+Hay muchas formas de realizar esta función, la primera que utilizamos
+es la {\bf distancia manhatan}.
+$$ manhatan(x,y, x',y') = |x'-x|+|y'-y| $$
+ Esta heurística no es completamente precisa,
+ya que  nos ofrece una sobreestimación del resultado correcto. Esto se
+debe a que la conectividad entre celdas es diferente en un mapa
+hexagonal que en uno rectangular, aunque la representación usada del
+mapa invite al error.
+
+\subsection{Implementando la lista abierta}
+
+Un aspecto interesante de implementación para mejorar la optimalidad
+de nuestro programa es cómo implementar la lista de nodos
+abiertos. Recordamos que A* usa la lista abierta para realizar un
+seguimiento de los nodos que todavía tiene que vistar. Esta quizás sea
+la estructura de datos más importante para el algoritmo, y su correcta
+implementación es no trivial.\\
+
+Aunque al principio empezamos con una implementación ineficiente de la
+lista abierta, al decidir optimizar su implementación con una
+estructura de datos más acertado mejoró cien veces su velocidad. Una
+de las mejores fuentes de inspiración fueron las notas de
+Amit.\ref{amit} \\
+
+Combinando las colas de prioridad y las estructuras de datos tipo {\it
+  set}, se consigue una cola de prioridad en la que sus componentes
+están garantizados a ser únicos. \\
+
+Esto nos proporciona una complejidad O(1) para pruebas de pertenencia,
+y =(log N) para la extracción del menor elemento. La inserción en
+cambio es mas complicada. Cuando un elemento no existe, se añade en
+O(log N). En cambio, cuando ya existe, su prioridad se comprueba con
+el nuevo elemento en O(1). Si la prioridad del nuevo elemento es
+menor, se actualiza en la cola. Esto lleva un tiempo O(N).
+
+\chapter{Reacción}
+\chapter{Ataque con Armas}
+\chapter{Ataque Físico}
+\chapter{Final de Turno}
+
+Esta fase nos brinda la posibilidad de apagar o encender radiadores,
+soltar garrote o expulsar municiones.
 
 \newpage
 \begin{thebibliography}{XXX}
-\bibitem{0} González Duque, R., 2003. {\it PYTHON para todos.} $1^{st}$ed. \\
-\bibitem{2} Gutschmidt, Tom, 2003. {\it Game Programming with Python,
-    Lua, and Ruby  } Premier Press \\
-\bibitem{3} Pilgrim, Mark, 2004. {\it Dive into Python.} Apress. \\
-\bibitem{1}  \url{
+\bibitem{0} González Duque, R., 2003. {\it ``PYTHON para todos.''} $1^{st}$ed. \\
+\bibitem{2} Gutschmidt, Tom, 2003. {\it ``Game Programming with Python,
+    Lua, and Ruby.''  } Premier Press \\
+\bibitem{2} Weixiong Zhang, 1999. {\it ``State-Space Search. Algorithms,
+  Complexity, Extensions and Applications.''} Springer-Verlag: NY \\
+\bibitem{3} Pilgrim, Mark, 2004. {\it ``Dive into Python.''} Apress. \\
+\bibitem{1} Amit Patel\\ \url{
     http://theory.stanford.edu/~amitp/GameProgramming/} \label{amit}
   \\
 \bibitem{4}  \url{http://www.policyalmanac.org/games/aStarTutorial.htm}\\

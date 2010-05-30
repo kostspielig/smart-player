@@ -65,10 +65,10 @@ class PathFinder(object):
             curr_node = open_set.pop_smallest() 
             # If we reached the tarjet  Take care of END FACE 
             if curr_node.coord == goal.pos: 
+                print "gcost: " +str(curr_node.g_cost)+" fcost: " +str(curr_node.f_cost)
                 return self._reconstruct_path(curr_node) 
              
-            closed_set[curr_node] = curr_node 
-             
+            closed_set[curr_node] = curr_node            
             for succ_coord in self.successors(curr_node.coord): 
                 succ_node = self._Node(succ_coord) 
                 (succ_node.g_cost, succ_node.face) = self._compute_g_cost(curr_node, succ_node) 
@@ -101,11 +101,12 @@ class PathFinder(object):
         """ Reconstructs the path to the node from the start node 
             (for which .pred is None)
         """
-        pth = [node.coord] 
+        temp = Pos(node.coord, node.face)
+        pth = [temp] 
         n = node 
         while n.pred: 
             n = n.pred 
-            pth.append(n.coord) 
+            pth.append(Pos(n.coord, n.face)) 
          
         return reversed(pth) 
  

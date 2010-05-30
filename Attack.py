@@ -32,15 +32,18 @@ import os
 class Attack:
 
     def __init__ (self, playerNumber, mechs, fichBoard, dmech, board ):
-        self.__playerNumber = playerNumber
-        self.__mechs = mechs
-        self.__fichBoard = fichBoard
-        self.__board = board
-        self.__dmech = dmech
-        self.__enemys = None
-        self.__player = None
+        self.__playerNumber = playerNumber #Numero del jugador actual
+        self.__mechs = mechs #Conjunto de mechs de la partida
+        self.__fichBoard = fichBoard # Fichero del tablero
+        self.__board = board # Objeto tablero
+        self.__dmech = dmech # Conjunto de defmechs
+        self.__enemys = None #Lista de enemigos
+        self.__player = None #Mech actual
+        self.__enemysAttack = None #Lista de enemigos en linea de vision
+        self.__finalWeapons = None #Lista de armas usadas en el ataque con armas
+        self.__stick = False #Indica si se cogi— el garrote al final del ataque con armas
         
-        #buscamos aljugador actual
+        #buscamos al jugador actual
         for i in range(self.__mechs.mechNumber) :
             if self.__mechs.mechSet[i].getPlayerNumber == self.__playerNumber :
                 self.__player = self.__mechs.mechSet[i]
@@ -49,9 +52,136 @@ class Attack:
         for i in range(self.__mechs.mechNumber) :
             if (self.__playerNumber != self.__mechs.mechSet[i].getPlayerNumber):
                 self.__enemys.append(self.__mechs.mechSet[i])
-       
+    
+    def physicalAttack (self):
+        f = "AccionJ" + str(self.__playerNumber)+".sbt"
+        f = open(f, "w")
+        choiseEnemy = None
+        distance = 0
+        enemy = None
+        
+        if len(self.__enemysAttack) > 0 :
+            choiseEnemy = self.enemyMoreNear(self.__enemysAttack, distance)
+            enemy = self.__enemysAttack[choiseEnemy]
+            if distance < 2 :
+                if self.__stick == True :
+                    f.write("1" + "\n")
+                    f.write("BIBD" + "\n")
+                    f.write("3000" + "\n")
+                    
+                    if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
+                        f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                    elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
+                        f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                    elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
+                        f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                    else :
+                        f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                    
+                    f.write("Mech" + "\n")
+                #si no tenemos garrote pegamos pu–etazos
+                else : 
+                    BI = False
+                    PI = False
+                    BD = False
+                    PD = False
+                    used = 0
+                    for i in range(self.__finalWeapons):
+                        #localizacion del arma
+                        itemLocation = self.__finalWeapons[i].getItemLocation()
+                        if itemLocation == 0 : BI = True
+                        elif itemLocation == 2:PI = True
+                        elif itemLocation == 3: PD = True
+                        elif itemLocation == 5: BD = True
+                        
+                    #No se pueden dar dos patadas en el mismo turno (pegaremos con la pierna derecha)
+                    if PI == False and PD == False : PD = True
+
+                    #numero de extremidades que se usaran para el ataque
+                    if BI == False : used = used + 1
+                    if PI == False : used = used + 1
+                    if BD == False : used = used + 1
+                    if PD == False : used = used + 1
+
+                    f.write(str(used) + "\n")
+                   
+                   
+                    if BI == False :
+                        f.write("BI" + "\n")
+                        f.write("1000" + "\n")
+                        f.write("" + "\n")
+                       
+                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
+                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
+                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
+                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        else :
+                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                       
+                        f.write("Mech" + "\n")
+
+                    if BD == False :
+                        f.write("BD" + "\n")
+                        f.write("1000" + "\n")
+                        f.write("" + "\n")
+                       
+                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
+                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
+                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
+                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        else :
+                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                           
+                        f.write("Mech" + "\n")
+                    
+                    if PI == False :
+                        f.write("PI" + "\n")
+                        f.write("2000" + "\n")
+                        f.write("" + "\n")
+                       
+                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
+                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
+                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
+                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        else :
+                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                           
+                        f.write("Mech" + "\n")
+                    
+                    if PD == False :
+                        f.write("PD" + "\n")
+                        f.write("2000" + "\n")
+                        f.write("" + "\n")
+                       
+                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
+                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
+                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
+                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
+                        else :
+                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                           
+                        f.write("Mech" + "\n")
+            
+            #no se ataca
+            else:
+                f.write("0"+"\n")
+        
+        #no se ataca
+        else:
+            f.write("0"+"\n")
+        
+        f.close()
+        
+     
     def weaponsAttack (self):
-        enemysAttack = None
         attack = False
         choiseEnemy = None
         distance = None
@@ -65,43 +195,43 @@ class Attack:
         for i in range(self.__enemys)  :
             attack = self.visionLine(self.__enemys)
             if attack == True :
-                enemysAttack.append(self.__enemys[i])
+                self.__enemysAttack.append(self.__enemys[i])
         
         #Se puede atacar ?
-        if enemysAttack != None :
+        if len(self.__enemysAttack) > 0 :
             #seleccionamos el enemigo a atacar(m‡s cercano)
-            choiseEnemy = int(self.enemyMoreNear(enemysAttack, distance) )
+            choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
             
             #comprobamos que armas se pueden usar contra el enemigo elegido
-        
-            choiseWeapons = self.choiseWeapons(self.__enemys[choiseEnemy])
+            choiseWeapons = self.choiseWeapons(self.__enemysAttack[choiseEnemy])
             
             #eleccion temperatura
           
-            temp = self.choiseTemperature(self.__enemys[choiseEnemy])
+            temp = self.choiseTemperature(self.__enemysAttack[choiseEnemy])
             
             #eleccion definitiva de las armas a lanzar
+            self.__finalWeapons = self.shootWeapons(self.__enemysAttack[choiseEnemy], temp, choiseWeapons)
             
-            finalWeapons = self.shootWeapons(self.__enemys[choiseEnemy], temp, choiseWeapons)
-            
-            self.writeDistanceAttack(finalWeapons, self.__enemys[choiseEnemy], f)
+            #Escribimos el ataque que vamos a realizar en el fichero de AccionJ
+            self.writeWeaponsAttack(self.__finalWeapons, self.__enemysAttack[choiseEnemy], f)
         
-        #si no se puede atacar
+        #si no se puede atacar lo escribimos en el fichero de AccionJ
         else :
-            self.writeNoAttack(self.__enemys, f)
+            self.writeNoAttack(self.__enemysAttack, f)
     
     def writeNoAttack(self, Enemys, f):
         f = open (f, "w")
         distance = None
         
         #comprobamos si hay un garrote en la casilla del jugador
-        if self.__player.getCell().getStick() == True :    
-            #buscamos
+        if self.__player.getCell().getStick() == True :   
+            #buscamos el enemigo m‡s cercano
             choiseEnemy = int(self.enemyMoreNear(Enemys, distance))
             
             #Si est‡ la distancia es menor o igual a 4 cogeremos el garrote
             if distance <= 4 :
                 f.write("True" + "\n")
+                self.__stick = True 
             else :
                 f.write("False" + "\n")
                 f.write("0000" + "\n")
@@ -116,7 +246,7 @@ class Attack:
             
              
             
-    def writeDistanceAttack(self, finalWeapons, Enemy, f):
+    def writeWeaponsAttack(self, finalWeapons, Enemy, f):
         f = open (f, "w")
         
         if len(finalWeapons) == 0:

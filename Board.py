@@ -179,20 +179,19 @@ class Board(object):
                 face = 5
         # Total cost of changing the facing side
         costFace = fabs(c1.face - face) 
-        print "face: " + str(face)
+        print "cost face: " + str(costFace)
             
         obj = self.map[p2[0]][p2[1]].objects
         if (self.map[p2[0]][p2[1]].ground == 2): # Agua
-            print "waterrrr"
             if (self.map[p2[0]][p2[1]].level == -1):
                 costCell = 2
             elif (self.map[p2[0]][p2[1]].level <= -2):
                 costCell = 4
+            else:
+                costCell = 1
         elif ( (obj == 3) or (obj== 0) or (obj==1) ): # Escombros o edif pequenios o bosque ligero
-            print "BOSKE LIGERO"
             costCell = 2
         elif ((obj == 4) or (obj == 2)): # edif medianos o bosque denso
-            print "BOSKEEEE DENSO"
             costCell = 3
         elif (self.map[p2[0]][p2[1]].objects == 5): # edif grandes
             costCell = 4
@@ -200,17 +199,65 @@ class Board(object):
             costCell = 5
         else: 
             costCell = 1
-            print "NOTHING"
-
-        print "result"
+        print "cost cell" + str(costCell)
         return (int(costFace+costCell), face)
+
+    def successors2(self, c, movType = 0):
+        slist = []
+        
+        #All other faces
+        for x in range(6):
+            if x == c.face:
+                continue
+            print"new pos: " + str(Pos(c.pos, x))
+            slist.append(Pos(c.pos, x))
+
+        #Position right in front  
+            if ((c.pos[1]+1)%2 == 0): #columnas pares
+                if c.face == 0:
+                    i=0 ;j=-1
+                if c.face == 1:
+                    i=1;j=0
+                if c.face == 2:
+                    i=1;j =1
+                if c.face == 3:
+                    i=0;j=1
+                if c.face == 4:
+                    i=-1;j =1
+                if c.face ==5:
+                    i=-1;j=0
+            else: #columnas impares
+                if c.face == 0:
+                    i=0 ;j=-1
+                if c.face == 1:
+                    i=1;j=-1
+                if c.face == 2:
+                    i=1;j =0
+                if c.face == 3:
+                    i=0;j=1
+                if c.face == 4:
+                    i=-1;j =0
+                if c.face ==5:
+                    i=-1;j=-1
+            newFil = (c.pos[0]) +j
+            newCol = (c.pos[1]) +i
+            
+        # Check if we dont try a position out of the board
+        if (0 <= newFil <= self.__height -1 and 0 <= newCol <= self.__width -1):
+                    
+            #Checks whether the cell is correct
+            if ( self.checkCell(c.pos, (newFil,newCol), movType) ):
+                print "new pos in front: " + str(Pos((newFil,newCol),c.face))
+                slist.append(Pos((newFil, newCol),c.face))
+
+        return slist
 
     def successors (self, c, movType = 0):
         """ Compute the successors of coordinate 'c': all the 
             coordinates that can be reached by one step from 'c'.
         """
         slist = []
-        print str(c[0])+", "+str(c[1])+"level " + str(self.map[c[0]][c[1]].level)
+        
         # Go over every cell attached
         for i in (-1,0,1):
             for j in (-1,0,1):
@@ -222,9 +269,10 @@ class Board(object):
                         continue
                 newFil = (c[0]) +j
                 newCol = (c[1]) +i
-                print "i: "+str(newCol+1) + ", j: "+ str(newFil+1)
+
                 # Check if we dont try a position out of the board
-                if (0 <= newFil <= self.__width -1 and 0 <= newCol <= self.__height -1):
+                if (0 <= newFil <= self.__height -1 and 0 <= newCol <= self.__width -1):
+                    
                     #Checks whether the cell is correct
                     if ( self.checkCell(c, (newFil,newCol), movType) ):
                         slist.append((newFil, newCol))
@@ -236,13 +284,18 @@ class Board(object):
     def checkCell (self, c1, c2, moveType = 0):
         """ Checks whether a cell is allowed to be moved to
             From c1 to c2
+            moveType: 0-Walk, 1-Run, 2-Jump
         """
         what = False
         # If running -> water with depth less than one
         if (abs (self.map[c1[0]][c1[1]].level) > 1 and moveType == 1):
             return False
-        # Checks the height difference
-        if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) < 2):
+        # We do not wanna go through a cell with fire! (running or walking)
+        if (self.map[c1[0]][c1[1]].fire == True and moveType == 1 and moveType == 0):
+            return False
+        # Checks the height difference for run and walk
+        if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) <= 2
+             and (moveType == 0 or moveType == 1)):
             what = True
 
         return what

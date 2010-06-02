@@ -24,41 +24,55 @@ __)|||(_| |  |_|   | (_| / (/_ |
 
 """
 
-class Options:
+import sys
+import pathfinder
+import Board
+import MechFile
+import Initiative
+
+class Movement:
     
-    def __init__ (self):
-        self.movementType = None
+    def __init__ (self, playerN, board, mechs, ini):
+        self.player = playerN
+        self.board = board
+        self.mechs = mechs
+        self.ini = ini
+        self.movType = None
         self.nextCell = None
         self.nextFace = None
         self.masc = None
         self.stepNumber = None
         self.step = []
 
-    
-    def readOptions (self, fileName):
+    def findNextPosition(self):
+        return 0
 
-        try:
-            file = open(fileName, "r")
-        except IOError:
-            print "The file "+ fileName+ " does not exist"
-            return -1
+    def setTarjet(self):
+        """ Finds out the player we are going to approach
+            returns the player number
+        """
+        t = 0
+        tarjet = sys.maxint
+        for m in self.mechs.mechSet:
+            if m.playerNumber == self.player:
+                continue
+            d = dist((self.mechs.mechSet[self.plater].cell[0:-2],
+                  self.mechs.mechSet[self.plater].cell[2:]),(m.cell[0:-2], m.cell[2:]))
+            if d < tarjet:
+                t = m.playerNumber
+        return t
+
+    def printAccion(self):
+
+        file = open("accionJ"+ str(self.player)+".sbt", "w")
                     
-        file.readline()# Read Magic Number : movSBT
+        file.write(str(self.movType) +"\n")
 
-        self.fire = str2bool( file.readline() )
-
-     
-        file.close()
-
-    def printOptions (self, fileName= "out.txt"):
-
-        file = open(fileName, "w")
-                    
-        file.write("movSBT\n")
-
-        f.write (str( self.fire ) +"\n")
      
         file.close()
 
 def str2bool(string):
     return string.strip().lower() in ('yes', '1', 'true')
+
+def dist (c1,c2):
+        return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])

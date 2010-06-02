@@ -138,9 +138,10 @@ class Board(object):
             
 
 
-    def move_cost(self, c1, c2):
+    def move_cost(self, c1, c2, movType = 0):
         """ Compute the cost of movement from one coordinate c1 to
             another c2. 
+            movType 0-walk; 1-run; 2-jump
         """
         p1 = c1.pos
         p2 = c2.pos
@@ -179,7 +180,6 @@ class Board(object):
                 face = 5
         # Total cost of changing the facing side
         costFace = fabs(c1.face - face) 
-        print "cost face: " + str(costFace)
             
         obj = self.map[p2[0]][p2[1]].objects
         if (self.map[p2[0]][p2[1]].ground == 2): # Agua
@@ -199,58 +199,9 @@ class Board(object):
             costCell = 5
         else: 
             costCell = 1
-        print "cost cell" + str(costCell)
         return (int(costFace+costCell), face)
 
-    def successors2(self, c, movType = 0):
-        slist = []
-        
-        #All other faces
-        for x in range(6):
-            if x == c.face:
-                continue
-            print"new pos: " + str(Pos(c.pos, x))
-            slist.append(Pos(c.pos, x))
 
-        #Position right in front  
-            if ((c.pos[1]+1)%2 == 0): #columnas pares
-                if c.face == 0:
-                    i=0 ;j=-1
-                if c.face == 1:
-                    i=1;j=0
-                if c.face == 2:
-                    i=1;j =1
-                if c.face == 3:
-                    i=0;j=1
-                if c.face == 4:
-                    i=-1;j =1
-                if c.face ==5:
-                    i=-1;j=0
-            else: #columnas impares
-                if c.face == 0:
-                    i=0 ;j=-1
-                if c.face == 1:
-                    i=1;j=-1
-                if c.face == 2:
-                    i=1;j =0
-                if c.face == 3:
-                    i=0;j=1
-                if c.face == 4:
-                    i=-1;j =0
-                if c.face ==5:
-                    i=-1;j=-1
-            newFil = (c.pos[0]) +j
-            newCol = (c.pos[1]) +i
-            
-        # Check if we dont try a position out of the board
-        if (0 <= newFil <= self.__height -1 and 0 <= newCol <= self.__width -1):
-                    
-            #Checks whether the cell is correct
-            if ( self.checkCell(c.pos, (newFil,newCol), movType) ):
-                print "new pos in front: " + str(Pos((newFil,newCol),c.face))
-                slist.append(Pos((newFil, newCol),c.face))
-
-        return slist
 
     def successors (self, c, movType = 0):
         """ Compute the successors of coordinate 'c': all the 
@@ -316,3 +267,6 @@ def str2bool(string):
         return False
     else:
         return "Error: Not boolean"
+
+def manhatan (c1,c2):
+        return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])

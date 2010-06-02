@@ -1,0 +1,22 @@
+\select@language {spanish}
+\contentsline {chapter}{\numberline {1}Introducci\IeC {\'o}n}{2}{chapter.1}
+\contentsline {section}{\numberline {1.1}Descripci\IeC {\'o}n del Problema}{3}{section.1.1}
+\contentsline {section}{\numberline {1.2}Abstracci\IeC {\'o}n del Problema}{3}{section.1.2}
+\contentsline {subsubsection}{Agente Inteligente}{3}{section.1.2}
+\contentsline {subsubsection}{Ambientes}{5}{figure.1.2}
+\contentsline {chapter}{\numberline {2}Modelo Te\IeC {\'o}rico}{7}{chapter.2}
+\contentsline {chapter}{\numberline {3}Descripci\IeC {\'o}n de la Soluci\IeC {\'o}n}{8}{chapter.3}
+\contentsline {section}{\numberline {3.1}Movimiento}{8}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}L\IeC {\'o}gica del movimiento}{8}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Algoritmo A*}{9}{subsection.3.1.2}
+\contentsline {section}{\numberline {3.2}Implementaci\IeC {\'o}n}{10}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Pathfinder}{11}{subsection.3.2.1}
+\contentsline {subsubsection}{Sucesores o Hijos}{11}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Funci\IeC {\'o}n de evaluaci\IeC {\'o}n}{12}{subsection.3.2.2}
+\contentsline {subsubsection}{Funci\IeC {\'o}n de coste}{12}{subsection.3.2.2}
+\contentsline {subsubsection}{Funci\IeC {\'o}n heur\IeC {\'\i }stica}{12}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Implementando la lista abierta}{12}{subsection.3.2.3}
+\contentsline {section}{\numberline {3.3}Reacci\IeC {\'o}n}{13}{section.3.3}
+\contentsline {section}{\numberline {3.4}Ataque con Armas}{13}{section.3.4}
+\contentsline {section}{\numberline {3.5}Ataque F\IeC {\'\i }sico}{13}{section.3.5}
+\contentsline {section}{\numberline {3.6}Final de Turno}{13}{section.3.6}

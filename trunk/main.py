@@ -13,6 +13,7 @@ import Options
 import Board
 import DefMech
 import MechFile
+import Initiative
  
 """
 Main Function
@@ -52,6 +53,10 @@ def main():
     mechs = MechFile.MechFile()
     mechs.readMechFile("mechsJ"+str(playerNumber)+".sbt")
 
+    # Reading initiative file
+    ini = Initiative.Initiative()
+    ini.readInitiative("iniciativaJ"+str(playerNumber)+".sbt")
+
     # Reading defMechs
     defM = []
     for x in range(mechs.mechNumber):
@@ -81,12 +86,7 @@ if __name__ == "__main__":
 def movement ():
     print "Movement"
 
-def printMovement(playerNumber):
-    filename = filename = "accionJ"+ str(playerNumber) +".sbt"
-    f = open (filename, "w")
-    f.write ("\n")
 
-    f.close()
 
 def reaction ():
     print "Reaction"

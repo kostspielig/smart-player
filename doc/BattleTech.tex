@@ -83,9 +83,125 @@ llamados Mechs). \\
   \includegraphics[width=7cm]{images/mech_super.jpg}
 \end{figure}
 
-\chapter{Descripción del Problema}
+\section{Descripción del Problema}
 
-\chapter {Movimiento}
+\section{Abstracción del Problema}
+La inteligencia artificia, {\bf IA}, es una disciplina relativamente
+nueva, la cual es considerada como una gran desconocida y una de las
+que más interés profano despierta. Pero, {¿qué es realmente la IA?}
+Aunque existen muchas definiciones, podemos resumirlas en {\it
+  ``desarrollar sistemas que piensen y actúen racionalmente''}.\\
+
+También hemos encontrado otras definiciones que resultan interesantes:
+\begin{itemize}
+\item {\it `` The exciting new effort to make computers think ... machines
+  with minds, in the full literal sense.''} (Haugeland, 1985)\\
+\item {\it `` The art of creating machines that perform functions that
+  require intelligence shen permormed by people''} (kurzweil, 1990)\\
+\item {\it `` The study of how to make computers do things at which, at the
+  moment people are better''} (Rich and Knight, 1991)\\
+\end{itemize}
+En la IA se encuentra un paradigma conocido como {\it ``paradigma de
+  agentes''}, que aborda el desarrollo de entidades que puedan actuar
+de forma autómata y razonada. Si retomamos la definición dada
+anteriormente donde se consideraba a la IA como un medio para el
+desarrollo de sistemas que piensen y actúen racionalmente, podemos
+pensar que la IA, en su conjunto, trata realmente de construir
+precisamente dichas entidades autónomas e inteligentes.
+\begin{quote}
+ ``Los agentes constituyen el próximo avance más significativo en el
+ desarrollo de sistemas y pueden ser considerados como la nueva
+ revolución en el software.''
+ Dr. Nicholas Jennings
+\end{quote}
+
+\subsubsection{Agente Inteligente}
+Un agente inteligente, es una entidad capaz de percibir su entorno,
+procesar tales percepciones y responder o actuar en su entorno de
+manera racional, es decir, de manera correcta y tendiendo a maximizar
+un resultado esperado.\\
+
+En este contexto la racionalidad es la característica que posee una
+elección de ser correcta, más específicamente, de tender a maximizar
+un resultado esperado. Este concepto de racionalidad es más general y
+por ello más adecuado que inteligencia (la cual sugiere entendimiento)
+para describir el comportamiento de los agentes inteligentes. Por este
+motivo es mayor el consenso en llamarlos {\it agentes racionales}.\\
+
+Nuestro {\bf jugador inteligente} se corresponde con un {\bf agente racional}, y
+por lo tanto debe poseer las características:
+\begin{itemize}
+\item {\bf Reactivo.} El jugador podrá responder a cambios en el
+  entorno en el que se encuentra situado. Estos cambios se le indican
+  al jugador mediante los ficheros, que en cada fase de la partida el
+  jugador debe leer para obtener toda la información necesaria.
+\item {\bf Pro-activo.} El jugador debe ser capaz de intentar cumplir
+  sus planes u objetivos. Su objetivo final será destruir a el resto
+  de los jugadores.
+\item {\bf Autonomía.} Nuestro agente actuará sin intervención de
+  ningún usuario externo a nuestro programa. Por tanto tiene control
+  total sobre sus acciones y estados internos.
+\end{itemize}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=12.4cm]{images/funcion.png}
+  \caption{Esquema de funcionamiento.}
+\end{figure}
+Hemos de diferenciar nuestro sistema de los sistemas Multi-Agente
+(SMA). Éstos son grupos de agentes que interaccionan entre sí para
+conseguir objetivos comunes, pero en nuestro entorno los distintos
+jugadores no se comunican entre sí - no tienen conducta social-. Si
+tuvieramos esto en cuenta, aumentaría la complejidad en el
+desarrollo.\\
+
+Nuestro agente es {\it basado en metas}. Estas ayudan a decidir las acciones
+correctas en cada momento. En nuestro juego, el agente o jugador
+escoge un objetivo, en base al cual toma sus decisiones. Por tanto, no
+basta con conocer el entorno, sino además es necesario determinar las
+acciones a seguir que permitan alcanzar la meta. Elegir las acciones
+correctas varia en complejidad.
+\begin{itemize}
+\item {\it Búsqueda}
+\item {\it Planificación}
+\end{itemize}
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=10cm]{images/metas.png}
+  \caption{Agente basado en metas.}
+\end{figure}
+\subsubsection{Ambientes}
+Existen diferentes tipos de ambientes:
+\begin{itemize}
+\item {\bf Accesibles y no accesibles.} En nuestro caso se trata de un
+  ambiente accesible, ya que el agente tiene acceso al estado total
+  del ambiente.
+\item {\bf Deterministas y no deterministas.} Depende de si el estado
+  siguiente se determina a partir del estado y las acciones elegidas
+  por el agente.
+\item {\bf Episódicos y no episódicos.} En ambientes episódicos, como
+  es nuestro caso, la experiencia del agente se divide en
+  ``episodios''- o fases-. Cada episodio consta de un agente que
+  percibe y actúa.
+\item {\bf Estáticos y dinámicos.} Si el abiente cambia mientras un
+  agente toma una acción a seguir, entonces se dice que el ambiente es
+  ``dinámico''. Pero en nuestro caso tratamos con ambientes {\it
+    estáticos}, puesto que no se tiene que observar y pensar al mismo tiempo.
+\item {\bf Discretos y continuos.} Si existe una cantidad limitada de
+ percepciones y acciones distintas y discernibles, se dice que el
+ ambiente es discreto. Si no es posible enumerarlos, entonces es un
+ ambiente continuo. Nuestro problema abarca ambienes discretos, lo
+ cual nos facilita el trabajo.
+
+\end{itemize}
+
+\chapter{Modelo Teórico}
+
+\chapter{Descripción de la Solución}
+
+\section {Movimiento}
+
+\subsection{Lógica del movimiento}
 Uno de los mayores desafíos en el diseño de {\bf Inteligencia
   Artificial} realista en juegos de ordenador es el movimiento del
 agente. Las estrategias de busqueda de caminos o {\it pathfinding} son
@@ -136,7 +252,7 @@ Veamos una comparación de tres tipos distintos de algoritmos.
   garantía-, A* puede garantizar el camino más corto.
 \end{enumerate}
 
-\section{Algoritmo A*}
+\subsection{Algoritmo A*}
 El algoritmo de búsqueda A* es un tipo de algoritmo de búsqueda en
 grafos. Se basa en encontrar, siempre y cuando se cumplan ciertas
 condiciones, el camino de menor coste entre un nodo origen y uno
@@ -272,10 +388,10 @@ O(log N). En cambio, cuando ya existe, su prioridad se comprueba con
 el nuevo elemento en O(1). Si la prioridad del nuevo elemento es
 menor, se actualiza en la cola. Esto lleva un tiempo O(N).
 
-\chapter{Reacción}
-\chapter{Ataque con Armas}
-\chapter{Ataque Físico}
-\chapter{Final de Turno}
+\section{Reacción}
+\section{Ataque con Armas}
+\section{Ataque Físico}
+\section{Final de Turno}
 
 Esta fase nos brinda la posibilidad de apagar o encender radiadores,
 soltar garrote o expulsar municiones.
@@ -291,6 +407,8 @@ soltar garrote o expulsar municiones.
 \bibitem{1} Amit Patel\\ \url{
     http://theory.stanford.edu/~amitp/GameProgramming/} \label{amit}
   \\
+\bibitem{0} Russell, S. \& Norvig, P. {\it ``Artificial Intelligence: A
+    Modern Approach''} $3^{rd}$ed. \\ \label{russell}
 \bibitem{4}  \url{http://www.policyalmanac.org/games/aStarTutorial.htm}\\
 \bibitem{5}  \url{ }\\
 \bibitem{6}  \url{ }\\

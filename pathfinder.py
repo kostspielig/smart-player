@@ -40,7 +40,7 @@ class PathFinder(object):
         self.heuristic_to_goal = heuristic_to_goal 
      
 
-    def compute_path(self, start, goal): 
+    def compute_path(self, start, goal, movType = 0, PM = 7): 
         """ Compute the path between the 'start' point and the  
             'goal' point.  
              
@@ -72,9 +72,9 @@ class PathFinder(object):
                 return self._reconstruct_path(curr_node) 
              
             closed_set[curr_node] = curr_node            
-            for succ_coord in self.successors(curr_node.coord): 
+            for succ_coord in self.successors(curr_node.coord,movType, PM): 
                 succ_node = self._Node(succ_coord) 
-                (succ_node.g_cost, succ_node.face) = self._compute_g_cost(curr_node, succ_node) 
+                (succ_node.g_cost, succ_node.face) = self._compute_g_cost(curr_node, succ_node, movType) 
                 succ_node.f_cost = self._compute_f_cost(succ_node, goal) 
                  
                 if succ_node in closed_set: 
@@ -87,10 +87,10 @@ class PathFinder(object):
  
     ########################## PRIVATE ########################## 
      
-    def _compute_g_cost(self, from_node, to_node):
+    def _compute_g_cost(self, from_node, to_node, movType = 0):
         f = Pos(from_node.coord, from_node.face)
         t = Pos(to_node.coord, to_node.face)
-        m_c = self.move_cost(f, t)
+        m_c = self.move_cost(f, t, movType)
         return (from_node.g_cost + m_c[0], m_c[1]) 
  
     def _compute_f_cost(self, node, goal):
@@ -175,10 +175,11 @@ class Pos(object):
 if __name__ == "__main__": 
     from Board import Board
      
-    start = 4,1
-    goal = 3,2
+    start = 11,12
+    goal = 8,10
+    PM = 4
 
-    s = Pos(start, 0)
+    s = Pos(start, 3)
     g = Pos(goal, 1)
     tm = Board()
     tm.readBoard("../ficheros2/manglar.sbt")
@@ -187,7 +188,7 @@ if __name__ == "__main__":
     
     import time 
     t = time.clock() 
-    path = list(pf.compute_path(s, g)) 
+    path = list(pf.compute_path(s, g, 0,PM)) 
     print "Elapsed: %s" % (time.clock() - t) 
 
     print path

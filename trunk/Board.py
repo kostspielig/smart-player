@@ -140,7 +140,7 @@ class Board(object):
 
     def move_cost(self, c1, c2, movType = 0):
         """ Compute the cost of movement from one coordinate c1 to
-            another c2. 
+            another c2. Both coordinates must be adjacent.
             movType 0-walk; 1-run; 2-jump
         """
         p1 = c1.pos
@@ -148,62 +148,65 @@ class Board(object):
         face = 0
         costFace = 0
         costCell = 0
+        if movType == 0 or movType == 1:
         #return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) 
-        y = - (p1[0] - p2[0])
-        x = - (p1[1] - p2[1])
-        if ((p1[1]+1)%2 == 1): #columnas impares
-            # Which side is facing the other node??
-            if (x == 0 and y == -1): # N
-                face = 0
-            elif (x == 1 and y == -1): # NE
-                face = 1
-            elif (x == 1 and y == 0): # SE
-                face = 2
-            elif (x == 0 and y == 1): # S
-                face = 3
-            elif (x == -1 and y == 0): # SO
-                face = 4
-            elif (x == -1 and y == -1): # NO
-                face = 5
-        else: #columnas pares
-            if (x == 0 and y == -1): # N
-                face = 0
-            elif (x == 1 and y == 0): # NE
-                face = 1
-            elif (x == 1 and y == 1): # SE
-                face = 2
-            elif (x == 0 and y == 1): # S
-                face = 3
-            elif (x == -1 and y == 1): # SO
-                face = 4
-            elif (x == -1 and y == 0): # NO
-                face = 5
+            y = - (p1[0] - p2[0])
+            x = - (p1[1] - p2[1])
+            if ((p1[1]+1)%2 == 1): #columnas impares
+                # Which side is facing the other node??
+                if (x == 0 and y == -1): # N
+                    face = 0
+                elif (x == 1 and y == -1): # NE
+                    face = 1
+                elif (x == 1 and y == 0): # SE
+                    face = 2
+                elif (x == 0 and y == 1): # S
+                    face = 3
+                elif (x == -1 and y == 0): # SO
+                    face = 4
+                elif (x == -1 and y == -1): # NO
+                    face = 5
+            else: #columnas pares
+                if (x == 0 and y == -1): # N
+                    face = 0
+                elif (x == 1 and y == 0): # NE
+                    face = 1
+                elif (x == 1 and y == 1): # SE
+                    face = 2
+                elif (x == 0 and y == 1): # S
+                    face = 3
+                elif (x == -1 and y == 1): # SO
+                    face = 4
+                elif (x == -1 and y == 0): # NO
+                    face = 5
         # Total cost of changing the facing side
-        costFace = fabs(c1.face - face) 
+            costFace = fabs(c1.face - face) 
             
-        obj = self.map[p2[0]][p2[1]].objects
-        if (self.map[p2[0]][p2[1]].ground == 2): # Agua
-            if (self.map[p2[0]][p2[1]].level == -1):
+            obj = self.map[p2[0]][p2[1]].objects
+            if (self.map[p2[0]][p2[1]].ground == 2): # Agua
+                if (self.map[p2[0]][p2[1]].level == -1):
+                    costCell = 2
+                elif (self.map[p2[0]][p2[1]].level <= -2):
+                    costCell = 4
+                else:
+                    costCell = 1
+            elif ( (obj == 3) or (obj== 0) or (obj==1) ): # Escombros o edif pequenios o bosque ligero
                 costCell = 2
-            elif (self.map[p2[0]][p2[1]].level <= -2):
+            elif ((obj == 4) or (obj == 2)): # edif medianos o bosque denso
+                costCell = 3
+            elif (self.map[p2[0]][p2[1]].objects == 5): # edif grandes
                 costCell = 4
-            else:
+            elif (self.map[p2[0]][p2[1]].objects == 6): # edif reforzados
+                costCell = 5
+            else: 
                 costCell = 1
-        elif ( (obj == 3) or (obj== 0) or (obj==1) ): # Escombros o edif pequenios o bosque ligero
-            costCell = 2
-        elif ((obj == 4) or (obj == 2)): # edif medianos o bosque denso
-            costCell = 3
-        elif (self.map[p2[0]][p2[1]].objects == 5): # edif grandes
-            costCell = 4
-        elif (self.map[p2[0]][p2[1]].objects == 6): # edif reforzados
-            costCell = 5
-        else: 
+        elif movType == 2: # if salto, only 1 PM
             costCell = 1
         return (int(costFace+costCell), face)
 
 
 
-    def successors (self, c, movType = 0):
+    def successors (self, c, movType = 0, PM =15):
         """ Compute the successors of coordinate 'c': all the 
             coordinates that can be reached by one step from 'c'.
         """
@@ -225,30 +228,37 @@ class Board(object):
                 if (0 <= newFil <= self.__height -1 and 0 <= newCol <= self.__width -1):
                     
                     #Checks whether the cell is correct
-                    if ( self.checkCell(c, (newFil,newCol), movType) ):
+                    if ( self.checkCell(c, (newFil,newCol), movType, PM) ):
                         slist.append((newFil, newCol))
 
         return slist
 
 
                 
-    def checkCell (self, c1, c2, moveType = 0):
+    def checkCell (self, c1, c2, moveType = 0, PM =15):
         """ Checks whether a cell is allowed to be moved to
             From c1 to c2
             moveType: 0-Walk, 1-Run, 2-Jump
         """
         what = False
         # If running -> water with depth less than one
-        if (abs (self.map[c1[0]][c1[1]].level) > 1 and moveType == 1):
+        if (abs (self.map[c1[0]][c1[1]].level) > -1 and moveType == 1):
+            print "run"
             return False
         # We do not wanna go through a cell with fire! (running or walking)
         if (self.map[c1[0]][c1[1]].fire == True and moveType == 1 and moveType == 0):
+            print "run or walk"
             return False
         # Checks the height difference for run and walk
         if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) <= 2
              and (moveType == 0 or moveType == 1)):
+            print "run or walk"
             what = True
-
+        # Checks whether the height difference is greater than PM
+        if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) <= PM
+             and moveType == 2):
+            print "jump"
+            what = True
         return what
 
 

@@ -33,16 +33,17 @@ import Initiative
 class Movement:
     
     def __init__ (self, playerN, board, mechs, ini):
-        self.player = playerN
-        self.board = board
-        self.mechs = mechs
-        self.ini = ini
+        self.player = playerN # Number of current player
+        self.board = board    # Map
+        self.mechs = mechs    # Info about opponent mechs
+        self.ini = ini        # Initiative file
         self.movType = None
         self.nextCell = None
         self.nextFace = None
-        self.masc = None
+        self.masc = False     # By convention is set to False
         self.stepNumber = None
-        self.step = []
+        self.step = [] # (stepType, times/face)
+                       # stepType 1 - adelante 2 - atras 3 - izquierda 4 - derecha 5 -levantarse 6 - cuerpo a tierra
 
     def findNextPosition(self):
         return 0
@@ -52,15 +53,21 @@ class Movement:
             returns the player number
         """
         t = 0
-        tarjet = sys.maxint
+        distance = sys.maxint
         for m in self.mechs.mechSet:
             if m.playerNumber == self.player:
                 continue
             d = dist((self.mechs.mechSet[self.plater].cell[0:-2],
                   self.mechs.mechSet[self.plater].cell[2:]),(m.cell[0:-2], m.cell[2:]))
-            if d < tarjet:
+            if d < distance:
                 t = m.playerNumber
         return t
+
+    def nextMove(self):
+        enemy = self.setTarjet()
+        if self.mechs[self.player].ground == True:
+            self.movType = 0 # We try to get up by walking
+            self.step.append(())
 
     def printAccion(self):
 

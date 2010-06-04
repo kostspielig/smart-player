@@ -84,7 +84,11 @@ llamados Mechs). \\
 \end{figure}
 
 \section{Descripción del Problema}
-
+\begin{quote}
+    {\it En la practica se ha de diseñar
+    y desarrollar un prototipo de
+    Jugador Inteligente. }
+\end{quote}
 \section{Abstracción del Problema}
 La inteligencia artificia, {\bf IA}, es una disciplina relativamente
 nueva, la cual es considerada como una gran desconocida y una de las
@@ -192,8 +196,22 @@ Existen diferentes tipos de ambientes:
  ambiente es discreto. Si no es posible enumerarlos, entonces es un
  ambiente continuo. Nuestro problema abarca ambienes discretos, lo
  cual nos facilita el trabajo.
-
 \end{itemize}
+
+{\bf Programa de Ambientes.}\\
+
+Un simulador toma como entrada uno o más agentes y dispone de lo
+necesario para proporcionar las percepciones correctas una y otra vez
+a cada agente y así recibir como respuesta una acción.\\
+
+El simulador procede a actualizar  al ambiente tomando como base las
+acciones, y posiblemente otros procesos dinámicos del ambiente que no
+se consideran como agentes.\\
+
+Los agentes se diseñan para que funcionen dentro de un conjunto de
+ambientes diversos. Para poder medir el desempeño de un agente es
+necesario contar con un simulador que seleccione ambientes
+particulares en los que se pueda probar al agente.
 
 \chapter{Modelo Teórico}
 

@@ -57,10 +57,12 @@ class Movement:
         for m in self.mechs.mechSet:
             if m.playerNumber == self.player:
                 continue
-            d = dist((self.mechs.mechSet[self.plater].cell[0:-2],
-                  self.mechs.mechSet[self.plater].cell[2:]),(m.cell[0:-2], m.cell[2:]))
+            d = dist2((int(self.mechs.mechSet[self.player].cell[0:-2]),
+                  int(self.mechs.mechSet[self.player].cell[2:])),(int(m.cell[0:-2]),int( m.cell[2:])))
+            print "distance to " + str(m.playerNumber) + "equals to " +str(d)
             if d < distance:
                 t = m.playerNumber
+                distance = d
         return t
 
     def nextMove(self):
@@ -83,3 +85,35 @@ def str2bool(string):
 
 def dist (c1,c2):
         return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])
+
+def dist2 (c1,c2):
+    Vx = abs(c2[0]-c1[0])
+    Vy = abs(c2[1]-c1[1])
+    if Vy%2 != 0:
+        factor = 0
+    elif c1[1] < c2[1]: 
+        factor = (c1[0]-1)%2
+    else:
+        factor = (c2[0]-1)%2
+
+    return Vx + max(0, Vy- (Vx/2) - factor)
+
+if __name__ == "__main__": 
+
+    actualPlayer = 4
+
+    # Reading the board
+    board = Board.Board()
+    board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
+
+    # Reading the mech file
+    mechs = MechFile.MechFile()
+    mechs.readMechFile("../ficheros/mechsJ"+str(actualPlayer)+".sbt")
+
+    # Reading initiative file
+    ini = Initiative.Initiative()
+    ini.readInitiative("../ficheros/iniciativaJ"+str(actualPlayer)+".sbt")
+
+    strategy = Movement(actualPlayer, board, mechs, ini)
+
+    print strategy.setTarjet()

@@ -84,9 +84,13 @@ def str2bool(string):
     return string.strip().lower() in ('yes', '1', 'true')
 
 def dist (c1,c2):
-        return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])
+    """ Manhatan distance
+    """
+    return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])
 
 def dist2 (c1,c2):
+    """ Exact distance
+    """
     Vx = abs(c2[0]-c1[0])
     Vy = abs(c2[1]-c1[1])
     if Vy%2 != 0:

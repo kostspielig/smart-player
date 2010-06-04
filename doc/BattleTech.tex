@@ -398,7 +398,25 @@ el tipo de movimiento a realizar.
 
 {\it PathFinder} también conoce el coste de cada movimiento ya que se
 lo estamos diciendo en la función {\bf move\_cost}. Esta función nos
-dice el coste real para movernos de un nodo a otro. 
+dice el coste real para movernos de un nodo a otro. \\
+
+Para implementar esta función hemos tenido en cuenta varios factores:
+\begin{itemize}
+\item {\it El tipo de movimiento:} Andar, correr o saltar. Cada tipo de
+  movimiento tiene sus propias restricciones, las cuales hemos de tener en
+  cuenta.
+\item {\it Los objetos.} Dependiendo del tipo de objeto(escombros, edificios ...) que se encuentre en una
+  casilla, será más o menos costoso - o incluso imposible - el paso a través de
+  ella.
+\item {\it El nivel o profundiad} . El máximo   desnivel posible andando y
+  corriendo es 2, mientras que saltando es un desnivel no mayor a los
+  $PM_{salto}$.
+\item {\it Tipo de terreno}. Cada tipo de terreno lleva asociado un coste distinto.
+\item {\it Cambio de encaramiento}. Cambiar nuestro encaramiento también tiene
+  un coste asociado, por lo tanto, debemos tener en cuenta el número de veces
+  que giramos para poder desplazarnos a la casilla deseada.
+\end{itemize}
+
 
 \subsubsection{Función heurística}
 

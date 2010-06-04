@@ -14,6 +14,7 @@ import Board
 import DefMech
 import MechFile
 import Initiative
+import Movement
  
 """
 Main Function
@@ -38,36 +39,36 @@ def main():
         return -1
    
         
-    playerNumber = int(args[0])
+    actualPlayer = int(args[0])
     phase = args[1]
 
     # Reading the options
     config = Options.Options()
-    config.readOptions("configJ"+str(playerNumber)+".sbt")
+    config.readOptions("configJ"+str(actualPlayer)+".sbt")
 
     # Reading the board
     board = Board.Board()
-    board.readBoard("mapaJ"+str(playerNumber)+".sbt")
+    board.readBoard("mapaJ"+str(actualPlayer)+".sbt")
 
     # Reading the mech file
     mechs = MechFile.MechFile()
-    mechs.readMechFile("mechsJ"+str(playerNumber)+".sbt")
+    mechs.readMechFile("mechsJ"+str(actualPlayer)+".sbt")
 
     # Reading initiative file
     ini = Initiative.Initiative()
-    ini.readInitiative("iniciativaJ"+str(playerNumber)+".sbt")
+    ini.readInitiative("iniciativaJ"+str(actualPlayer)+".sbt")
 
     # Reading defMechs
     defM = []
     for x in range(mechs.mechNumber):
         M = DefMech.DefMech()
-        M.readDefMech("defmechJ" + str(playerNumber) + "-" + str(x) + ".sbt")
+        M.readDefMech("defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
         defM.append(M)
         M = None
 
     # For each phase
     if phase == "Movimiento":
-        movement()
+        movement(actualPlayer,board, mechs, ini)
     elif phase == "Reaccion":
         reaction ()
     elif phase == "AtaqueArmas":
@@ -83,9 +84,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-def movement ():
+def movement (actualPlayer,board, mechs, ini):
     print "Movement"
-
+    strategy = Movement(actualPlayer, board, mechs, ini)
 
 
 def reaction ():

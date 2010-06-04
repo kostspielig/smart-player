@@ -23,7 +23,6 @@
 \lstset{language=Python,commentstyle=\emph}
 \usepackage{color} 
 \usepackage{colortbl}
-\lstset{language=SQL}
 
 \usepackage{phdthesis}
 
@@ -308,9 +307,46 @@ todos sus hijos, los inserta en abiertos, y pasa el nodo evaluado a cerrados.
 
 
 \section {Implementación}
+\begin{tabular}{  p{13cm}  }
+  \hline    \hline                    
+{\bf Algoritmo:} {\it A*. A estrella}\\  \hline     
+{\bf Input:} {\it start}: Node de comienzo; {\it goal} Nodo final\\  \hline     
+{\bf Output:} Lista con nodos que forman el camino (si existe).\\  \hline     
 
-%\begin{lstlisting}
-%\end{lstlisting}
+  \hline  \hline 
+\begin{lstlisting}
+  closed_set = {}
+        
+  start_node = start
+  start_node.g_cost = 0
+  start_node.f_cost = compute_f_cost(start_node, goal)
+        
+  open_set = PriorityQueueSet()
+  open_set.add(start_node)
+        
+  while len(open_set) > 0:
+     curr_node = open_set.pop_smallest()
+            
+     if curr_node.coord == goal:
+        return reconstruct_path(curr_node)
+            
+     closed_set[curr_node] = curr_node
+            
+     for succ_coord in successors(curr_node.coord):
+        succ_node = succ_coord
+        succ_node.g_cost = compute_g_cost(curr_node, succ_node)
+        succ_node.f_cost = compute_f_cost(succ_node, goal)
+                
+        if succ_node in closed_set:
+           continue
+                   
+        if open_set.add(succ_node):
+           succ_node.pred = curr_node
+        
+  return []
+\end{lstlisting} 
+\end{tabular}
+
 
 La implementación es genérica y no se basa en ningún juego en
 concreto. {\bf PathFinder} es una clase genérica que no tiene en
@@ -319,7 +355,7 @@ el coste de moverte de un lugar a otro. Deja a gusto del programador
 especificar la información mediante el paso de funciones al constructor.
 
 \subsection{Pathfinder}
-
+Esta clase implementa nuestro algorimo A*. Veamos ahora de que se compone.
 \subsubsection{Sucesores o Hijos}
 
 ¿Cómo sabe {\it PathFinder} la forma de nuestro grafo? Sólo nos basta
@@ -373,12 +409,31 @@ un nodo destino.\\
 
 Hay muchas formas de realizar esta función, la primera que utilizamos
 es la {\bf distancia manhatan}.
-$$ manhatan(x,y, x',y') = |x'-x|+|y'-y| $$
- Esta heurística no es completamente precisa,
-ya que  nos ofrece una sobreestimación del resultado correcto. Esto se
-debe a que la conectividad entre celdas es diferente en un mapa
-hexagonal que en uno rectangular, aunque la representación usada del
-mapa invite al error.
+$$ manhatan(x,y, x',y') = Vx + Vy $$
+Siendo,
+$$Vx = |x'-x| $$
+$$Vy = |y'-y| $$
+
+ Esta heurística no es completamente precisa, ya que  nos ofrece una
+ sobreestimación del resultado correcto. Esto se debe a que la
+ conectividad entre celdas es diferente en un mapa hexagonal que en
+ uno rectangular, aunque la representación que hemos usado del mapa
+ pueda invitar al error, ya que usamos una matriz cuadrada.\\
+
+Finalmente, tras realizar varios experimentos con la función {\it
+  manhattan}, nos dimos cuenta de que conducía a resultados erróneos
+en un número elevado de ocasiones. Así, encontramos la función que nos
+da la distancia exacta para un tablero hexagonal:
+$$ hexagonal\_distance(x,y, x',y') = Vx + max \{0, Vy- (Vx/2) -
+  factor\}  $$
+Siendo:
+
+$$ factor = \left \{ \begin{matrix} 0 & \mbox{if }mod(Vy,2) \ne 0 
+\\ mod(x-1,2) & \mbox{if } y < y'
+\\ mod(x'-1,2) & \mbox{otherwise } \end{matrix} \right. $$
+
+De esta forma obtenemos la distancia real entre dos casillas de un tablero
+hexagonal. Esto nos permite una mayor precisión en nuestros cálculos.
 
 \subsection{Implementando la lista abierta}
 

@@ -242,32 +242,44 @@ class Board(object):
         """
         what = False
         # If running -> water with depth less than one
-        if (abs (self.map[c1[0]][c1[1]].level) > -1 and moveType == 1):
-            print "run"
+        if (self.map[c1[0]][c1[1]].level < -1 and moveType == 1):
             return False
         # We do not wanna go through a cell with fire! (running or walking)
         if (self.map[c1[0]][c1[1]].fire == True and moveType == 1 and moveType == 0):
-            print "run or walk"
             return False
         # Checks the height difference for run and walk
         if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) <= 2
              and (moveType == 0 or moveType == 1)):
-            print "run or walk"
             what = True
         # Checks whether the height difference is greater than PM
         if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) <= PM
              and moveType == 2):
-            print "jump"
             what = True
         return what
 
 
-    def heuristic_to_goal(self, c1, c2): 
+    def heuristic_to_goal_manhatan(self, c1, c2): 
         """ Heuristic 1 - Manhatan
             C1 and C1, Type Pos
+            return Distance
         """
         return abs(c2.pos[0]-c1.pos[0]) + abs(c2.pos[1]-c1.pos[1])
 
+    def heuristic_to_goal (self,c1,c2):
+        """ Heuristic 2 - Actual distance in a hexagonal grid
+            C1 and C1, Type Pos
+            return Distance
+        """
+        Vx = abs(c2[0]-c1[0])
+        Vy = abs(c2[1]-c1[1])
+        if Vy%2 != 0:
+            factor = 0
+        elif c1[1] < c2[1]: 
+            factor = (c1[0]-1)%2
+        else:
+            factor = (c2[0]-1)%2
+
+        return Vx + max(0, Vy- (Vx/2) - factor)
     
 
 def str2bool(string):

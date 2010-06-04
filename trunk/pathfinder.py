@@ -76,7 +76,7 @@ class PathFinder(object):
                 succ_node = self._Node(succ_coord) 
                 (succ_node.g_cost, succ_node.face) = self._compute_g_cost(curr_node, succ_node, movType) 
                 succ_node.f_cost = self._compute_f_cost(succ_node, goal) 
-                 
+                          
                 if succ_node in closed_set: 
                     continue 
                     
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     
     import time 
     t = time.clock() 
-    path = list(pf.compute_path(s, g, 0,PM)) 
+    path = list(pf.compute_path(s, g, 1,PM)) 
     print "Elapsed: %s" % (time.clock() - t) 
 
     print path

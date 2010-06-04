@@ -60,7 +60,7 @@ class MechFile:
             m.disconnected = str2bool ( file.readline() )
             m.blocked = str2bool ( file.readline() )
             m.ground = str2bool ( file.readline() )
-            m.cell = str ( file.readline()[0:-2] )
+            m.cell = str (file.readline()).strip('\n').strip('\r')
             m.facingSide = int ( file.readline() )
             m.facingTorsoSide = int ( file.readline() )
             m.temp = int ( file.readline() )
@@ -89,9 +89,9 @@ class MechFile:
                 if m.ammunitionNumber > 0:
                     for p in range(m.ammunitionNumber):
                         # Location of the ammunition
-                        m.ammunition[p].append(file.readline()[0:-2]) 
+                        m.ammunition[p].append(file.readline().strip('\n').strip('\r')) 
                         # Ammunition slot inside the location
-                        m.ammunition[p].append(file.readline()[0:-2]) 
+                        m.ammunition[p].append(file.readline().strip('\n').strip('\r')) 
             ## End
             for o in range(self.mechNumber):
                 m.narc.append( str2bool( file.readline() ) )

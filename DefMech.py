@@ -52,8 +52,8 @@ class DefMech:
         
         file.readline() # Read Magic Number : defmechSBT
 
-        m.name = str ( file.readline() )[0:-2]
-        m.model = str ( file.readline() )[0:-2]
+        m.name = str ( file.readline() ).strip('\n').strip('\r')
+        m.model = str ( file.readline() ).strip('\n').strip('\r')
         m.ton = int ( file.readline() )
         m.power = int ( file.readline() )
         m.internalRadiators = int ( file.readline() )
@@ -95,12 +95,12 @@ class DefMech:
         for x in range (m.equippedComponentsNumber):
             m.component.append(Component.Component() )
             m.component[x].code = int ( file.readline() )
-            m.component[x].name = str ( file.readline() )[0:-2]
-            m.component[x].type = str ( file.readline() )[0:-2]
+            m.component[x].name = str ( file.readline() ).strip('\n').strip('\r')
+            m.component[x].type = str ( file.readline() ).strip('\n').strip('\r')
             m.component[x].weaponInBack = str2bool ( file.readline() )
             m.component[x].itemLocation = int ( file.readline() )
             m.component[x].secondaryItemLocation = int ( file.readline() )
-            m.component[x].weaponType = str ( file.readline() )[0:-2]
+            m.component[x].weaponType = str ( file.readline() ).strip('\n').strip('\r')
             m.component[x].heat = int ( file.readline() )
             m.component[x].harm = int ( file.readline() )
             m.component[x].shotsPerTurn = int ( file.readline() )
@@ -111,7 +111,7 @@ class DefMech:
             m.component[x].operativeTeam = str2bool ( file.readline() )
             m.component[x].weaponCode = int ( file.readline() )
             m.component[x].amount = int ( file.readline() )
-            m.component[x].specialAmmunition = str ( file.readline() )[0:-2]
+            m.component[x].specialAmmunition = str ( file.readline() ).strip('\n').strip('\r')
             m.component[x].triggerSwitch = int ( file.readline() )
 
         m.weaponsNumber =  int ( file.readline() )
@@ -119,7 +119,7 @@ class DefMech:
         for p in range(m.actuatorsNumber):
             m.actuator.append(Actuator.Actuator())
             m.actuator[p].code = int ( file.readline() )
-            m.actuator[p].name = str ( file.readline() )[0:-2]
+            m.actuator[p].name = str ( file.readline() ).strip('\n').strip('\r')
             m.actuator[p].itemLocation = int ( file.readline() )
             m.actuator[p].operative = str2bool ( file.readline() )
             m.actuator[p].impactsNumber = int ( file.readline() )
@@ -127,10 +127,10 @@ class DefMech:
             m.location[v].slotNumber = int ( file.readline() )
             for w in range(m.location[v].slotNumber):
                 m.location[v].slot.append(Slot.Slot())
-                m.location[v].slot[w].type = str ( file.readline() )[0:-2]
+                m.location[v].slot[w].type = str ( file.readline() ).strip('\n').strip('\r')
                 m.location[v].slot[w].amount = int ( file.readline() )
                 m.location[v].slot[w].code = int ( file.readline() )
-                m.location[v].slot[w].name =  str ( file.readline() )[0:-2]
+                m.location[v].slot[w].name =  str ( file.readline() ).strip('\n').strip('\r')
                 m.location[v].slot[w].componentIndex = int ( file.readline() )
                 m.location[v].slot[w].actuatorIndex = int ( file.readline() )
                 m.location[v].slot[w].ammunitionDamage = int ( file.readline() )

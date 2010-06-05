@@ -68,9 +68,58 @@ class PathFinder(object):
             curr_node = open_set.pop_smallest() 
             # If we reached the tarjet  Take care of END FACE 
             if curr_node.coord == goal.pos: 
-                print "gcost: " +str(curr_node.g_cost)+" fcost: " +str(curr_node.f_cost)
                 return self._reconstruct_path(curr_node) 
              
+            closed_set[curr_node] = curr_node            
+            for succ_coord in self.successors(curr_node.coord,movType, PM): 
+                succ_node = self._Node(succ_coord) 
+                (succ_node.g_cost, succ_node.face) = self._compute_g_cost(curr_node, succ_node, movType) 
+                succ_node.f_cost = self._compute_f_cost(succ_node, goal) 
+                          
+                if succ_node in closed_set: 
+                    continue 
+                    
+                if open_set.add(succ_node): 
+                    succ_node.pred = curr_node 
+         
+        return [] 
+ 
+
+    def compute_path_until_PM(self, start, goal, movType = 0, PM = 7): 
+        """ Compute the path between the 'start' point and the  
+            'goal' point.  
+             
+            The path is returned as an iterator to the points,  
+            including the start and goal points themselves. 
+             
+            If no path was found, an empty list is returned.
+        """ 
+        # 
+        # Implementation of the A* algorithm. 
+        # 
+        closed_set = {} 
+         
+        start_node = self._Node(start.pos, start.face) 
+        start_node.g_cost = 0 
+        start_node.f_cost = self._compute_f_cost(start_node, goal) 
+         
+        open_set = PriorityQueueSet() 
+        open_set.add(start_node) 
+         
+        while len(open_set) > 0: 
+            # Remove and get the node with the lowest f_score from  
+            # the open set             
+            # 
+            curr_node = open_set.pop_smallest() 
+            # If we reached the tarjet  Take care of END FACE 
+            if curr_node.coord == goal.pos: 
+                print "gcost: " +str(curr_node.g_cost)+" fcost: " +str(curr_node.f_cost)
+                if curr_node.face != goal.face:
+                    new = self._Node(curr_node.coord, goal.face, curr_node.g_cost+abs(curr_node.face - goal.face) , 0, curr_node)
+                    return self._reconstruct_path_until_PM(new, PM)
+                else:
+                    return self._reconstruct_path_until_PM(curr_node, PM)
+                
             closed_set[curr_node] = curr_node            
             for succ_coord in self.successors(curr_node.coord,movType, PM): 
                 succ_node = self._Node(succ_coord) 
@@ -112,7 +161,28 @@ class PathFinder(object):
             pth.append(Pos(n.coord, n.face)) 
          
         return reversed(pth) 
- 
+
+    def _reconstruct_path_until_PM(self, node, PM): 
+        """ Reconstructs the path to the node from the start node 
+            (for which .pred is None)
+        """
+        can = True
+        cost = 0
+        temp = Pos(node.coord, node.face)
+        if node.g_cost <= PM:
+            cost = node.g_cost
+            pth = [(temp, node.g_cost)] 
+        else:
+            can = False 
+            pth =[]
+        n = node 
+        while n.pred: 
+            n = n.pred 
+            if n.g_cost <= PM:
+                pth.append(Pos(n.coord, n.face)) 
+                if n.g_cost > cost: cost = n.g_cost
+         
+        return list(reversed(pth)), can, cost
 
     class _Node(object): 
         """ Used to represent a node on the searched graph during 
@@ -177,7 +247,7 @@ if __name__ == "__main__":
      
     start = 11,12
     goal = 8,10
-    PM = 4
+    PM = 5
 
     s = Pos(start, 3)
     g = Pos(goal, 1)
@@ -186,9 +256,13 @@ if __name__ == "__main__":
 
     pf = PathFinder(tm.successors, tm.move_cost, tm.heuristic_to_goal)
     
-    import time 
-    t = time.clock() 
-    path = list(pf.compute_path(s, g, 1,PM)) 
-    print "Elapsed: %s" % (time.clock() - t) 
+    #import time 
+    #t = time.clock() 
+    #path = list(pf.compute_path(s, g, 1,PM)) 
+    #print "Elapsed: %s" % (time.clock() - t) 
 
-    print path
+    path2, can, cost = pf.compute_path_until_PM(s, g, 1,PM)
+
+    #print path
+    print str(can) + "cost: " + str (cost)
+    print path2

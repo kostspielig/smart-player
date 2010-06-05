@@ -216,7 +216,7 @@ particulares en los que se pueda probar al agente.
 
 \chapter{Descripción de la Solución}
 
-\section {Movimiento}
+\section {Módulo de Movimiento}
 
 \subsection{Lógica del movimiento}
 Uno de los mayores desafíos en el diseño de {\bf Inteligencia
@@ -306,7 +306,7 @@ todos sus hijos, los inserta en abiertos, y pasa el nodo evaluado a cerrados.
 
 
 
-\section {Implementación}
+\subsection {Implementación}
 \begin{tabular}{  p{13cm}  }
   \hline    \hline                    
 {\bf Algoritmo:} {\it A*. A estrella}\\  \hline     
@@ -354,9 +354,9 @@ cuenta como representes tu grafo ni como representes o como calcules
 el coste de moverte de un lugar a otro. Deja a gusto del programador
 especificar la información mediante el paso de funciones al constructor.
 
-\subsection{Pathfinder}
+\subsubsection{Pathfinder}
 Esta clase implementa nuestro algorimo A*. Veamos ahora de que se compone.
-\subsubsection{Sucesores o Hijos}
+\subsubsection{{\it \bf Sucesores o Hijos}}
 
 ¿Cómo sabe {\it PathFinder} la forma de nuestro grafo? Sólo nos basta
 con especificarlo en la función {\bf successors}. Esta función
@@ -392,9 +392,9 @@ el tipo de movimiento a realizar.
 
 
 
-\subsection{Función de evaluación}
+\subsubsection{Función de evaluación}
 
-\subsubsection{Función de coste}
+\subsubsection{{\it \bf Función de coste}}
 
 {\it PathFinder} también conoce el coste de cada movimiento ya que se
 lo estamos diciendo en la función {\bf move\_cost}. Esta función nos
@@ -418,7 +418,7 @@ Para implementar esta función hemos tenido en cuenta varios factores:
 \end{itemize}
 
 
-\subsubsection{Función heurística}
+\subsubsection{{\it \bf Función heurística}}
 
 La última función que pasamos como argumento a {\it PathFinder} es
 {\bf heuristic\_to\_goal}. Tal y como su nombre indica es la
@@ -453,7 +453,7 @@ $$ factor = \left \{ \begin{matrix} 0 & \mbox{if }mod(Vy,2) \ne 0
 De esta forma obtenemos la distancia real entre dos casillas de un tablero
 hexagonal. Esto nos permite una mayor precisión en nuestros cálculos.
 
-\subsection{Implementando la lista abierta}
+\subsubsection{Implementando la lista abierta}
 
 Un aspecto interesante de implementación para mejorar la optimalidad
 de nuestro programa es cómo implementar la lista de nodos
@@ -503,7 +503,7 @@ soltar garrote o expulsar municiones.
 \bibitem{4}  \url{http://www.policyalmanac.org/games/aStarTutorial.htm}\\
 \bibitem{5}  \url{ }\\
 \bibitem{6}  \url{ }\\
-\bibitem{7}  \url{ }
+\bibitem{7}  \url{http://code.google.com/p/smart-player/ } \label{googlecode}
 \end{thebibliography}
 
 \end{document}

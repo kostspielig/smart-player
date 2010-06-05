@@ -58,6 +58,8 @@ def main():
     ini = Initiative.Initiative()
     ini.readInitiative("iniciativaJ"+str(actualPlayer)+".sbt")
 
+ 
+
     # Reading defMechs
     defM = []
     for x in range(mechs.mechNumber):
@@ -66,13 +68,15 @@ def main():
         defM.append(M)
         M = None
 
+    attack = Attack.Attack(playerNumber, mechs, defM, "mapaJ"+str(playerNumber)+".sbt")
+    
     # For each phase
     if phase == "Movimiento":
         movement(actualPlayer,board, mechs, ini)
     elif phase == "Reaccion":
         reaction ()
     elif phase == "AtaqueArmas":
-        weaponsAttack ()
+        attack.weaponsAttack ()
     elif phase == "AtaqueFisico":
         physicalAttack ()
     elif phase == "FinalTurno":

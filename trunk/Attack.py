@@ -26,32 +26,46 @@ __)|||(_| |  |_|   | (_| / (/_ |
 
 import MechFile
 import DefMech
-import Board
+from math import *
 import os
 
-class Attack:
+def str2bool(string):
+    if string.strip().lower() in ('yes', '1', 'true', 'si'):
+        return True
+    elif string.strip().lower() in ('no', '0', 'false'):
+        return False
+    else:
+        return "Error: Not boolean" 
 
-    def __init__ (self, playerNumber, mechs, fichBoard, dmech, board ):
-        self.__playerNumber = playerNumber #Numero del jugador actual
+class Attack :
+    def __init__ (self, playerNumber, mechs, dmech, fichBoard, board) :
+        self.__playerNumber = playerNumber #Numero de jugador 
         self.__mechs = mechs #Conjunto de mechs de la partida
-        self.__fichBoard = fichBoard # Fichero del tablero
-        self.__board = board # Objeto tablero
         self.__dmech = dmech # Conjunto de defmechs
-        self.__enemys = None #Lista de enemigos
-        self.__player = None #Mech actual
-        self.__enemysAttack = None #Lista de enemigos en linea de vision
-        self.__finalWeapons = None #Lista de armas usadas en el ataque con armas
-        self.__stick = False #Indica si se cogi— el garrote al final del ataque con armas
-        
-        #buscamos al jugador actual
-        for i in range(self.__mechs.mechNumber) :
-            if self.__mechs.mechSet[i].getPlayerNumber == self.__playerNumber :
-                self.__player = self.__mechs.mechSet[i]
-        
-        #Creamos una lista de enemigos
-        for i in range(self.__mechs.mechNumber) :
-            if (self.__playerNumber != self.__mechs.mechSet[i].getPlayerNumber):
-                self.__enemys.append(self.__mechs.mechSet[i])
+        self.__fichBoard = fichBoard
+        self.__board = board
+        self.__enemys = [] #Lista de enemigos
+        self.__player = mechs.mechSet[playerNumber] #Mech actual
+        self.__enemysAttack = [] #Lista de enemigos en linea de vision
+        self.__finalWeapons = [] #Lista de armas usadas en el ataque con armas
+        self.__stick = False #Indica si se cogi el garrote al final del ataque con armas
+
+        #Creamos una lista de enemigos y seleccionamos al jugador actual
+        for i in range(mechs.mechNumber) :
+            if i != playerNumber :
+               self.__enemys.append(mechs.mechSet[i])
+
+    def printPlayerNumber(self):
+        print self.__playerNumber
+        print self.__stick
+        print self.__player.getBlocked()
+    
+    def printMechsLen(self):
+        print len(self.__dmech)
+        print len(self.__enemys)
+        print len(self.__enemysAttack)
+        print len(self.__finalWeapons)
+    
     
     def physicalAttack (self):
         f = "AccionJ" + str(self.__playerNumber)+".sbt"
@@ -59,34 +73,50 @@ class Attack:
         choiseEnemy = None
         distance = 0
         enemy = None
+
+        #Creamos una lista de enemigos atacables
+        for i in range(len(self.__enemys))  :
+            attack = self.visionLine(self.__enemys[i])
+            if attack == True :
+                self.__enemysAttack.append(self.__enemys[i])
+
+        #debemos estimar  el ataque con armas que se realizo anteriormente para saber que extremidades
+        # se pueden usar
         
         if len(self.__enemysAttack) > 0 :
-            choiseEnemy = self.enemyMoreNear(self.__enemysAttack, distance)
-            enemy = self.__enemysAttack[choiseEnemy]
             if distance < 2 :
                 if self.__stick == True :
                     f.write("1" + "\n")
                     f.write("BIBD" + "\n")
                     f.write("3000" + "\n")
                     
-                    if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
-                        f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                    elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
-                        f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
-                    elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
-                        f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                    else :
-                        f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                    f.write(enemy.getCell()+"\n")
                     
                     f.write("Mech" + "\n")
-                #si no tenemos garrote pegamos pu–etazos
-                else : 
+                #si no tenemos garrote pegamos punetazos
+                else :
+
+                    choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
+                    enemy = self.__enemysAttack[choiseEnemy]
+                        
+                        
+                    #comprobamos que armas se pueden usar contra el enemigo elegido
+                    choiseWeapons = self.choiseWeapons(enemy)
+                    print "Armas1" +str(len(choiseWeapons))
+                    
+                    #eleccion temperatura
+                      
+                    temp = self.choiseTemperature(enemy)                        
+                    #eleccion definitiva de las armas a lanzar
+                    self.__finalWeapons = self.shootWeapons(enemy, temp, choiseWeapons)
+                    print "ArmasF" +str(len(self.__finalWeapons))
+
                     BI = False
                     PI = False
                     BD = False
                     PD = False
                     used = 0
-                    for i in range(self.__finalWeapons):
+                    for i in range(len(self.__finalWeapons)):
                         #localizacion del arma
                         itemLocation = self.__finalWeapons[i].getItemLocation()
                         if itemLocation == 0 : BI = True
@@ -109,64 +139,36 @@ class Attack:
                     if BI == False :
                         f.write("BI" + "\n")
                         f.write("1000" + "\n")
-                        f.write("" + "\n")
+                        
                        
-                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
-                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
-                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
-                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        else :
-                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        f.write(enemy.getCell()+"\n")
                        
                         f.write("Mech" + "\n")
 
                     if BD == False :
                         f.write("BD" + "\n")
                         f.write("1000" + "\n")
-                        f.write("" + "\n")
+            
                        
-                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
-                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
-                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
-                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        else :
-                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        f.write(enemy.getCell()+"\n")
                            
                         f.write("Mech" + "\n")
                     
                     if PI == False :
                         f.write("PI" + "\n")
                         f.write("2000" + "\n")
-                        f.write("" + "\n")
+                        
                        
-                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
-                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
-                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
-                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        else :
-                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        f.write(enemy.getCell()+"\n")
                            
                         f.write("Mech" + "\n")
                     
                     if PD == False :
                         f.write("PD" + "\n")
                         f.write("2000" + "\n")
-                        f.write("" + "\n")
+                        
                        
-                        if enemy.getCell().getX() < 10 and enemy.getCell.getY() < 10 :
-                            f.write("0"+str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() < 10 and enemy.getCell.getY() >= 10 :
-                            f.write("0"+str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
-                        elif enemy.getCell().getX() >= 10 and enemy.getCell.getY() < 10 :
-                            f.write(str(enemy.getCell().getX())+"0"+str(enemy.getCell().getY())+"\n")
-                        else :
-                            f.write(str(enemy.getCell().getX())+str(enemy.getCell().getY())+"\n")
+                        f.write(enemy.getCell()+"\n")
                            
                         f.write("Mech" + "\n")
             
@@ -190,20 +192,25 @@ class Attack:
         temp = 0
         f = "AccionJ" + str(self.__playerNumber)+".sbt"
         
+        #self.printPlayerNumber()
         
         #Creamos una lista de enemigos atacables
-        for i in range(self.__enemys)  :
-            attack = self.visionLine(self.__enemys)
+        for i in range(len(self.__enemys))  :
+            attack = self.visionLine(self.__enemys[i])
             if attack == True :
                 self.__enemysAttack.append(self.__enemys[i])
+
+        print "Enemigos "+str(len(self.__enemysAttack))
         
         #Se puede atacar ?
         if len(self.__enemysAttack) > 0 :
-            #seleccionamos el enemigo a atacar(m‡s cercano)
+            #seleccionamos el enemigo a atacar(mas cercano)
             choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
+            
             
             #comprobamos que armas se pueden usar contra el enemigo elegido
             choiseWeapons = self.choiseWeapons(self.__enemysAttack[choiseEnemy])
+            print "Armas1" +str(len(choiseWeapons))
             
             #eleccion temperatura
           
@@ -211,6 +218,7 @@ class Attack:
             
             #eleccion definitiva de las armas a lanzar
             self.__finalWeapons = self.shootWeapons(self.__enemysAttack[choiseEnemy], temp, choiseWeapons)
+            print "ArmasF" +str(len(self.__finalWeapons))
             
             #Escribimos el ataque que vamos a realizar en el fichero de AccionJ
             self.writeWeaponsAttack(self.__finalWeapons, self.__enemysAttack[choiseEnemy], f)
@@ -224,11 +232,11 @@ class Attack:
         distance = None
         
         #comprobamos si hay un garrote en la casilla del jugador
-        if self.__player.getCell().getStick() == True :   
-            #buscamos el enemigo m‡s cercano
+        if self.__board.map[int(self.__player.getCell()[0:2])][int(self.__player.getCell()[0:2])] == True :   
+            #buscamos el enemigo mas cercano
             choiseEnemy = int(self.enemyMoreNear(Enemys, distance))
             
-            #Si est‡ la distancia es menor o igual a 4 cogeremos el garrote
+            #Si esta la distancia es menor o igual a 4 cogeremos el garrote
             if distance <= 4 :
                 f.write("True" + "\n")
                 self.__stick = True 
@@ -257,91 +265,93 @@ class Attack:
             #No cogemos el garrote
             f.write("False"+ "\n")
             #Hexagono objetivo primario
-            if Enemy.getCell().getX() < 10 and Enemy.getCell.getY() < 10 :
-                f.write("0"+str(Enemy.getCell().getX())+"0"+str(Enemy.getCell().getY())+"\n")
-            elif Enemy.getCell().getX() < 10 and Enemy.getCell.getY() >= 10 :
-                f.write("0"+str(Enemy.getCell().getX())+str(Enemy.getCell().getY())+"\n")
-            elif Enemy.getCell().getX() >= 10 and Enemy.getCell.getY() < 10 :
-                f.write(str(Enemy.getCell().getX())+"0"+str(Enemy.getCell().getY())+"\n")
-            else :
-                f.write(str(Enemy.getCell().getX())+str(Enemy.getCell().getY())+"\n")
+            f.write(Enemy.getCell()+"\n")
         
-        #numero de armas
-        f.write(str(len(finalWeapons)))
-        
-        #por cada arma
-        numComponents = self.__dmech.getEquippedComponentsNumber() 
-        numActuators = self.__dmech.getActuatorsNumber()
-        for i in range(finalWeapons):
+            #numero de armas
+            f.write(str(len(finalWeapons))+"\n")
             
-            #localizacion del arma
-            itemLocation = finalWeapons[i].getItemLocation()
-            if itemLocation == 0 : f.write("BI"+"\n")
-            elif itemLocation == 1: f.write("TI"+"\n")
-            elif itemLocation == 2: f.write("PI"+"\n")
-            elif itemLocation == 3: f.write("PD"+"\n") 
-            elif itemLocation == 4: f.write("TD"+"\n")
-            elif itemLocation == 5: f.write("BD"+"\n")
-            elif itemLocation == 6: f.write("TC"+"\n")
-            elif itemLocation == 7: f.write("CAB"+"\n")
-            
-            #numero de slot donde esta el arma
-            loca = self.__dmech.location[itemLocation]
-            encontrado = False
-            for j in range(loca.getSlotNumber) and not(encontrado):
-                if loca.slot[j].getCode() == finalWeapons[i].getCode():
-                    encontrado = True
-                    f.write(str(j)+"\n")
-            
-            #Disparo a doble cadencia -> siempre false, no es buena estrategia
-            f.write("False"+"\n")
-            if finalWeapons[i].getType() == "Energêa":
-                f.write("-1"+"\n")
-                f.write("-1"+"\n")
-            else:
-                numComponents = self.__dmech.getEquippedComponentsNumber() 
-                numActuators = self.__dmech.getActuatorsNumber()
-                for j in range(numComponents):
-                    if self.__dmech.component[j].getWeaponCode() == finalWeapons[i].getCode() :
-                        ammunitionCode = self.__dmech.component[j].getCode()
-                        for h in range(numActuators):
-                            if self.__dmech.actuator[h].getCode() == ammunitionCode:
-                                itemLocation = self.__dmech.actuator[h].getItemLocation()
-                                if itemLocation == 0 : f.write("BI"+"\n")
-                                elif itemLocation == 1: f.write("TI"+"\n")
-                                elif itemLocation == 2: f.write("PI"+"\n")
-                                elif itemLocation == 3: f.write("PD"+"\n") 
-                                elif itemLocation == 4: f.write("TD"+"\n")
-                                elif itemLocation == 5: f.write("BD"+"\n")
-                                elif itemLocation == 6: f.write("TC"+"\n")
-                                elif itemLocation == 7: f.write("CAB"+"\n")
-                    
-                            #numero de slot donde esta la municion
-                                loca = self.__dmech.location[itemLocation]
-                                encontrado = False
-                                for j in range(loca.getSlotNumber) and not(encontrado):
-                                    if loca.slot[j].getCode() == ammunitionCode :
-                                        encontrado = True
-                                        f.write(str(j)+"\n")
-            
-            #Hexagono objetivo del arma
-            if Enemy.getCell().getX() < 10 and Enemy.getCell.getY() < 10 :
-                f.write("0"+str(Enemy.getCell().getX())+"0"+str(Enemy.getCell().getY())+"\n")
-            elif Enemy.getCell().getX() < 10 and Enemy.getCell.getY() >= 10 :
-                f.write("0"+str(Enemy.getCell().getX())+str(Enemy.getCell().getY())+"\n")
-            elif Enemy.getCell().getX() >= 10 and Enemy.getCell.getY() < 10 :
-                f.write(str(Enemy.getCell().getX())+"0"+str(Enemy.getCell().getY())+"\n")
-            else :
-                f.write(str(Enemy.getCell().getX())+str(Enemy.getCell().getY())+"\n")
+            #por cada arma
+            numComponents = self.__dmech[self.__playerNumber].mech.getEquippedComponentsNumber() 
+            numActuators = self.__dmech[self.__playerNumber].mech.getActuatorsNumber()
+            for i in range(len(finalWeapons)):
                 
-            f.write("Mech"+"\n")
-            f.close()
+                #localizacion del arma
+                itemLocation = finalWeapons[i].getItemLocation()
+                if itemLocation == 0 : f.write("BI"+"\n")
+                elif itemLocation == 1: f.write("TI"+"\n")
+                elif itemLocation == 2: f.write("PI"+"\n")
+                elif itemLocation == 3: f.write("PD"+"\n") 
+                elif itemLocation == 4: f.write("TD"+"\n")
+                elif itemLocation == 5: f.write("BD"+"\n")
+                elif itemLocation == 6: f.write("TC"+"\n")
+                elif itemLocation == 7: f.write("CAB"+"\n")
+                
+                #numero de slot donde esta el arma
+                loca = self.__dmech[self.__playerNumber].mech.location[itemLocation]
+                encontrado4 = False
+                j = 0
+                while j < loca.getSlotNumber() and not(encontrado4):
+                    if loca.slot[j].getCode() == finalWeapons[i].getCode():
+                        encontrado4 = True
+                        f.write(str(j)+"\n")
+                    j = j + 1
+                
+                #Disparo a doble cadencia -> siempre false, no es buena estrategia
+                f.write("False"+"\n")
+
+
+                if finalWeapons[i].getWeaponType()[0:5] == "Energ":
+                    print "OK"
+                    f.write("-1"+"\n")
+                    f.write("-1"+"\n")
+                else:
+                    k = 0
+                    encontrado = False
+                    while k < numComponents and not(encontrado):
+                        if self.__dmech[self.__playerNumber].mech.component[k].getWeaponCode() == finalWeapons[i].getCode() :
+                            ammunitionCode = self.__dmech[self.__playerNumber].mech.component[k].getCode()
+                            encontrado = True
+                            h = 0
+                            encontrado2 = False
+        
+                            while h < numComponents and not(encontrado2):
+                                if self.__dmech[self.__playerNumber].mech.component[h].getCode() == ammunitionCode:
+                                    print "OK"
+                                    encontrado2 = True
+                                    itemLocation = self.__dmech[self.__playerNumber].mech.component[h].getItemLocation()
+                                    if itemLocation == 0 : f.write("BI"+"\n")
+                                    elif itemLocation == 1: f.write("TI"+"\n")
+                                    elif itemLocation == 2: f.write("PI"+"\n")
+                                    elif itemLocation == 3: f.write("PD"+"\n") 
+                                    elif itemLocation == 4: f.write("TD"+"\n")
+                                    elif itemLocation == 5: f.write("BD"+"\n")
+                                    elif itemLocation == 6: f.write("TC"+"\n")
+                                    elif itemLocation == 7: f.write("CAB"+"\n")
+                        
+                                    #numero de slot donde esta la municion
+                                    loca = self.__dmech[self.__playerNumber].mech.location[itemLocation]
+                                    encontrado3 = False
+                                    j = 0
+                                    while j < loca.getSlotNumber() and not(encontrado3):
+                                        if loca.slot[j].getCode() == ammunitionCode :
+                                            encontrado3 = True
+                                            print "OK"
+                                            f.write(str(j)+"\n")
+                                        j = j +1
+
+                                else:   h = h +1
+                        k = k + 1
+                #Hexagono objetivo del arma
+                f.write(Enemy.getCell()+"\n")
+                f.write("Mech"+"\n")
+
+        f.close()
                                 
     
     def shootWeapons(self, Enemy, temp, choiseWeapons) :
         cumulativeTemp = 0
         #ordenamos las armas lanzables por calidad
-        for i in range(choiseWeapons):        
+        for i in range(len(choiseWeapons)):        
             """Ordena la lista por el metodo burbuja mejorado y 
          ademas sale del ciclo de pasadas, en cuanto detecta 
          que al final de una pasada no se realizaron 
@@ -351,16 +361,16 @@ class Attack:
             while pasada<len(choiseWeapons) and intercambios==1 : 
                 intercambios=0 
                 for i in range(0,len(choiseWeapons)-pasada):  
-                    if (choiseWeapons[i].getHarm()/choiseWeapons[i].getHeaT()) >  (choiseWeapons[i+1].getHarm()/choiseWeapons[i+1].getHeaT()): 
+                    if (choiseWeapons[i].getHarm()/choiseWeapons[i].getHeat()) >  (choiseWeapons[i+1].getHarm()/choiseWeapons[i+1].getHeat()): 
                         choiseWeapons[i], choiseWeapons[i+1] = choiseWeapons[i+1], choiseWeapons[i] 
                         intercambios=1  
                     pasada += 1 
         #compruebo cuantas armas de las seleccionadas puedo disparar sin superar el limite de calor    
-        finalWeapons = None
+        finalWeapons = []
         numWeapons = 0
-        for i in range(choiseWeapons):
+        for i in range(len(choiseWeapons)):
             if not(cumulativeTemp + choiseWeapons[i].getHeat() > temp):
-                cumulativeTemp = cumulativeTemp + choiseWeapons.getHeat()
+                cumulativeTemp = cumulativeTemp + choiseWeapons[i].getHeat()
                 finalWeapons.append(choiseWeapons[i])
         return finalWeapons
         
@@ -385,35 +395,49 @@ class Attack:
         
     
     def choiseWeapons(self, Enemy):
-        disWeapons = None
-        for  i in range(self.__dmech.getEquippedComponentsNumber() ):
-            distance = euclideanDistance(self.__player.getCell, Enemy.getCell() )
-            if (distance <= self.__dmech.component[i].longDistance) and self.__dmech.component[i].operativeTeam :
-                disWeapons.append(self.__dmech.component[i])
+        disWeapons = []
+        for  i in range(self.__dmech[self.__playerNumber].mech.getEquippedComponentsNumber() ):
+            if self.__dmech[self.__playerNumber].mech.component[i].getType()[0:3] == "ARM":
+                distance = self.euclideanDis(self.__player.getCell(), Enemy.getCell() )
+                if (distance <= self.__dmech[self.__playerNumber].mech.component[i].longDistance) and self.__dmech[self.__playerNumber].mech.component[i].operativeTeam :
+                    disWeapons.append(self.__dmech[self.__playerNumber].mech.component[i])
         return disWeapons
                                            
     
     def enemyMoreNear(self, enemysList, distance):
         i = 0
         min = 0
-        distance = euclideanDistance(self.__player.getCell(), enemysList[0].getCell())
+        distance = self.euclideanDis(self.__player.getCell(), enemysList[0].getCell())
         while i < len(enemysList):
-            if (distance > (euclideanDistance(self.__player.getCell(), enemysList[i].getCell())) ):
-                distance = euclideanDistance(self.__player.getCell(), enemysList[i].getCell())
+            if (distance > (self.euclideanDis(self.__player.getCell(), enemysList[i].getCell())) ):
+                distance = self.euclideanDis(self.__player.getCell(), enemysList[i].getCell())
                 min = i
             i = i +1
-        return i
-             
+        return min
+
+    def euclideanDis(self, c1, c2):
+        return sqrt(((int(c2[0:2])-int(c1[0:2]))*(int(c2[0:2])-int(c1[0:2])))+((int(c2[2:4])-int(c1[2:4]))*(int(c2[2:4])-int(c1[2:4]))))             
 
     def visionLine(self, enemy):
-        GroundPlayer = self.__player.getGround()
-        GroundEnemy = self.__mechs.mechSet[enemy.playerNumber].getGround()
+        if self.__player.getGround() == True :
+            GroundPlayer = "1"
+        else: 
+            GroundPlayer = "0"
+        
+        if self.__mechs.mechSet[enemy.getPlayerNumber()].getGround() == True :
+            GroundEnemy = "1"
+        else:
+            GroundEnemy = "0"
+        
+        cellGoal = self.__mechs.mechSet[enemy.getPlayerNumber()].getCell()
         cellSource = self.__player.getCell()
-        cellGoal = self.__mechs.mechSet[enemy.playerNumber].getCell()
-        execute = "LDyC.exe "+self.__fichBoard+" "+cellSource+" "+GroundPlayer+" "+cellGoal+" "+GroundEnemy
+
+        
+        execute = "LDVyC.exe "+self.__fichBoard+" "+cellSource+" "+GroundPlayer+" "+cellGoal+" "+GroundEnemy
         
         #ejecutar el programa de LineaVison
         os.system(execute)
+        #os.execl('/bin/ls', '/bin/ls', '-l', '-i')
         
         try:
             file = open("LDV.sbt", "r")
@@ -425,17 +449,4 @@ class Attack:
         isVisionLine = str2bool ( file.readline() )
         file.close()
         return isVisionLine
-        
-        
-def str2bool(string):
-    if string.strip().lower() in ('yes', '1', 'true', 'si'):
-        return True
-    elif string.strip().lower() in ('no', '0', 'false'):
-        return False
-    else:
-        return "Error: Not boolean"
 
-def euclideanDistance(self, c1, c2):
-    return sqrt(((c2.getX()-c1.getX())*(c2.getX()-c1.getX())+((c2.getY()-c1.getY())*(c2.getY()-c1.getY()))
-
-        

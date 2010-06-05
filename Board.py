@@ -45,7 +45,7 @@ class Board(object):
         else:
             print "Error!"
     width = property(getWidth, setWidth)
-        
+    
     def getHeight(self):
         return self.__height
 
@@ -55,13 +55,13 @@ class Board(object):
         else:
             print "Error!"
     height = property(getHeight, setHeight)
-        
+    
     def readBoard (self, fileName):
         """ 
         Reads a board from a specified file 
         
         Arguments:
-            * fileName -- Path to the file containing the board description
+        * fileName -- Path to the file containing the board description
         
         """
 
@@ -72,7 +72,7 @@ class Board(object):
             return -1
         
         file.readline() #Leer mapaSBT
-   
+        
         self.__height = int( file.readline() )
         self.__width = int( file.readline() )
         
@@ -99,15 +99,15 @@ class Board(object):
             
             for y in faceParams:
                 cell.faceRoad.append(str2bool( file.readline()) )
-          	 
+                
             self.map[col][fil] =cell
             cell = None
-          
+            
         file.close()
-               
+        
     def printBoard (self, filename = "out.txt"):
         """ Prints a file text with the map
-            contained in the Board
+        contained in the Board
         """
         f = open (filename, "w")
         f.write ("mapaSBT\n")
@@ -135,13 +135,11 @@ class Board(object):
                 f.write (str ( self.map[fil][col].faceRoad[y]) +"\n")
           	
         f.close()
-            
-
-
+        
     def move_cost(self, c1, c2, movType = 0):
         """ Compute the cost of movement from one coordinate c1 to
-            another c2. Both coordinates must be adjacent.
-            movType 0-walk; 1-run; 2-jump
+        another c2. Both coordinates must be adjacent.
+        movType 0-walk; 1-run; 2-jump
         """
         p1 = c1.pos
         p2 = c2.pos
@@ -149,37 +147,8 @@ class Board(object):
         costFace = 0
         costCell = 0
         if movType == 0 or movType == 1:
-        #return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) 
-            y = - (p1[0] - p2[0])
-            x = - (p1[1] - p2[1])
-            if ((p1[1]+1)%2 == 1): #columnas impares
-                # Which side is facing the other node??
-                if (x == 0 and y == -1): # N
-                    face = 0
-                elif (x == 1 and y == -1): # NE
-                    face = 1
-                elif (x == 1 and y == 0): # SE
-                    face = 2
-                elif (x == 0 and y == 1): # S
-                    face = 3
-                elif (x == -1 and y == 0): # SO
-                    face = 4
-                elif (x == -1 and y == -1): # NO
-                    face = 5
-            else: #columnas pares
-                if (x == 0 and y == -1): # N
-                    face = 0
-                elif (x == 1 and y == 0): # NE
-                    face = 1
-                elif (x == 1 and y == 1): # SE
-                    face = 2
-                elif (x == 0 and y == 1): # S
-                    face = 3
-                elif (x == -1 and y == 1): # SO
-                    face = 4
-                elif (x == -1 and y == 0): # NO
-                    face = 5
-        # Total cost of changing the facing side
+            face = facing_side(p1, p2)
+            # Total cost of changing the facing side
             costFace = fabs(c1.face - face) 
             
             obj = self.map[p2[0]][p2[1]].objects
@@ -208,7 +177,7 @@ class Board(object):
 
     def successors (self, c, movType = 0, PM =15):
         """ Compute the successors of coordinate 'c': all the 
-            coordinates that can be reached by one step from 'c'.
+        coordinates that can be reached by one step from 'c'.
         """
         slist = []
         
@@ -234,11 +203,11 @@ class Board(object):
         return slist
 
 
-                
+    
     def checkCell (self, c1, c2, moveType = 0, PM =15):
         """ Checks whether a cell is allowed to be moved to
-            From c1 to c2
-            moveType: 0-Walk, 1-Run, 2-Jump
+        From c1 to c2
+        moveType: 0-Walk, 1-Run, 2-Jump
         """
         what = False
         # If running -> water with depth less than one
@@ -260,24 +229,24 @@ class Board(object):
 
     def heuristic_to_goal_manhatan(self, c1, c2): 
         """ Heuristic 1 - Manhatan
-            C1 and C1, Type Pos
-            return Distance
+        C1 and C1, Type Pos
+        return Distance
         """
         return abs(c2.pos[0]-c1.pos[0]) + abs(c2.pos[1]-c1.pos[1])
 
     def heuristic_to_goal (self,c1,c2):
         """ Heuristic 2 - Actual distance in a hexagonal grid
-            C1 and C1, Type Pos
-            return Distance
+        C1 and C1, Type Pos
+        return Distance
         """
-        Vx = abs(c2[0]-c1[0])
-        Vy = abs(c2[1]-c1[1])
+        Vx = abs(c2.pos[0]-c1.pos[0])
+        Vy = abs(c2.pos[1]-c1.pos[1])
         if Vy%2 != 0:
             factor = 0
-        elif c1[1] < c2[1]: 
-            factor = (c1[0]-1)%2
+        elif c1.pos[1] < c2.pos[1]: 
+            factor = (c1.pos[0]-1)%2
         else:
-            factor = (c2[0]-1)%2
+            factor = (c2.pos[0]-1)%2
 
         return Vx + max(0, Vy- (Vx/2) - factor)
     
@@ -291,4 +260,82 @@ def str2bool(string):
         return "Error: Not boolean"
 
 def manhatan (c1,c2):
-        return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])
+    return abs(c2[0]-c1[0]) + abs(c2[1]-c1[1])
+
+
+def facing_side (p1, p2):
+    y = - (p1[0] - p2[0])
+    x = - (p1[1] - p2[1])
+    face = 0 
+    if ((p1[1]+1)%2 == 1): #columnas impares
+        # Which side is facing the other node??
+        if (x == 0 and y == -1): # N
+            face = 0
+        elif (x == 1 and y == -1): # NE
+            face = 1
+        elif (x == 1 and y == 0): # SE
+            face = 2
+        elif (x == 0 and y == 1): # S
+            face = 3
+        elif (x == -1 and y == 0): # SO
+            face = 4
+        elif (x == -1 and y == -1): # NO
+            face = 5
+    else: #columnas pares
+        if (x == 0 and y == -1): # N
+            face = 0
+        elif (x == 1 and y == 0): # NE
+            face = 1
+        elif (x == 1 and y == 1): # SE
+            face = 2
+        elif (x == 0 and y == 1): # S
+            face = 3
+        elif (x == -1 and y == 1): # SO
+            face = 4
+        elif (x == -1 and y == 0): # NO
+            face = 5
+    return face
+
+def adjacent_cells (p, face):
+    """ Returns the adjacent cell of p1 in the side face
+    """
+    r1 = 0; r0 = 0
+    if ((p[1]+1)%2 == 1): #columnas impares
+        if face == 0: # N
+            r0 = p[0] -1
+            r1 = p[1] 
+        elif face == 1: # NE
+            r0 = p[0] -1
+            r1 = p[1] +1
+        elif face == 2: # SE
+            r0 = p[0] 
+            r1 = p[1] +1
+        elif face == 3: # S
+            r0 = p[0] +1
+            r1 = p[1] 
+        elif face == 4: # SO
+            r0 = p[0] 
+            r1 = p[1] -1
+        elif face == 5: # NO
+            r0 = p[0] -1
+            r1 = p[1] -1
+    else: #columnas pares
+        if face == 0: # N
+            r0 = p[0] -1
+            r1 = p[1] 
+        elif face == 1: # NE
+            r0 = p[0] 
+            r1 = p[1] +1
+        elif face == 2: # ES
+            r0 = p[0] +1
+            r1 = p[1] +1
+        elif face == 3: # S
+            r0 = p[0] +1
+            r1 = p[1] 
+        elif face == 4: # SO
+            r0 = p[0] +1
+            r1 = p[1] -1
+        elif face == 5: # NO
+            r0 = p[0] 
+            r1 = p[1] -1
+    return r0,r1

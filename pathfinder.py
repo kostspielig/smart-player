@@ -227,6 +227,16 @@ class Pos(object):
         self.pos = pos
         self.face = face 
 
+    def printPos (self):
+        if (self.pos[1]+1 <= 9): x = "0"+str(self.pos[1]+1)
+        else: x = str(self.pos[1]+1)
+        if (self.pos[0]+1 <= 9): y = "0"+str(self.pos[0]+1)
+        else: y = str(self.pos[0]+1)
+        return x+y
+
+    def printFace (self):
+        return self.face+1
+
     def __eq__(self, other): 
         return (self.pos == other.pos) and (self.face == other.face)
          
@@ -244,7 +254,8 @@ class Pos(object):
  
 if __name__ == "__main__": 
     from Board import Board
-     
+    import Movement
+
     start = 11,12
     goal = 8,10
     PM = 5
@@ -258,11 +269,13 @@ if __name__ == "__main__":
     
     #import time 
     #t = time.clock() 
-    #path = list(pf.compute_path(s, g, 1,PM)) 
+    path = list(pf.compute_path(s, g, 1,PM)) 
     #print "Elapsed: %s" % (time.clock() - t) 
 
-    path2, can, cost = pf.compute_path_until_PM(s, g, 1,PM)
+    #path2, can, cost = pf.compute_path_until_PM(s, g, 1,PM)
 
-    #print path
-    print str(can) + "cost: " + str (cost)
-    print path2
+    print path
+   # print str(can) + "cost: " + str (cost)
+   # print path2
+    
+    print Movement.calculate_steps(path)

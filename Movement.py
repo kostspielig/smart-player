@@ -31,8 +31,13 @@ import MechFile
 import Initiative
 from pathfinder import Pos
 
+
+mov = {0: 'Andar', 1: 'Correr', 2: 'Saltar', 3: 'Inmovil'}
+step = {0: 'Adelante', 1: 'Atras', 2: 'Izquierda', 3: 'Derecha', 4: 'Levantarse', 5: 'Cuerpo a Tierra'}
+
 class Movement:
-    
+
+
     def __init__ (self, playerN, board, mechs, ini):
         self.playerN = playerN # Number of current player
         self.board = board    # Map
@@ -43,9 +48,10 @@ class Movement:
         self.nextFace = None
         self.masc = False     # By convention is set to False
         self.stepNumber = None
-        self.step = [] # (stepType, times/face)
-                       # stepType: 1-adelante 2-atras 3-izquierda
-                       # 4-derecha 5-levantarse 6-cuerpo a tierra
+        self.stepCell = [] # (stepType, times/face)
+        # stepType: 1-adelante 2-atras 3-izquierda
+        # 4-derecha 5-levantarse 6-cuerpo a tierra
+        self.path = None
         self.player = self.mechs.mechSet[self.playerN]
         self.playerCell = int(self.player.cell[2:] ) -1, int(self.player.cell[0:-2] )-1
         self.playerFace = self.player.facingSide
@@ -55,7 +61,7 @@ class Movement:
 
     def setTarjet(self):
         """ Finds out the player we are going to approach
-            returns the enemy number + distance to enemy
+        returns the enemy number + distance to enemy
         """
         t = 0
         distance = sys.maxint
@@ -63,7 +69,7 @@ class Movement:
             if m.playerNumber == self.playerN:
                 continue
             d = dist2((int(self.player.cell[0:-2]),
-                  int(self.player.cell[2:])),(int(m.cell[0:-2]),int( m.cell[2:])))
+                       int(self.player.cell[2:])),(int(m.cell[0:-2]),int( m.cell[2:])))
             print "distance to " + str(m.playerNumber) + "equals to " +str(d)
             if d < distance:
                 t = m.playerNumber
@@ -80,13 +86,13 @@ class Movement:
             self.movType = 0 # We try to get up by walking
             self.nextCell = self.playerCell
             self.nextFace = face
-            self.step.append(5,face)
+            self.stepCell.append((4,face)) #Levantarse , face
 
         # If we do move first -> Hide
         if self.ini.position[self.playerN]< self.ini.position[enemy]:
             self._hide(cellEnemy)
         else: #We do move last -> go for the enemy's back!
-            self._approach( cellEnemy,faceTorsoEnemy )
+            self.path, cost, self.movType = self._approach( cellEnemy,faceTorsoEnemy )
 
             return 0
         
@@ -103,20 +109,63 @@ class Movement:
         if can == False and self.player.run != 0:
             path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
             if can2 == True:
-                return path2, cost2
+                return path2, cost2, 1
         if can2 == False and self.player.jump != 0:
             path3, can3, cost3 = pf.compute_path_until_PM(A, B, 2, self.player.jump)
             if can3 == True:
-                return path3,cost3
-        return path, cost
+                return path3,cost3,2
+        return path, cost, 0
 
     def printAccion(self):
 
         file = open("accionJ"+ str(self.playerN)+".sbt", "w")
-                    
-        file.write(str(self.movType) +"\n")
-     
+        
+        file.write(str(mov[self.movType]) +"\n")
+
+        if self.movType == 0 or self.movType == 1: # Andar o correr
+            p = self.path[len(self.path)-1]
+            file.write(str(p.printPos()) +"\n") #Hex destino
+            file.write(str(p.printFace()) +"\n") #Lado hex destino
+            file.write(str(self.masc) +"\n") #Usar masc? 
+            move = self.calculate_steps()
+            for x in move:
+                file.write(str(step[x[0]]) +"\n")
+                file.write(str(x[1]) +"\n")
+            ret = 0
+        if self.movType == 2: # Saltar
+            p = self.path[len(self.path)-1]
+            file.write(str(p.printPos()) +"\n")
+            file.write(str(p.printFace()) +"\n")
+            ret = 2
+        if self.movType == 3: # Inmovil -> Do Nothing
+            ret = 3
+
         file.close()
+        return ret
+    def calculate_steps(self):
+        #y = self.path[0]
+        #for x in self.path[1:]:
+        moves = []
+        i = 1
+        while i < len(self.path): 
+            y = self.path[i-1]; x = self.path[i]
+            if y.face != x.face:
+                costFace = min( (x.face - y.face)%6, (y.face - x.face)%6 )
+                if (y.face - costFace) % 6 == x.face:
+                    moves.append(2,costFace)
+                else: moves.append(3, costFace)
+                i += 1
+            else:
+                aux = 1
+                i += 1
+                while i < len(self.path):
+                    y = self.path[i-1]; x = self.path[i]
+                    if x.face == y.face:
+                        aux += 1
+                    else: break
+                    i += 1
+                moves.append(0, aux)
+        return moves
 
 def str2bool(string):
     return string.strip().lower() in ('yes', '1', 'true')
@@ -166,6 +215,32 @@ def relative_position(c1, c2):
                 return 4
             else: #c1[1] < c2[1]
                 return 2
+
+def calculate_steps( path):
+    #y = self.path[0]
+    #for x in self.path[1:]:
+    moves = []
+    i = 1
+    while i < len(path): 
+        y = path[i-1]; x = path[i]
+        if y.face != x.face:
+            costFace = min( (x.face - y.face)%6, (y.face - x.face)%6 )
+            if (y.face - costFace) % 6 == x.face:
+                moves.append((step[2],costFace))
+            else: moves.append((step[3], costFace))
+            i += 1
+        else:
+            aux = 1
+            i += 1
+            while i < len(path):
+                y = path[i-1]; x = path[i]
+                if x.face == y.face:
+                    aux += 1
+                else: break
+                i += 1
+            moves.append((step[0], aux))
+    return moves
+
 
 if __name__ == "__main__": 
 

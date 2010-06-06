@@ -149,7 +149,7 @@ class Board(object):
         if movType == 0 or movType == 1:
             face = facing_side(p1, p2)
             # Total cost of changing the facing side
-            costFace = fabs(c1.face - face) 
+            costFace = min( (c1.face - face)%6, (face - c1.face)%6 )
             
             obj = self.map[p2[0]][p2[1]].objects
             if (self.map[p2[0]][p2[1]].ground == 2): # Agua

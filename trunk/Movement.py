@@ -55,6 +55,9 @@ class Movement:
         self.player = self.mechs.mechSet[self.playerN]
         self.playerCell = int(self.player.cell[2:] ) -1, int(self.player.cell[0:-2] )-1
         self.playerFace = self.player.facingSide
+        self.walk = self.player.walk
+        self.run = self.player.run
+        self.jump = self.player.jump
 
     def findNextPosition(self):
         return 0
@@ -81,7 +84,8 @@ class Movement:
         faceTorsoEnemy = self.mechs.mechSet[enemy].facingTorsoSide
         cellEnemy = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1
 
-        if self.player.ground == True and self.player.walk >= 2: # Levantarse
+        # Si estamos en el suelo -> Nos levantamos
+        if self.player.ground == True and self.player.walk >= 2: 
             face = relative_position(self.playerCell, cellEnemy)
             self.movType = 0 # We try to get up by walking
             self.nextCell = self.playerCell
@@ -94,10 +98,12 @@ class Movement:
         else: #We do move last -> go for the enemy's back!
             self.path, cost, self.movType = self._approach( cellEnemy,faceTorsoEnemy )
 
-            return 0
+        self.printAction()
+
         
     def _hide (self, enemy):
-        return 0
+        self.movType = 3
+    
 
     def _approach (self, enemy, faceTorsoEnemy):
 

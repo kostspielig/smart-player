@@ -239,6 +239,8 @@ class Board(object):
         C1 and C1, Type Pos
         return Distance
         """
+        p1 = (c2.pos[1]+1, c2.pos[0]+1)
+        p2 = (c1.pos[1]+1, c1.pos[0]+1)
         Vx = abs(c2.pos[0]-c1.pos[0])
         Vy = abs(c2.pos[1]-c1.pos[1])
         if Vy%2 != 0:
@@ -339,3 +341,20 @@ def adjacent_cells (p, face):
             r0 = p[0] 
             r1 = p[1] -1
     return r0,r1
+
+
+def areAdjacent(c,c2):       
+    slist=[]
+    for i in (-1,0,1):
+        for j in (-1,0,1):
+            if ((c[1]+1)%2 == 0): #columnas pares
+                if (i == -1 and j == -1) or (i == 0 and j == 0) or (i == 1 and j == -1):
+                    continue
+            else:
+                if (i == 1 and j == 1) or (i == 0 and j == 0) or (j == 1 and i == -1):
+                        continue
+            newFil = (c[0]) +j
+            newCol = (c[1]) +i
+
+            slist.append((newFil, newCol))
+    return c2 in slist

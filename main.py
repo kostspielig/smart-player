@@ -15,6 +15,7 @@ import DefMech
 import MechFile
 import Initiative
 import Movement
+import Attack
  
 """
 Main Function
@@ -35,7 +36,7 @@ def main():
             sys.exit(0)
     # process arguments
     if len(args) != 2:
-        print "Error: Incorrect number of arguments"
+        print "Error: Incorrect number of arguments\n Player Number + Phase"
         return -1
    
         
@@ -44,19 +45,19 @@ def main():
 
     # Reading the options
     config = Options.Options()
-    config.readOptions("configJ"+str(actualPlayer)+".sbt")
+    config.readOptions("../ficheros/configJ"+str(actualPlayer)+".sbt")
 
     # Reading the board
     board = Board.Board()
-    board.readBoard("mapaJ"+str(actualPlayer)+".sbt")
+    board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
 
     # Reading the mech file
     mechs = MechFile.MechFile()
-    mechs.readMechFile("mechsJ"+str(actualPlayer)+".sbt")
+    mechs.readMechFile("../ficheros/mechsJ"+str(actualPlayer)+".sbt")
 
     # Reading initiative file
     ini = Initiative.Initiative()
-    ini.readInitiative("iniciativaJ"+str(actualPlayer)+".sbt")
+    ini.readInitiative("../ficheros/iniciativaJ"+str(actualPlayer)+".sbt")
 
  
 
@@ -64,15 +65,16 @@ def main():
     defM = []
     for x in range(mechs.mechNumber):
         M = DefMech.DefMech()
-        M.readDefMech("defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
+        M.readDefMech("../ficheros/defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
         defM.append(M)
         M = None
 
     attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
+
     
     # For each phase
     if phase == "Movimiento":
-        movement(actualPlayer,board, mechs, ini)
+        movement (actualPlayer,board, mechs, ini)
     elif phase == "Reaccion":
         reaction ()
     elif phase == "AtaqueArmas":
@@ -85,13 +87,10 @@ def main():
         print "Incorrect Phase!!"
         return -2
 
-if __name__ == "__main__":
-    main()
-
 def movement (actualPlayer,board, mechs, ini):
     print "Movement"
-    strategy = Movement(actualPlayer, board, mechs, ini)
-
+    strategy = Movement.Movement(actualPlayer, board, mechs, ini)
+    strategy.nextMove()
 
 def reaction ():
     print "Reaction"
@@ -104,3 +103,6 @@ def physicalAttack ():
 
 def turnEnd ():
     print "ENDDDDDDDDDDDDDDDDDDDDDDDD"
+
+if __name__ == "__main__":
+    main()

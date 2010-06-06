@@ -55,9 +55,7 @@ class Movement:
         self.player = self.mechs.mechSet[self.playerN]
         self.playerCell = int(self.player.cell[2:] ) -1, int(self.player.cell[0:-2] )-1
         self.playerFace = self.player.facingSide
-        self.walk = self.player.walk
-        self.run = self.player.run
-        self.jump = self.player.jump
+        self.getUp = False
 
     def findNextPosition(self):
         return 0
@@ -80,12 +78,16 @@ class Movement:
         return t, distance
 
     def nextMove(self):
-        enemy,distance = self.setTarjet() 
+        print "walk: "+str(self.player.walk)
+        print "run: "+str(self.player.run)
+        print "jump: "+str(self.player.jump)
+        enemy,distance = self.setTarjet()
         faceTorsoEnemy = self.mechs.mechSet[enemy].facingTorsoSide
         cellEnemy = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1
-
+ 
         # Si estamos en el suelo -> Nos levantamos
-        if self.player.ground == True and self.player.walk >= 2: 
+        if self.player.ground == True and self.player.walk >= 2:
+            self.getUp = True
             face = relative_position(self.playerCell, cellEnemy)
             self.movType = 0 # We try to get up by walking
             self.nextCell = self.playerCell
@@ -93,9 +95,11 @@ class Movement:
             self.stepCell.append((4,face)) #Levantarse , face
 
         # If we do move first -> Hide
-        if self.ini.position[self.playerN]< self.ini.position[enemy]:
+        if self.ini.position.index(self.playerN)< self.ini.position.index(enemy):
+            print self.ini.position
             self._hide(cellEnemy)
         else: #We do move last -> go for the enemy's back!
+            print "Moving last"
             self.path, cost, self.movType = self._approach( cellEnemy,faceTorsoEnemy )
 
         self.printAction()
@@ -109,7 +113,7 @@ class Movement:
 
         x = Board.adjacent_cells(enemy, faceTorsoEnemy)    
         pf = pathfinder.PathFinder(self.board.successors, self.board.move_cost, self.board.heuristic_to_goal)
-        A = Pos(self.cellPlayer, self.facePlayer)
+        A = Pos(self.playerCell, self.playerFace)
         B = Pos(x, faceTorsoEnemy)
         path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
         if can == False and self.player.run != 0:
@@ -122,13 +126,22 @@ class Movement:
                 return path3,cost3,2
         return path, cost, 0
 
-    def printAccion(self):
+    def printAction(self):
 
         file = open("accionJ"+ str(self.playerN)+".sbt", "w")
         
         file.write(str(mov[self.movType]) +"\n")
-
-        if self.movType == 0 or self.movType == 1: # Andar o correr
+        if self.getUp == True:
+            p = Pos(self.nextCell, self.nextFace)
+            file.write(str(p.printPos()) +"\n") #Hex destino
+            file.write(str(p.printFace()) +"\n") #Lado hex destino
+            file.write(str(self.masc) +"\n") #Usar masc? 
+            file.write(str(1) +"\n")
+            file.write(str(step[4]) +"\n")
+            file.write(str(p.printFace()) +"\n")
+            ret = 0
+            
+        elif self.movType == 0 or self.movType == 1: # Andar o correr
             p = self.path[len(self.path)-1]
             file.write(str(p.printPos()) +"\n") #Hex destino
             file.write(str(p.printFace()) +"\n") #Lado hex destino
@@ -138,16 +151,17 @@ class Movement:
                 file.write(str(step[x[0]]) +"\n")
                 file.write(str(x[1]) +"\n")
             ret = 0
-        if self.movType == 2: # Saltar
+        elif self.movType == 2: # Saltar
             p = self.path[len(self.path)-1]
             file.write(str(p.printPos()) +"\n")
             file.write(str(p.printFace()) +"\n")
             ret = 2
-        if self.movType == 3: # Inmovil -> Do Nothing
+        elif self.movType == 3: # Inmovil -> Do Nothing
             ret = 3
 
         file.close()
         return ret
+
     def calculate_steps(self):
         #y = self.path[0]
         #for x in self.path[1:]:
@@ -158,8 +172,8 @@ class Movement:
             if y.face != x.face:
                 costFace = min( (x.face - y.face)%6, (y.face - x.face)%6 )
                 if (y.face - costFace) % 6 == x.face:
-                    moves.append(2,costFace)
-                else: moves.append(3, costFace)
+                    moves.append((2,costFace))
+                else: moves.append((3, costFace))
                 i += 1
             else:
                 aux = 1
@@ -267,3 +281,5 @@ if __name__ == "__main__":
     strategy = Movement(actualPlayer, board, mechs, ini)
 
     print strategy.setTarjet()
+
+    strategy.nextMove()

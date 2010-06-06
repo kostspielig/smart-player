@@ -63,12 +63,9 @@ class Attack :
         distance = 0
         enemy = None
 
-        #Creamos una lista de enemigos atacables que esten adyacentes
-        for i in range(len(self.__enemys))  :
-            if self.areAdjacent((int(self.__player.getCell()[2:]), int(self.__player.getCell()[0:-2]) ) , (int(self.__enemys[i].getCell()[2:]), int(self.__enemys[i].getCell()[2:]))) == True :
-                self.__enemysAttack.append(self.__enemys[i])
+    
 
-         #Creamos una lista de enemigos atacables
+        #Creamos una lista de enemigos atacables
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
             if attack == True :

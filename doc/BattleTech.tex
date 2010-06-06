@@ -480,7 +480,41 @@ el nuevo elemento en O(1). Si la prioridad del nuevo elemento es
 menor, se actualiza en la cola. Esto lleva un tiempo O(N).
 
 \section{Reacción}
-\section{Ataque con Armas}
+\section{Módulo de Ataque con Armas}
+\subsection{Lógica del ataque con armas}
+El ataque con armas es una de las fases más importantes del juego.  El objetivo principal del Mech en la fase de ataque con armas será elegir a que enemigos y con que armas desea atacar.
+Para poder realizar esta fase inteligentemente, dotaremos al Mech de la capacidad para analizar los distintos condicionantes que intervienen en el ataque. 
+Antes de adentrarnos en que tipos de condicionantes, es necesario definir la estrategia general que realizarán nuestros Mechs. La estrategía será maximizar el daño sobre el atacado minimizando los daños en el atacante, es decir, atacaremos al Mech objetivo con todas las armas posibles mientras no se supere un valor umbral de daño en forma de calor en el atacante. Por tanto queda claro que los condicionantes que debe determinar el Mech serán:
+\begin{enumerate}
+\item Se realiza ataque.
+\begin{enumerate}
+\item Localización del Mech objetivo.
+\item Elección de armas a usar en el ataque.
+\item Determinación del valor umbral de temperatura.
+\end{enumerate}
+\item No se realiza ataque.
+\end{enumerate}
+\subsection{Se realiza un ataque}
+En primer lugar es necesario saber si el Mech desea atacar o prefiero no realizar ningún tipo de ataque. Para discriminar entre las dos actuaciones nos basamos en calcular que enemigos están dentro de nuestra línea de visión. Si existe al menos un Mech dentro de nuestra línea de visión el ataque se realizará. 
+\subsubsection{Localización del Mech objetivo}
+Una vez seleccionados los Mechs que están dentro de nuestra línea de visión, elegimos cual es el que está más próximo a nosotros, calculando la distancia entre nuestra casilla en el tablero y las casillas de los enemigos dentro de nuestra línea de visión. Determinamos así el Mech objetivo sobre el que recaerán todo el poder de nuestras armas.
+\subsubsection{Elección de armas a usar en el ataque}
+Una vez determinado el objetivo del ataque procedemos a elegir las armas que podemos usar en el ataque. Cada arma tiene un valor que corresponde a la distancia que es capaz de alcanzar en un disparo, por tanto, el siguiente paso será comprobar de entre todas las armas de nuestro Mech cuales son capaces de alcanzar la distancia a la que está de nosotros el Mech objetivo. 
+\subsubsection{Determinación del valor umbral de temperatura}
+Debe quedar claro que lanzar todas las armas posibles a nuestro enemigo no es una buena estrategia, ya que a cada disparo, la temperatura de nuestro Mech puede ascender de tal forma que incluso quede desactivado. Por tanto debemos calcular cuanta temperatura puede soportar el Mech en la realización del ataque. Sabemos que si un Mech pasa de 15º al acabar el turno, recibirá un punto de daño y si sobrepasa 26º recibirá dos. Por tanto podemos determinar el umbral de temperatura soportable de la siguiente forma:
+\begin{itemize}
+\item Si la temperatura del Mech es menor que 10º el umbral será 12º.
+\item Si la temperatura del Mech está comprendida entre 10º y 15º el umbral será 9º.
+\item Si la temperatura del Mech está comprendida entre 16º y 20º el umbral será 6º.
+\item Si la temperatura del Mech está comprendida entre 20º y 26º el umbral será 4º.
+\item Si la temperatura del Mech es mayor que 26º el umbral será 2º
+\end{itemize}
+\subsection{No se realiza ataque}
+Si no hay ningún enemigo dentro de nuestra línea de visión no realizaremos ningún ataque, quedando como única posibilidad recoger un garrote, sí está alojado en nuestra casilla, para usarlo más tarde en un posible ataque físico.
+
+
+
+
 \section{Ataque Físico}
 \section{Final de Turno}
 

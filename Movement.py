@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 __id__ = "$Id: Movement.py $"
-__version__ = "$Revision: 1 $"
-__date__ = "$Date: 20/04/2010 Sat  $"
+__version__ = "$Revision: 8 $"
+__date__ = "$Date: 06/06/2010 Sat  $"
 __author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
@@ -54,7 +54,7 @@ class Movement:
         self.path = None
         self.player = self.mechs.mechSet[self.playerN]
         self.playerCell = int(self.player.cell[2:] ) -1, int(self.player.cell[0:-2] )-1
-        self.playerFace = self.player.facingSide
+        self.playerFace = self.player.facingSide -1
         self.getUp = False
 
     def findNextPosition(self):
@@ -82,7 +82,9 @@ class Movement:
         print "run: "+str(self.player.run)
         print "jump: "+str(self.player.jump)
         enemy,distance = self.setTarjet()
-        faceTorsoEnemy = self.mechs.mechSet[enemy].facingTorsoSide
+        faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6
+        print "torso enemy"+ str(faceTorsoEnemy+1)
+
         cellEnemy = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1
  
         # Si estamos en el suelo -> Nos levantamos
@@ -100,31 +102,34 @@ class Movement:
             self._hide(cellEnemy)
         else: #We do move last -> go for the enemy's back!
             print "Moving last"
-            self.path, cost, self.movType = self._approach( cellEnemy,faceTorsoEnemy )
+            self.path, self.movType = self._approach( cellEnemy,faceTorsoEnemy )
+            print self.path
 
         self.printAction()
 
         
     def _hide (self, enemy):
-        self.movType = 3
+        self.movType = 3 # Inmovil
     
 
     def _approach (self, enemy, faceTorsoEnemy):
 
-        x = Board.adjacent_cells(enemy, faceTorsoEnemy)    
+        x = Board.adjacent_cells(enemy, faceTorsoEnemy)
+        print "_______"
+        print x
         pf = pathfinder.PathFinder(self.board.successors, self.board.move_cost, self.board.heuristic_to_goal)
         A = Pos(self.playerCell, self.playerFace)
-        B = Pos(x, faceTorsoEnemy)
+        B = Pos(x, Board.facing_side(x, enemy))
         path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
         if can == False and self.player.run != 0:
             path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
             if can2 == True:
-                return path2, cost2, 1
+                return (path2, 1)
         if can2 == False and self.player.jump != 0:
             path3, can3, cost3 = pf.compute_path_until_PM(A, B, 2, self.player.jump)
             if can3 == True:
-                return path3,cost3,2
-        return path, cost, 0
+                return (path3,2)
+        return (path, 0)
 
     def printAction(self):
 
@@ -143,6 +148,7 @@ class Movement:
             
         elif self.movType == 0 or self.movType == 1: # Andar o correr
             p = self.path[len(self.path)-1]
+            print p
             file.write(str(p.printPos()) +"\n") #Hex destino
             file.write(str(p.printFace()) +"\n") #Lado hex destino
             file.write(str(self.masc) +"\n") #Usar masc? 
@@ -168,7 +174,14 @@ class Movement:
         moves = []
         i = 1
         while i < len(self.path): 
-            y = self.path[i-1]; x = self.path[i]
+            y = self.path[i-1] 
+            x = self.path[i]
+
+            #print self.path
+            #print "YYYYY"
+            #print y
+            #print "XXXX"
+            #print x
             if y.face != x.face:
                 costFace = min( (x.face - y.face)%6, (y.face - x.face)%6 )
                 if (y.face - costFace) % 6 == x.face:
@@ -184,7 +197,7 @@ class Movement:
                         aux += 1
                     else: break
                     i += 1
-                moves.append(0, aux)
+                moves.append((0, aux))
         return moves
 
 def str2bool(string):

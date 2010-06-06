@@ -171,7 +171,7 @@ class PathFinder(object):
         temp = Pos(node.coord, node.face)
         if node.g_cost <= PM:
             cost = node.g_cost
-            pth = [(temp, node.g_cost)] 
+            pth = [temp] 
         else:
             can = False 
             pth =[]
@@ -182,7 +182,7 @@ class PathFinder(object):
                 pth.append(Pos(n.coord, n.face)) 
                 if n.g_cost > cost: cost = n.g_cost
          
-        return list(reversed(pth)), can, cost
+        return (list(reversed(pth)), can, cost)
 
     class _Node(object): 
         """ Used to represent a node on the searched graph during 
@@ -247,7 +247,7 @@ class Pos(object):
         return hash(self.pos) 
  
     def __str__(self): 
-        return 'N(%s, %s) -> face: %s' % (self.pos[1]+1, self.pos[0]+1, self.face) 
+        return 'N(%s, %s) -> face: %s' % (self.pos[1]+1, self.pos[0]+1, self.face+1) 
  
     def __repr__(self): 
         return self.__str__() 

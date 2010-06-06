@@ -78,7 +78,7 @@ def main():
     elif phase == "AtaqueArmas":
         attack.weaponsAttack ()
     elif phase == "AtaqueFisico":
-        physicalAttack ()
+        attack.physicalAttack ()
     elif phase == "FinalTurno":
         turnEnd ()
     else: 

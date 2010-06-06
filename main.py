@@ -68,7 +68,7 @@ def main():
         defM.append(M)
         M = None
 
-    attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt")
+    attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
     
     # For each phase
     if phase == "Movimiento":

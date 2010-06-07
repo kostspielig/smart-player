@@ -1,26 +1,63 @@
 #!/usr/bin/python
 
 __id__ = "$Id: Reaction.py $"
-__version__ = "$Revision: 1 $"
-__date__ = "$Date: 06/06/2010 Sat  $"
+__version__ = "$Revision: 2 $"
+__date__ = "$Date: 07/06/2010 Sat  $"
 __author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
+import sys
+import Movement
+
+change = {0: 'Igual', 1: 'Derecha', 2: 'Izquierda'}
 
 class Reaction:
     """ Reaction Phase """
 
-    def __init__ (self, playerN):
-        self.playerN = playerN
+    def __init__ (self, actualPlayer, board, mechs, ini ):
+        self.playerN = actualPlayer
+        self.board = board
+        self.mechs = mechs
+        self.ini = ini
+        self.player = self.mechs.mechSet[self.playerN]
+        self.playerCell = ( int(self.player.cell[2:] ) -1, int(self.player.cell[0:-2] )-1 )
+        self.playerFace = self.player.facingSide -1
+        self.newFace = change[0]
+
+    def calculate_reaction(self):
+        enemy,distance = self.setTarjet()
+        faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6 #[0-5]
+        enemyCell = (int(self.mechs.mechSet[enemy].cell[2:])-1, int(self.mechs.mechSet[enemy].cell[0:-2])-1)
+        facePos = Movement.relative_position(self.playerCell, enemyCell)
+        if self.playerFace != facePos:
+            if (self.playerFace +1)%6 == facePos:
+                self.newFace = change[1]
+            elif (self.playerFace -1)%6 == facePos:
+                self.newFace = change[2]
+
+        return 0
 
     def printAction(self):
         file = open("accionJ"+ str(self.playerN)+".sbt", "w")
         
-        file.write(str(0) +"\n")
-        file.write(str(0) +"\n")
-        file.write(str(False) +"\n")
-        file.write(str(0) +"\n")
+        file.write(str(self.newFace) +"\n")
 
         file.close()
 
+    def setTarjet(self):
+        """ Finds out the player we are going to approach
+        returns the enemy number + distance to enemy
+        """
+        t = 0
+        distance = sys.maxint
+        for m in self.mechs.mechSet:
+            if m.playerNumber == self.playerN:
+                continue
+            d = Movement.dist2((int(self.player.cell[0:-2]),
+                       int(self.player.cell[2:])),(int(m.cell[0:-2]),int( m.cell[2:])))
+            print "distance to " + str(m.playerNumber) + "equals to " +str(d)
+            if d < distance:
+                t = m.playerNumber
+                distance = d
+        return t, distance

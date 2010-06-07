@@ -31,10 +31,11 @@ from pathfinder import Pos
 
 class Board(object):
     
-    def __init__ (self):
+    def __init__ (self, enemysCell = []):
         self.__width = 0
         self.__height = 0
         self.map = []
+        self.enemysCell = enemysCell
         
     def getWidth(self):
         return self.__width
@@ -224,6 +225,10 @@ class Board(object):
         if ( abs( self.map[c1[0]][c1[1]].level - self.map[c2[0]][c2[1]].level ) <= PM
              and moveType == 2):
             what = True
+        #if (self.enemysCell != [] ):
+        #    if c2 in self.enemysCell: 
+        #        print "ENEMYS CELL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        #        return False
         return what
 
 
@@ -343,7 +348,8 @@ def adjacent_cells (p, face):
     return r0,r1
 
 
-def areAdjacent(c,c2):       
+def areAdjacent(c,c2):   
+    """ Returns whether 2 cells are adjacent or not """
     slist=[]
     for i in (-1,0,1):
         for j in (-1,0,1):

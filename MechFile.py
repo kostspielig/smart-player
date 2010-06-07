@@ -161,6 +161,16 @@ class MechFile:
 
         f.close()
 
+    def enemys_cell (self):
+        EC = []
+
+        for x in self.mechSet:
+            if x.playerNumber != self.actualMech:
+                EC.append( ( int(x.cell[2:])-1, int(x.cell[0:-2])-1) )
+
+        return EC
+
+
 def str2bool(string):
     if string.strip().lower() in ('yes', '1', 'true', 'si'):
         return True

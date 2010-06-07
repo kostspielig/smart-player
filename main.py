@@ -19,6 +19,7 @@ import Initiative
 import Movement
 import Attack
 import EndTurn
+import Reaction
  
 """
 Main Function
@@ -50,13 +51,13 @@ def main():
         config = Options.Options()
         config.readOptions("../ficheros/configJ"+str(actualPlayer)+".sbt")
 
-        # Reading the board
-        board = Board.Board()
-        board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
-
         # Reading the mech file
         mechs = MechFile.MechFile()
         mechs.readMechFile("../ficheros/mechsJ"+str(actualPlayer)+".sbt")
+
+        # Reading the board
+        board = Board.Board(mechs.enemys_cell())
+        board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
 
         # Reading initiative file
         ini = Initiative.Initiative()
@@ -72,20 +73,20 @@ def main():
             defM.append(M)
             M = None
 
-        attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
+
 
     
         # For each phase
         if phase == "Movimiento":
             movement (actualPlayer,board, mechs, ini)
         elif phase == "Reaccion":
-            reaction ()
+            reaction (actualPlayer, board, mechs, ini)
         elif phase == "AtaqueArmas":
-            attack.weaponsAttack ()
+            weaponsAttack (actualPlayer, board, mechs, defM)
         elif phase == "AtaqueFisico":
-            attack.physicalAttack ()
+            physicalAttack (actualPlayer, board, mechs, defM)
         elif phase == "FinalTurno":
-            turnEnd ()
+            turnEnd (actualPlayer)
         else: 
             print "Incorrect Phase!!"
             return -2
@@ -96,21 +97,26 @@ def main():
         print "Error"
         traceback.print_exc(file=sys.stdout)
         
-def movement (actualPlayer,board, mechs, ini):
+def movement (actualPlayer, board, mechs, ini):
     strategy = Movement.Movement(actualPlayer, board, mechs, ini)
     strategy.nextMove()
 
-def reaction ():
-    print "Reaction"
+def reaction (actualPlayer, board, mechs, ini):
+    re = Reaction.Reaction(actualPlayer)
+    re.printAction()
 
-def weaponsAttack ():
+def weaponsAttack (actualPlayer, board, mechs, defM):
+    attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
+    attack.weaponsAttack ()
     print "Atatck - W"
 
-def physicalAttack ():
+def physicalAttack (actualPlayer, board, mechs, defM):
+    attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
+    attack.physicalAttack ()
     print "Atatck - P"
 
-def turnEnd ():
-    end = EndTurn.EndTurn()
+def turnEnd (actualPlayer):
+    end = EndTurn.EndTurn(actualPlayer)
     end.printAction()
 
 if __name__ == "__main__":

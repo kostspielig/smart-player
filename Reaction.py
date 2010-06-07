@@ -21,14 +21,16 @@ class Reaction:
         self.mechs = mechs
         self.ini = ini
         self.player = self.mechs.mechSet[self.playerN]
-        self.playerCell = ( int(self.player.cell[2:] ) -1, int(self.player.cell[0:-2] )-1 )
+        self.playerCell = ( int(self.player.cell[2:] ) -1, 
+                            int(self.player.cell[0:-2] )-1 )
         self.playerFace = self.player.facingSide -1
         self.newFace = change[0]
 
     def calculate_reaction(self):
         enemy,distance = self.setTarjet()
         faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6 #[0-5]
-        enemyCell = (int(self.mechs.mechSet[enemy].cell[2:])-1, int(self.mechs.mechSet[enemy].cell[0:-2])-1)
+        enemyCell = (int(self.mechs.mechSet[enemy].cell[2:])-1, 
+                     int(self.mechs.mechSet[enemy].cell[0:-2])-1)
         facePos = Movement.relative_position(self.playerCell, enemyCell)
         if self.playerFace != facePos:
             if (self.playerFace +1)%6 == facePos:
@@ -36,7 +38,8 @@ class Reaction:
             elif (self.playerFace -1)%6 == facePos:
                 self.newFace = change[2]
 
-        return 0
+        self.printAction()
+        self.printLog()
 
     def printAction(self):
         file = open("accionJ"+ str(self.playerN)+".sbt", "w")
@@ -44,6 +47,17 @@ class Reaction:
         file.write(str(self.newFace) +"\n")
 
         file.close()
+
+    def printLog(self):
+        file = open("x50608460.log", "a")
+        file.write (" FASE DE REACCION =====================>\n")
+        if self.newFace != change[0]: # Si no nos quedamos quietos
+            file.write ("Cambiamos el encaramiento moviendonos hacia la "+ self.newFace + "\n")
+        else:
+            file.write ("Nos quedamos con el mismo encaramiento \n")
+        file.write ("<=======================================\n")
+        file.close ()
+
 
     def setTarjet(self):
         """ Finds out the player we are going to approach

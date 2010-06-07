@@ -97,7 +97,7 @@ class Movement:
             self.stepCell.append((4,face)) #Levantarse , face
 
         # If we do move first -> Hide
-        if self.ini.position.index(self.playerN)< self.ini.position.index(enemy):
+        elif self.ini.position.index(self.playerN)< self.ini.position.index(enemy):
             print self.ini.position
             self._hide(cellEnemy)
         else: #We do move last -> go for the enemy's back!
@@ -106,6 +106,7 @@ class Movement:
             print self.path
 
         self.printAction()
+        self.printLog()
 
         
     def _hide (self, enemy):
@@ -168,6 +169,15 @@ class Movement:
 
         file.close()
         return ret
+
+    def printLog(self):
+        file = open("x50608460.log", "a")
+        file.write (" FASE DE MOVIMIENTO ====================>\n")
+        file.write (" ___Path___ \n")
+        file.write (str(self.path) + " \n")
+        file.write ("<========================================\n")
+        file.close ()
+        
 
     def calculate_steps(self):
         #y = self.path[0]

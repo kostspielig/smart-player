@@ -102,8 +102,8 @@ def movement (actualPlayer, board, mechs, ini):
     strategy.nextMove()
 
 def reaction (actualPlayer, board, mechs, ini):
-    re = Reaction.Reaction(actualPlayer)
-    re.printAction()
+    re = Reaction.Reaction(actualPlayer, board, mechs, ini)
+    re.calculate_reaction()
 
 def weaponsAttack (actualPlayer, board, mechs, defM):
     attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)

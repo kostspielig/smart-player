@@ -226,9 +226,13 @@ class Board(object):
              and moveType == 2):
             what = True
         #if (self.enemysCell != [] ):
-        #    if c2 in self.enemysCell: 
-        #        print "ENEMYS CELL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        #        return False
+        print "ENEMIGOS"
+        print self.enemysCell
+        if c2 in self.enemysCell: 
+            print c2
+            return False
+            print "ENEMYS CELL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+
         return what
 
 

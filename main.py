@@ -1,13 +1,15 @@
 #!/usr/bin/python
 
 __id__ = "$Id: main.py $"
-__version__ = "$Revision: 1 $"
-__date__ = "$Date: 09/05/2010 Sun $"
+__version__ = "$Revision: 15 $"
+__date__ = "$Date: 07/06/2010 Sun $"
 __author__ = "Maria Carrasco Rodriguez, Francisco Manuel Herrero Perez"
 __license__ = "GPL"
 __URL__ = "http://code.google.com/p/smart-player/"
 
 import sys
+import traceback
+import os
 import getopt
 import Options
 import Board
@@ -16,6 +18,7 @@ import MechFile
 import Initiative
 import Movement
 import Attack
+import EndTurn
  
 """
 Main Function
@@ -39,56 +42,61 @@ def main():
         print "Error: Incorrect number of arguments\n Player Number + Phase"
         return -1
    
-        
-    actualPlayer = int(args[0])
-    phase = args[1]
+    try:
+        actualPlayer = int(args[0])
+        phase = args[1]
 
-    # Reading the options
-    config = Options.Options()
-    config.readOptions("../ficheros/configJ"+str(actualPlayer)+".sbt")
+        # Reading the options
+        config = Options.Options()
+        config.readOptions("../ficheros/configJ"+str(actualPlayer)+".sbt")
 
-    # Reading the board
-    board = Board.Board()
-    board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
+        # Reading the board
+        board = Board.Board()
+        board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
 
-    # Reading the mech file
-    mechs = MechFile.MechFile()
-    mechs.readMechFile("../ficheros/mechsJ"+str(actualPlayer)+".sbt")
+        # Reading the mech file
+        mechs = MechFile.MechFile()
+        mechs.readMechFile("../ficheros/mechsJ"+str(actualPlayer)+".sbt")
 
-    # Reading initiative file
-    ini = Initiative.Initiative()
-    ini.readInitiative("../ficheros/iniciativaJ"+str(actualPlayer)+".sbt")
+        # Reading initiative file
+        ini = Initiative.Initiative()
+        ini.readInitiative("../ficheros/iniciativaJ"+str(actualPlayer)+".sbt")
 
  
 
-    # Reading defMechs
-    defM = []
-    for x in range(mechs.mechNumber):
-        M = DefMech.DefMech()
-        M.readDefMech("../ficheros/defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
-        defM.append(M)
-        M = None
+        # Reading defMechs
+        defM = []
+        for x in range(mechs.mechNumber):
+            M = DefMech.DefMech()
+            M.readDefMech("../ficheros/defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
+            defM.append(M)
+            M = None
 
-    attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
+        attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
 
     
-    # For each phase
-    if phase == "Movimiento":
-        movement (actualPlayer,board, mechs, ini)
-    elif phase == "Reaccion":
-        reaction ()
-    elif phase == "AtaqueArmas":
-        attack.weaponsAttack ()
-    elif phase == "AtaqueFisico":
-        attack.physicalAttack ()
-    elif phase == "FinalTurno":
-        turnEnd ()
-    else: 
-        print "Incorrect Phase!!"
-        return -2
+        # For each phase
+        if phase == "Movimiento":
+            movement (actualPlayer,board, mechs, ini)
+        elif phase == "Reaccion":
+            reaction ()
+        elif phase == "AtaqueArmas":
+            attack.weaponsAttack ()
+        elif phase == "AtaqueFisico":
+            attack.physicalAttack ()
+        elif phase == "FinalTurno":
+            turnEnd ()
+        else: 
+            print "Incorrect Phase!!"
+            return -2
 
+        os.system("pause")
+    
+    except:
+        print "Error"
+        traceback.print_exc(file=sys.stdout)
+        
 def movement (actualPlayer,board, mechs, ini):
-    print "Movement"
     strategy = Movement.Movement(actualPlayer, board, mechs, ini)
     strategy.nextMove()
 
@@ -102,7 +110,9 @@ def physicalAttack ():
     print "Atatck - P"
 
 def turnEnd ():
-    print "ENDDDDDDDDDDDDDDDDDDDDDDDD"
+    end = EndTurn.EndTurn()
+    end.printAction()
 
 if __name__ == "__main__":
     main()
+

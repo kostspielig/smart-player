@@ -125,7 +125,7 @@ class Movement:
             path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
             if can2 == True:
                 return (path2, 1)
-        if can2 == False and self.player.jump != 0:
+        if can == False and self.player.jump != 0:
             path3, can3, cost3 = pf.compute_path_until_PM(A, B, 2, self.player.jump)
             if can3 == True:
                 return (path3,2)
@@ -152,7 +152,8 @@ class Movement:
             file.write(str(p.printPos()) +"\n") #Hex destino
             file.write(str(p.printFace()) +"\n") #Lado hex destino
             file.write(str(self.masc) +"\n") #Usar masc? 
-            move = self.calculate_steps()
+            move,s = self.calculate_steps()
+            file.write(str(s) +"\n") #Numero de pasos
             for x in move:
                 file.write(str(step[x[0]]) +"\n")
                 file.write(str(x[1]) +"\n")
@@ -172,21 +173,25 @@ class Movement:
         #y = self.path[0]
         #for x in self.path[1:]:
         moves = []
+        s = 0
         i = 1
         while i < len(self.path): 
             y = self.path[i-1] 
             x = self.path[i]
-
-            #print self.path
-            #print "YYYYY"
-            #print y
-            #print "XXXX"
-            #print x
             if y.face != x.face:
                 costFace = min( (x.face - y.face)%6, (y.face - x.face)%6 )
                 if (y.face - costFace) % 6 == x.face:
                     moves.append((2,costFace))
-                else: moves.append((3, costFace))
+                    s += 1
+                    if i+1 !=len(self.path): 
+                        moves.append((0,1))
+                        s+= 1
+                else: 
+                    moves.append((3, costFace))
+                    s += 1
+                    if i+1 !=len(self.path): 
+                        moves.append((0,1))
+                        s+= 1
                 i += 1
             else:
                 aux = 1
@@ -198,7 +203,8 @@ class Movement:
                     else: break
                     i += 1
                 moves.append((0, aux))
-        return moves
+                s+= 1
+        return moves,s
 
 def str2bool(string):
     return string.strip().lower() in ('yes', '1', 'true')

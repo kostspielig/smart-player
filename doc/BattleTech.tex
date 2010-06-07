@@ -23,7 +23,7 @@
 \lstset{language=Python,commentstyle=\emph}
 \usepackage{color} 
 \usepackage{colortbl}
-
+\hypersetup{linkbordercolor= 1 0.8 0.8}
 \usepackage{phdthesis}
 
 
@@ -479,12 +479,43 @@ O(log N). En cambio, cuando ya existe, su prioridad se comprueba con
 el nuevo elemento en O(1). Si la prioridad del nuevo elemento es
 menor, se actualiza en la cola. Esto lleva un tiempo O(N).
 
-\section{Reacción}
+\section{Módulo de Reacción}
+
+El módulo de reacción es inmediatamente posterior al módulo de
+movimiento. En esta fase se presenta la posibilidad de corregir el
+encaramiento del torso para mejorar la estrategia de ataque -
+mejorando el ángulo de disparo, tenemer a mas enemigos en línea de
+visión, proteger partes débiles de nuestro mech, etc. -.\\
+
+Las posibilidades que se nos presentan ahora son tres:
+\begin{lstlisting}
+  change = {0: 'Igual', 1: 'Derecha', 2:'Izquierda'}
+\end{lstlisting}
+Las cuales nos indican lois tres posibles cambios que podemos
+realizar:
+\begin{enumerate}
+\item {\bf Igual}. Indica que no vamos a realizar ninguna
+  cambio. Dejamos nuestro encaramiento intacto para la siguientes
+  fases.
+\item {\bf Derecha}. Giramos el mech para posicionar su torso una cara
+  a Derecha.
+\item {\bf Izquierda}.Giramos el mech para posicionar su torso una cara
+  a Izquierda.
+\end{enumerate}
+
+
+
 \section{Módulo de Ataque con Armas}
 \subsection{Lógica del ataque con armas}
 El ataque con armas es una de las fases más importantes del juego.  El objetivo principal del Mech en la fase de ataque con armas será elegir a que enemigos y con que armas desea atacar.
 Para poder realizar esta fase inteligentemente, dotaremos al Mech de la capacidad para analizar los distintos condicionantes que intervienen en el ataque. 
-Antes de adentrarnos en que tipos de condicionantes, es necesario definir la estrategia general que realizarán nuestros Mechs. La estrategía será maximizar el daño sobre el atacado minimizando los daños en el atacante, es decir, atacaremos al Mech objetivo con todas las armas posibles mientras no se supere un valor umbral de daño en forma de calor en el atacante. Por tanto queda claro que los condicionantes que debe determinar el Mech serán:
+Antes de adentrarnos en que tipos de condicionantes, es necesario
+definir la estrategia general que realizarán nuestros Mechs. La
+estrategía será maximizar el daño sobre el atacado minimizando los
+daños en el atacante, es decir, atacaremos al Mech objetivo con todas
+las armas posibles mientras no se supere un valor umbral de daño en
+forma de calor en el atacante. Por tanto queda claro que los cond
+cionantes que debe determinar el Mech serán:
 \begin{enumerate}
 \item Se realiza ataque.
 \begin{enumerate}
@@ -495,9 +526,20 @@ Antes de adentrarnos en que tipos de condicionantes, es necesario definir la est
 \item No se realiza ataque.
 \end{enumerate}
 \subsection{Se realiza un ataque}
-En primer lugar es necesario saber si el Mech desea atacar o prefiero no realizar ningún tipo de ataque. Para discriminar entre las dos actuaciones nos basamos en calcular que enemigos están dentro de nuestra línea de visión. Si existe al menos un Mech dentro de nuestra línea de visión el ataque se realizará. 
+En primer lugar es necesario saber si el Mech desea atacar o prefiero
+no realizar ningún tipo de ataque. Para discriminar entre las dos
+actuaciones nos basamos en calcular que enemigos están dentro de
+nuestra línea de visión. Si existe al menos un Mech dentro de nuestra
+línea de visión el ataque se realizará. 
+
 \subsubsection{Localización del Mech objetivo}
-Una vez seleccionados los Mechs que están dentro de nuestra línea de visión, elegimos cual es el que está más próximo a nosotros, calculando la distancia entre nuestra casilla en el tablero y las casillas de los enemigos dentro de nuestra línea de visión. Determinamos así el Mech objetivo sobre el que recaerán todo el poder de nuestras armas.
+Una vez seleccionados los Mechs que están dentro de nuestra línea de
+visión, elegimos cual es el que está más próximo a nosotros,
+calculando la distancia entre nuestra casilla en el tablero y las
+casillas de los enemigos dentro de nuestra línea de
+visión. Determinamos así el Mech objetivo sobre el que recaerán todo
+el poder de nuestras armas.
+
 \subsubsection{Elección de armas a usar en el ataque}
 Una vez determinado el objetivo del ataque procedemos a elegir las armas que podemos usar en el ataque. Cada arma tiene un valor que corresponde a la distancia que es capaz de alcanzar en un disparo, por tanto, el siguiente paso será comprobar de entre todas las armas de nuestro Mech cuales son capaces de alcanzar la distancia a la que está de nosotros el Mech objetivo. 
 \subsubsection{Determinación del valor umbral de temperatura}

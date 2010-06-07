@@ -82,7 +82,7 @@ class Movement:
         print "run: "+str(self.player.run)
         print "jump: "+str(self.player.jump)
         enemy,distance = self.setTarjet()
-        faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6
+        faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6 #[0-5]
         print "torso enemy"+ str(faceTorsoEnemy+1)
 
         cellEnemy = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1

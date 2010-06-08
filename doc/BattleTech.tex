@@ -1,5 +1,5 @@
 % 
-% Practica ICO
+% Practica ICO - Smart Player
 % ------------------
 % Ingeniería del Conocimento
 % Universidad de Granada
@@ -26,8 +26,11 @@
 \usepackage{colortbl}
 \hypersetup{linkbordercolor= 1 0.8 0.8}
 \usepackage{phdthesis}
-
-
+\usepackage{times}
+\usepackage{setspace}
+% \onehalfspacing
+\renewcommand{\baselinestretch}{1.5}
+%\doublespacing
 
 % opening
 \title{Jugador Inteligente}
@@ -83,14 +86,166 @@ llamados Mechs). \\
   \includegraphics[width=7cm]{images/mech_super.jpg}
 \end{figure}
 
+Este juego fue diseñado por la compañía americana {\it FASA}, que
+debido al gran éxito obtenido, ha ido creciendo hasta el infinito con
+diversas aplicaciones.
+En España, lo primero que se comercializó fué la trilogía de novelas
+El sol y la espada, en la que {\it Michael A. Stackpole} desarrolla las
+líneas argumentales básicas del universo que sirve de fondo para el
+juego. Posteriormente, se editó el juego de tablero, la primera y
+segunda versiones de las reglas del juego de rol, seguidos de
+distintos accesorios (módulos, ampliaciones, figuras a escala, etc).\\
+
+El juego trata del enfrentamiento por la supremacía entre cinco
+unidades políticas herederas de un antiguo gran imperio -la Liga
+Estelar-, que se extendía hasta los 300 años-luz de la Tierra. Tras
+el derrumbe de la Liga, comienzan las Guerras de Sucesión entre las
+Grandes Casas (las familias que rigen cada una de las unidades
+políticas). Estas guerras acaban por destruir los medios de producción
+de bienes, con lo que tras 300 años de guerra continuada, la economía
+se basa en el saqueo sistemático para mantener la capacidad bélica de
+los diversos ejércitos.\\
+
+
+La acción principal de las novelas tiene lugar en el periodo
+comprendido entre el 3027 y el 3058, en el que Hanse Davion, Principe
+de la Federación de Soles, logra firmar una alianza con la
+Mancomunidad de Lira para someter al resto de naciones y reinstaurar
+la Liga Estelar. Esto da lugar a una serie de enfrentamientos
+políticos y militares a gran escala que dan un buen transfondo al
+juego de rol.\\
+
+
+El juego -tanto en tablero como en rol- se basa en las unidades
+militares de las Grandes Casas, compuestas por robots de 20 metros de
+altura (Mechs), cada uno con más armas encima que pinchos tiene un
+puercoespín. Como la ciencia ha decaido a un nivel similar al del
+siglo XXII, estos están cayéndose a pedazos, pero aún así son capaces
+de destrozar una ciudad sin esfuerzo. Aunque parezca un poco tonto eso
+de llevar un robot por un tablero disparando a otros robots, es
+divertidísimo. Si además lo incluyes en una campaña de un juego de
+rol, puedes acabar por olvidarte de los otros vicios.
+
+
 \section{Descripción del Problema}
 \begin{quote}
-    {\it En la practica se ha de diseñar
+  {\it En la practica se ha de diseñar
     y desarrollar un prototipo de
     Jugador Inteligente. }
 \end{quote}
-\section{Abstracción del Problema}
-La inteligencia artificia, {\bf IA}, es una disciplina relativamente
+
+Nuestro objetivo es crear un jugador inteligente que sea capaz de
+dirigir a los BattleMechs. Para ello debe decidir la acción a
+realizar en cada momento por ellos. Nuestro problema se restringe
+únicamente a controlar a los Mechs, aunque existan muchos otros tipos
+de vehículos en los combates - BattleMech, vehículo, Pelotón de
+infantería o Punta o Escuadra de armaduras de combate -.
+
+\subsection{BattleMechs}
+Titanes humanoides de metal de 12 metros de altura cubiertos con
+láseres, cañones automáticos y docenas de otras armas letales; poder
+suficiente para arrasar manzanas enteras de edificios. 
+
+\subsection{Mapas}
+
+En Battletech las partidas se juegan en mapas divididos en áreas de
+seis lados llamadas hexágonos, las cuales regulan el movimiento y el
+combate entre varias unidades. Los mapas pueden tener bosques, ríos,
+lagos, montañas y más.
+
+\subsection{Secuencia de Juego}
+
+Una partida de Battletech consiste en una serie de turnos. Durante
+cada turno todas las unidades en el mapa tienen la oportunidad de
+moverse y disparar sus armas. Cada turno consiste en varios
+segmentos de tiempo más pequeños, llamados fases.\\
+
+Durante cada fase, los jugadores pueden escoger un tipo de acción,
+cada turno incluye las correspondientes fases, que se desarrollan en
+el orden siguiente:
+\begin{enumerate}
+\item Fase de Movimiento
+\item Fase de Reacción
+\item Fase de Ataque con Armas
+\item Fase de Ataque Físicos
+\item Fase de Final de Turno
+\end{enumerate}
+
+\subsubsection{ Fase de Movimiento }
+El jugador que ha perdido la iniciativa mueve primero. El jugador que
+ganó la iniciativa mueve entonces. El movimiento se alterna entre los
+bandos hasta que todas las unidades se hayan movido. \\
+
+Las unidades de Battletech cambian de posición y ubicación
+en el mapa realizando uno de los distintos movimientos. Durante la
+Fase de Movimiento de cada turno los jugadores deben escoger un modo
+de movimiento, para los Mechs las opciones son andar, correr o saltar.
+
+\subsubsection{ Fase de Reacción }
+Fase posterior al movimiento que permite a los mechs de girar el
+torso. Sólo se permite un movimiento de giro, por lo que podremos
+girar a la derecha, a la izquierda o permanecer igual.
+
+\subsubsection{ Fase de Ataque con Armas } 
+Fase en la que los jugadores, por orden de iniciativa, pueden abrir
+fuego con la artilleria de sus mechs. El Mech elegirá las armas que
+disparara, dentro de las que dispone en su arsenal, y sobre qué
+enemigo usarlas.
+
+\subsubsection{ Fase de Ataque Físicos }
+Fase en la que se presenta una nueva opción la opción de realizar daño
+físico a otros Mech, y es la última opción de hacerles daño dentro del
+turno en el que nos encontramos.
+El ataque físico consistirá en realizar un impacto físico, con algún
+garrote/arma o extremidad del robot.
+
+\subsubsection{Fase  de Final de Turno }
+Fase en la que los jugadores pueden determinar acciones especiales como
+tirar algún garrote o munición al suelo o apagar o encender radiadores.
+
+\subsection {Objetivo}
+Nuestro objetivo principal en el juego será acabar con todos los
+jugadores que haya en el tablero, exceptuando al nuestro. Para ello,
+debemos destruir una a una el resto de las unidades que participan en
+el juego.
+
+
+\section {Abstracción del Problema}
+
+Para resolver nuestro problema podemos ver al jugador inteligente como
+un {\it ente}, que percibe el universo a través de un conjunto
+entradas - que nos indican el estado actual del juego -. Este ente
+debe ser capaz de escoger una acción a realizar.\\
+
+Pero, ¿Cómo escoger cual de entre todas las posibles acciones a
+realizar? La respuesta es bastante subjetiva, ya dependerá de la
+estrategia a seguir. Según la escogida, se obtendrá un resultado mejor
+o peor, pero también depende del caso concreto que estemos estudiando,
+ya que si cambiamos ciertos parametros de nuestro universo, otra
+estrategia puede resultar más favorable.\\
+
+A la hora de decidir sobre qué estrategia seguir, se debe de tener en
+cuenta que tanto la {\bf experiencia} adquirida tras años de juego y
+el {\bf conocimiento} de las reglas del mismo, son puntos críticos a
+la hora de maxímizar nuestro rendimiento.
+
+Nuestro ente se mueve en un espacio temporal discreto, el juego se
+divide por turnos y estos a su vez, se ve dividido en segmentos más
+pequeños a los que llamaremos fases. Cada fase se utiliza para
+realizar una acción determinada, y según la acción que queramos
+realizar seguiremos una manera de razonar distinta según los objetivos
+que queramos conseguir. Veamos entonces cada una de las fases.
+
+\subsection{Fase de Movimiento}
+\subsection{Fase de Reacción}
+\subsection{Fase de Ataque con Armas}
+\subsection{Fase de Ataque Físico}
+\subsection{Fase de Final de turno}
+
+
+
+\chapter{Modelo Teórico}
+La inteligencia artificial, {\bf IA}, es una disciplina relativamente
 nueva, la cual es considerada como una gran desconocida y una de las
 que más interés profano despierta. Pero, {¿qué es realmente la IA?}
 Aunque existen muchas definiciones, podemos resumirlas en {\it
@@ -99,11 +254,11 @@ Aunque existen muchas definiciones, podemos resumirlas en {\it
 También hemos encontrado otras definiciones que resultan interesantes:
 \begin{itemize}
 \item {\it `` The exciting new effort to make computers think ... machines
-  with minds, in the full literal sense.''} (Haugeland, 1985)\\
+    with minds, in the full literal sense.''} (Haugeland, 1985)\\
 \item {\it `` The art of creating machines that perform functions that
-  require intelligence shen permormed by people''} (kurzweil, 1990)\\
+    require intelligence shen permormed by people''} (kurzweil, 1990)\\
 \item {\it `` The study of how to make computers do things at which, at the
-  moment people are better''} (Rich and Knight, 1991)\\
+    moment people are better''} (Rich and Knight, 1991)\\
 \end{itemize}
 En la IA se encuentra un paradigma conocido como {\it ``paradigma de
   agentes''}, que aborda el desarrollo de entidades que puedan actuar
@@ -113,13 +268,13 @@ desarrollo de sistemas que piensen y actúen racionalmente, podemos
 pensar que la IA, en su conjunto, trata realmente de construir
 precisamente dichas entidades autónomas e inteligentes.
 \begin{quote}
- ``Los agentes constituyen el próximo avance más significativo en el
- desarrollo de sistemas y pueden ser considerados como la nueva
- revolución en el software.''
- Dr. Nicholas Jennings
+  ``Los agentes constituyen el próximo avance más significativo en el
+  desarrollo de sistemas y pueden ser considerados como la nueva
+  revolución en el software.''
+  Dr. Nicholas Jennings
 \end{quote}
 
-\subsubsection{Agente Inteligente}
+\section{Agente Inteligente}
 Un agente inteligente, es una entidad capaz de percibir su entorno,
 procesar tales percepciones y responder o actuar en su entorno de
 manera racional, es decir, de manera correcta y tendiendo a maximizar
@@ -171,10 +326,11 @@ correctas varia en complejidad.
 \end{itemize}
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=10cm]{images/metas.png}
+  \includegraphics[width=13.5cm]{images/meta2.png}
   \caption{Agente basado en metas.}
 \end{figure}
-\subsubsection{Ambientes}
+
+\section{Ambientes}
 Existen diferentes tipos de ambientes:
 \begin{itemize}
 \item {\bf Accesibles y no accesibles.} En nuestro caso se trata de un
@@ -192,13 +348,14 @@ Existen diferentes tipos de ambientes:
   ``dinámico''. Pero en nuestro caso tratamos con ambientes {\it
     estáticos}, puesto que no se tiene que observar y pensar al mismo tiempo.
 \item {\bf Discretos y continuos.} Si existe una cantidad limitada de
- percepciones y acciones distintas y discernibles, se dice que el
- ambiente es discreto. Si no es posible enumerarlos, entonces es un
- ambiente continuo. Nuestro problema abarca ambienes discretos, lo
- cual nos facilita el trabajo.
+  percepciones y acciones distintas y discernibles, se dice que el
+  ambiente es discreto. Si no es posible enumerarlos, entonces es un
+  ambiente continuo. Nuestro problema abarca ambienes discretos, lo
+  cual nos facilita el trabajo.
 \end{itemize}
 
-{\bf Programa de Ambientes.}\\
+{\bf Programa de Ambientes.}
+
 
 Un simulador toma como entrada uno o más agentes y dispone de lo
 necesario para proporcionar las percepciones correctas una y otra vez
@@ -212,8 +369,6 @@ Los agentes se diseñan para que funcionen dentro de un conjunto de
 ambientes diversos. Para poder medir el desempeño de un agente es
 necesario contar con un simulador que seleccione ambientes
 particulares en los que se pueda probar al agente.
-
-\chapter{Modelo Teórico}
 
 \chapter{Descripción de la Solución}
 
@@ -308,46 +463,53 @@ todos sus hijos, los inserta en abiertos, y pasa el nodo evaluado a cerrados.
 
 
 \subsection {Implementación}
+
+
 \begin{tabular}{  p{13cm}  }
   \hline    \hline                    
-{\bf Algoritmo:} {\it A*. A estrella}\\  \hline     
-{\bf Input:} {\it start}: Node de comienzo; {\it goal} Nodo final\\  \hline     
-{\bf Output:} Lista con nodos que forman el camino (si existe).\\  \hline     
+  {\bf Algoritmo:} {\it A*. A estrella}\\  \hline     
+  {\bf Input:} {\it start}: Node de comienzo; {\it goal} Nodo final\\  \hline     
+  {\bf Output:} Lista con nodos que forman el camino (si existe).\\  \hline     
 
   \hline  \hline 
-\begin{lstlisting}
-  closed_set = {}
-        
-  start_node = start
-  start_node.g_cost = 0
-  start_node.f_cost = compute_f_cost(start_node, goal)
-        
-  open_set = PriorityQueueSet()
-  open_set.add(start_node)
-        
-  while len(open_set) > 0:
-     curr_node = open_set.pop_smallest()
-            
-     if curr_node.coord == goal:
-        return reconstruct_path(curr_node)
-            
-     closed_set[curr_node] = curr_node
-            
-     for succ_coord in successors(curr_node.coord):
-        succ_node = succ_coord
-        succ_node.g_cost = compute_g_cost(curr_node, succ_node)
-        succ_node.f_cost = compute_f_cost(succ_node, goal)
-                
-        if succ_node in closed_set:
-           continue
-                   
-        if open_set.add(succ_node):
-           succ_node.pred = curr_node
-        
-  return []
-\end{lstlisting} 
-\end{tabular}
+\renewcommand{\baselinestretch}{1}
+\normalsize
+  \begin{lstlisting}
 
+    closed_set = {}
+    
+    start_node = start
+    start_node.g_cost = 0
+    start_node.f_cost = compute_f_cost(start_node, goal)
+    
+    open_set = PriorityQueueSet()
+    open_set.add(start_node)
+    
+    while len(open_set) > 0:
+    curr_node = open_set.pop_smallest()
+    
+    if curr_node.coord == goal:
+    return reconstruct_path(curr_node)
+    
+    closed_set[curr_node] = curr_node
+    
+    for succ_coord in successors(curr_node.coord):
+    succ_node = succ_coord
+    succ_node.g_cost = compute_g_cost(curr_node, succ_node)
+    succ_node.f_cost = compute_f_cost(succ_node, goal)
+    
+    if succ_node in closed_set:
+    continue
+    
+    if open_set.add(succ_node):
+    succ_node.pred = curr_node
+    
+    return []
+
+  \end{lstlisting} 
+\end{tabular}
+\renewcommand{\baselinestretch}{1.5}
+\normalsize
 
 La implementación es genérica y no se basa en ningún juego en
 concreto. {\bf PathFinder} es una clase genérica que no tiene en
@@ -367,7 +529,7 @@ se puede llegar desde el nodo inicial en un solo paso.
 \begin{figure}[!h]
   \centering
   \includegraphics[width=7cm]{images/map2.png}
-%  \caption{Trozo de mapa.}
+  % \caption{Trozo de mapa.}
 \end{figure}
 
 En nuestro ejemplo, los sucesores del nodo {\it 0103}, donde se encuentra
@@ -433,23 +595,23 @@ Siendo,
 $$Vx = |x'-x| $$
 $$Vy = |y'-y| $$
 
- Esta heurística no es completamente precisa, ya que  nos ofrece una
- sobreestimación del resultado correcto. Esto se debe a que la
- conectividad entre celdas es diferente en un mapa hexagonal que en
- uno rectangular, aunque la representación que hemos usado del mapa
- pueda invitar al error, ya que usamos una matriz cuadrada.\\
+Esta heurística no es completamente precisa, ya que  nos ofrece una
+sobreestimación del resultado correcto. Esto se debe a que la
+conectividad entre celdas es diferente en un mapa hexagonal que en
+uno rectangular, aunque la representación que hemos usado del mapa
+pueda invitar al error, ya que usamos una matriz cuadrada.\\
 
 Finalmente, tras realizar varios experimentos con la función {\it
   manhattan}, nos dimos cuenta de que conducía a resultados erróneos
 en un número elevado de ocasiones. Así, encontramos la función que nos
 da la distancia exacta para un tablero hexagonal:
 $$ hexagonal\_distance(x,y, x',y') = Vx + max \{0, Vy- (Vx/2) -
-  factor\}  $$
+factor\}  $$
 Siendo:
 
 $$ factor = \left \{ \begin{matrix} 0 & \mbox{if }mod(Vy,2) \ne 0 
-\\ mod(x-1,2) & \mbox{if } y < y'
-\\ mod(x'-1,2) & \mbox{otherwise } \end{matrix} \right. $$
+    \\ mod(x-1,2) & \mbox{if } y < y'
+    \\ mod(x'-1,2) & \mbox{otherwise } \end{matrix} \right. $$
 
 De esta forma obtenemos la distancia real entre dos casillas de un tablero
 hexagonal. Esto nos permite una mayor precisión en nuestros cálculos.
@@ -519,11 +681,11 @@ forma de calor en el atacante. Por tanto queda claro que los cond
 cionantes que debe determinar el Mech serán:
 \begin{enumerate}
 \item Se realiza ataque.
-\begin{enumerate}
-\item Localización del Mech objetivo.
-\item Elección de armas a usar en el ataque.
-\item Determinación del valor umbral de temperatura.
-\end{enumerate}
+  \begin{enumerate}
+  \item Localización del Mech objetivo.
+  \item Elección de armas a usar en el ataque.
+  \item Determinación del valor umbral de temperatura.
+  \end{enumerate}
 \item No se realiza ataque.
 \end{enumerate}
 \subsection{Se realiza un ataque}
@@ -565,12 +727,14 @@ Esta fase nos brinda la posibilidad de apagar o encender radiadores,
 soltar garrote o expulsar municiones.
 
 \newpage
+\renewcommand{\baselinestretch}{1}
+\normalsize
 \begin{thebibliography}{XXX}
 \bibitem{0} González Duque, R., 2003. {\it ``PYTHON para todos.''} $1^{st}$ed. \\
 \bibitem{2} Gutschmidt, Tom, 2003. {\it ``Game Programming with Python,
     Lua, and Ruby.''  } Premier Press \\
 \bibitem{2} Weixiong Zhang, 1999. {\it ``State-Space Search. Algorithms,
-  Complexity, Extensions and Applications.''} Springer-Verlag: NY \\
+    Complexity, Extensions and Applications.''} Springer-Verlag: NY \\
 \bibitem{3} Pilgrim, Mark, 2004. {\it ``Dive into Python.''} Apress. \\
 \bibitem{1} Amit Patel\\ \url{
     http://theory.stanford.edu/~amitp/GameProgramming/} \label{amit}
@@ -578,7 +742,7 @@ soltar garrote o expulsar municiones.
 \bibitem{0} Russell, S. \& Norvig, P. {\it ``Artificial Intelligence: A
     Modern Approach''} $3^{rd}$ed. \\ \label{russell}
 \bibitem{4}  \url{http://www.policyalmanac.org/games/aStarTutorial.htm}\\
-\bibitem{5}  \url{ }\\
+\bibitem{5}  \url{http://www.solaris7.com/ }\\
 \bibitem{6}  \url{ }\\
 \bibitem{7}  \url{http://code.google.com/p/smart-player/ } \label{googlecode}
 \end{thebibliography}

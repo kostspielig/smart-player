@@ -33,9 +33,9 @@ class Reaction:
                      int(self.mechs.mechSet[enemy].cell[0:-2])-1)
         facePos = Movement.relative_position(self.playerCell, enemyCell)
         if self.playerFace != facePos:
-            if (self.playerFace +1)%6 == facePos:
+            if ( (self.playerFace +1)%6 == facePos ) or ((self.playerFace +2)%6 == facePos):
                 self.newFace = change[1]
-            elif (self.playerFace -1)%6 == facePos:
+            elif ( (self.playerFace -1)%6 == facePos) or ((self.playerFace -2)%6 == facePos):
                 self.newFace = change[2]
 
         self.printAction()

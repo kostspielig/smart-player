@@ -108,10 +108,17 @@ class Movement:
 
         
     def _hide (self, enemy, distance2enemy):
+        path = []
         pos, face = self.posible_positions(enemy, distance2enemy)
+        # Si no ai posiciones cercanas cambiamos nuestro encaramiento
+        if pos == []: 
+            face = relative_position(self.player, enemy)
+            if face != self.playerFace: 
+                pos.append(self.playerCell)
         pf = pathfinder.PathFinder(self.board.successors, self.board.move_cost, self.board.heuristic_to_goal)
         A = Pos(self.playerCell, self.playerFace)
         for x in pos:
+            face = relative_position (x, enemy)
             B = Pos(x, face)
             path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
             if can == True: return (path,0)
@@ -127,43 +134,48 @@ class Movement:
 
     def posible_positions (self,enemyCell, distance2enemy):
         positions = []
-        face = relative_position (self.playerCell, enemyCell)
-        print self.playerCell
-        print enemyCell
-        print "HACIA DONDE ESTA EL ENEMIGO????"
-        print face
-        if distance2enemy <3:
-            face = (face+3)%6
+        faceEnemy = relative_position (self.playerCell, enemyCell)
+        face = faceEnemy
+        #if distance2enemy <3:
+        #    face = (face+3)%6
         cell = self.playerCell
-        for i in range(10):
+        newCell = cell
+        for i in range(2):
+            cell = newCell
             for j in [0,1,-1]:
-                newCell = Board.adjacent_cells(cell, face+j)
+                newCell = Board.adjacent_cells(cell, face+j, self.board)
+                if newCell == 0: continue
                 # Miramos si ai algun bosque denso o  ligero
                 obj = self.board.map[newCell[0]][newCell[1]].objects
                 if obj == 1 or obj == 2:
                     positions.append(newCell)
 
-        return positions, face
+        return positions, faceEnemy
     
 
     def _approach (self, enemy, faceTorsoEnemy):
         i = 0
+        x = 0
         while True:
-            x = Board.adjacent_cells(enemy, (faceTorsoEnemy+i)%6)
+            x = Board.adjacent_cells(enemy, (faceTorsoEnemy+i)%6, self.board)
             i += 1
-            if not x in self.mechs.enemys_cell(): break
-
+            if (not x in self.mechs.enemys_cell()) and x != 0: break
         pf = pathfinder.PathFinder(self.board.successors, self.board.move_cost, self.board.heuristic_to_goal)
         A = Pos(self.playerCell, self.playerFace)
         B = Pos(x, Board.facing_side(x, enemy))
+        if A == B: return ([], 3)
+
         path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
         if can == False and self.player.run != 0:
             path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
             if can2 == True:
                 return (path2, 1)
         if can == False and self.player.jump != 0:
+            print "ESTO K ES!: walk then jump"
+            print self.player.walk
+            print self.player.jump
             path3, can3, cost3 = pf.compute_path_until_PM(A, B, 2, self.player.jump)
-            if can3 == True:
+            if (can3 == True) or  (self.player.jump >= self.player.walk):
                 return (path3,2)
         return (path, 0)
 
@@ -208,7 +220,8 @@ class Movement:
     def printLog(self):
         file = open("x50608460.log", "a")
         file.write (" FASE DE MOVIMIENTO ====================>\n")
-        file.write (" ___Path___ \n")
+        file.write ("Tipo de movimiento :  " +str(mov[self.movType])+ "\n")
+        file.write (" ___Camino___ \n")
         file.write (str(self.path) + " \n")
         file.write ("<========================================\n")
         file.close ()
@@ -228,13 +241,13 @@ class Movement:
                 if (y.face - costFace) % 6 == x.face:
                     moves.append((2,costFace))
                     s += 1
-                    if i+1 !=len(self.path): 
+                    if i+1 !=len(self.path) or x.pos != y.pos: 
                         moves.append((0,1))
                         s+= 1
                 else: 
                     moves.append((3, costFace))
                     s += 1
-                    if i+1 !=len(self.path): 
+                    if i+1 !=len(self.path) or x.pos != y.pos: 
                         moves.append((0,1))
                         s+= 1
                 i += 1
@@ -289,7 +302,7 @@ def relative_position(c1, c2):
         if c1[1] < c2[1]:
             return 2
     else: # c1[0] == c2[0] # misma fila
-        if c1[1]+1%2 == 0: #columnas pares
+        if (c1[1]+1)%2 == 0: #columnas pares
             if c1[1] > c2[1]:
                 return 5
             else: #c1[1] < c2[1]

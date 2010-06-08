@@ -131,7 +131,7 @@ class PathFinder(object):
                 if open_set.add(succ_node): 
                     succ_node.pred = curr_node 
          
-        return [] 
+        return [], False, 0
  
     ########################## PRIVATE ########################## 
      
@@ -165,8 +165,10 @@ class PathFinder(object):
         """ Reconstructs the path to the node from the start node 
             (for which .pred is None)
         """
+
         can = True
         cost = 0
+        pth = []
         temp = Pos(node.coord, node.face)
         if node.g_cost <= PM:
             cost = node.g_cost

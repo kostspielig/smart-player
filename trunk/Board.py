@@ -303,7 +303,7 @@ def facing_side (p1, p2):
             face = 5
     return face
 
-def adjacent_cells (p, face):
+def adjacent_cells (p, face, board):
     """ Returns the adjacent cell of p1 in the side face
     """
     r1 = 0; r0 = 0
@@ -345,7 +345,12 @@ def adjacent_cells (p, face):
         elif face == 5: # NO
             r0 = p[0] 
             r1 = p[1] -1
-    return r0,r1
+
+    # Check if we dont try a position out of the board
+    if (0 <= r0 <= board.height -1 and 0 <= r1 <= board.width -1):
+        return r0,r1
+    return 0
+        
 
 
 def areAdjacent(c,c2):   

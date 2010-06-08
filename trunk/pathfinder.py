@@ -110,10 +110,9 @@ class PathFinder(object):
             # Remove and get the node with the lowest f_score from  
             # the open set             
             # 
-            curr_node = open_set.pop_smallest() 
+            curr_node = open_set.pop_smallest()
             # If we reached the tarjet  Take care of END FACE 
             if curr_node.coord == goal.pos: 
-                print "gcost: " +str(curr_node.g_cost)+" fcost: " +str(curr_node.f_cost)
                 if curr_node.face != goal.face:
                     new = self._Node(curr_node.coord, goal.face, curr_node.g_cost+abs(curr_node.face - goal.face) , 0, curr_node)
                     return self._reconstruct_path_until_PM(new, PM)
@@ -181,7 +180,6 @@ class PathFinder(object):
             if n.g_cost <= PM:
                 pth.append(Pos(n.coord, n.face)) 
                 if n.g_cost > cost: cost = n.g_cost
-         
         return (list(reversed(pth)), can, cost)
 
     class _Node(object): 

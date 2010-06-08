@@ -63,7 +63,6 @@ def main():
         ini = Initiative.Initiative()
         ini.readInitiative("../ficheros/iniciativaJ"+str(actualPlayer)+".sbt")
 
- 
 
         # Reading defMechs
         defM = []

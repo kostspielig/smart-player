@@ -78,19 +78,16 @@ class Movement:
         return t, distance
 
     def nextMove(self):
-        print "walk: "+str(self.player.walk)
-        print "run: "+str(self.player.run)
-        print "jump: "+str(self.player.jump)
         enemy,distance = self.setTarjet()
         faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6 #[0-5]
-        print "torso enemy"+ str(faceTorsoEnemy+1)
+        print "DISTANCE"+ str(distance)
 
-        cellEnemy = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1
+        enemyCell = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1
  
         # Si estamos en el suelo -> Nos levantamos
         if self.player.ground == True and self.player.walk >= 2:
             self.getUp = True
-            face = relative_position(self.playerCell, cellEnemy)
+            face = relative_position(self.playerCell, enemyCell)
             self.movType = 0 # We try to get up by walking
             self.nextCell = self.playerCell
             self.nextFace = face
@@ -98,26 +95,64 @@ class Movement:
 
         # If we do move first -> Hide
         elif self.ini.position.index(self.playerN)< self.ini.position.index(enemy):
-            print self.ini.position
-            self._hide(cellEnemy)
+            print "Hidding"
+            self.path, self.movType = self._hide(enemyCell, distance)
+            print self.path
         else: #We do move last -> go for the enemy's back!
-            print "Moving last"
-            self.path, self.movType = self._approach( cellEnemy,faceTorsoEnemy )
+            print "Approaching"
+            self.path, self.movType = self._approach( enemyCell,faceTorsoEnemy )
             print self.path
 
         self.printAction()
         self.printLog()
 
         
-    def _hide (self, enemy):
-        self.movType = 3 # Inmovil
+    def _hide (self, enemy, distance2enemy):
+        pos, face = self.posible_positions(enemy, distance2enemy)
+        pf = pathfinder.PathFinder(self.board.successors, self.board.move_cost, self.board.heuristic_to_goal)
+        A = Pos(self.playerCell, self.playerFace)
+        for x in pos:
+            B = Pos(x, face)
+            path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
+            if can == True: return (path,0)
+            if can == False and self.player.run != 0:
+                path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
+                if can2 == True:
+                    return (path2, 1)
+            if can == False and self.player.jump != 0:
+                path3, can3, cost3 = pf.compute_path_until_PM(A, B, 2, self.player.jump)
+                if can3 == True:
+                    return (path3,2)
+        return (path, 0)
+
+    def posible_positions (self,enemyCell, distance2enemy):
+        positions = []
+        face = relative_position (self.playerCell, enemyCell)
+        print self.playerCell
+        print enemyCell
+        print "HACIA DONDE ESTA EL ENEMIGO????"
+        print face
+        if distance2enemy <3:
+            face = (face+3)%6
+        cell = self.playerCell
+        for i in range(10):
+            for j in [0,1,-1]:
+                newCell = Board.adjacent_cells(cell, face+j)
+                # Miramos si ai algun bosque denso o  ligero
+                obj = self.board.map[newCell[0]][newCell[1]].objects
+                if obj == 1 or obj == 2:
+                    positions.append(newCell)
+
+        return positions, face
     
 
     def _approach (self, enemy, faceTorsoEnemy):
+        i = 0
+        while True:
+            x = Board.adjacent_cells(enemy, (faceTorsoEnemy+i)%6)
+            i += 1
+            if not x in self.mechs.enemys_cell(): break
 
-        x = Board.adjacent_cells(enemy, faceTorsoEnemy)
-        print "_______"
-        print x
         pf = pathfinder.PathFinder(self.board.successors, self.board.move_cost, self.board.heuristic_to_goal)
         A = Pos(self.playerCell, self.playerFace)
         B = Pos(x, Board.facing_side(x, enemy))
@@ -135,7 +170,7 @@ class Movement:
     def printAction(self):
 
         file = open("accionJ"+ str(self.playerN)+".sbt", "w")
-        
+        if self.path == []: self.movType =3
         file.write(str(mov[self.movType]) +"\n")
         if self.getUp == True:
             p = Pos(self.nextCell, self.nextFace)
@@ -147,7 +182,7 @@ class Movement:
             file.write(str(p.printFace()) +"\n")
             ret = 0
             
-        elif self.movType == 0 or self.movType == 1: # Andar o correr
+        elif (self.movType == 0 or self.movType == 1) and self.path != []: # Andar o correr
             p = self.path[len(self.path)-1]
             print p
             file.write(str(p.printPos()) +"\n") #Hex destino
@@ -164,7 +199,7 @@ class Movement:
             file.write(str(p.printPos()) +"\n")
             file.write(str(p.printFace()) +"\n")
             ret = 2
-        elif self.movType == 3: # Inmovil -> Do Nothing
+        elif self.movType == 3 or self.path == []: # Inmovil -> Do Nothing
             ret = 3
 
         file.close()

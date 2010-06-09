@@ -682,7 +682,7 @@ Por tanto queda claro que los condicionantes que debe determinar el Mech serán:
 \item No se realiza ataque.
 \end{enumerate}
 \subsection*{Se realiza un ataque}
-En primer lugar es necesario saber si el Mech desea atacar o prefiero no realizar ningún tipo de ataque. Para discriminar entre las dos actuaciones nos basamos en calcular que enemigos están dentro de nuestra línea de visión, pero con la práctica, hemos visto que el programa \textit{LDVyC.exe} usado para calcular si un enemigo está en la línea de visión no funciona como esperabamos, es decir, el programa indica que un Mech está en linea de visión incluso cuando nuestro enemigo está a nuestra espalda. Por tanto, además de que esté en línea de visión, comprobamos que esté en un ángulo correcto para el ataque. Si existe al menos un Mech que cumpla estos requisitos el ataque se realizará. 
+En primer lugar es necesario saber si el Mech desea atacar o prefiero no realizar ningún tipo de ataque. Para discriminar entre las dos actuaciones nos basamos en calcular que enemigos están dentro de nuestra línea de visión, pero con la práctica, hemos visto que el programa \textit{LDVyC.exe} usado para calcular si un enemigo está en la línea de visión no funciona como esperabamos, es decir, el programa indica que un Mech está en linea de visión incluso cuando nuestro enemigo está a nuestra espalda. Por tanto, además de que esté en línea de visión, comprobamos que nuestro torso esté en un ángulo correcto para el ataque. Si existe al menos un Mech que cumpla estos requisitos el ataque se realizará. 
 
 \subsubsection*{Localización del Mech objetivo}
 Una vez seleccionados los Mechs que están dentro de nuestra línea de visión, elegimos cual es el que está más próximo a nosotros, calculando la distancia entre nuestra casilla en el tablero y las casillas de los enemigos a los que podemos atacar. Determinamos así el Mech objetivo sobre el que recaerán todo el poder de nuestras armas.
@@ -715,7 +715,7 @@ Determinado $P$ (umbral de temperatura) ya tenemos las armas que usaremos en el 
 Si no hay ningún enemigo dentro de nuestra línea de visión no realizaremos ningún ataque, quedando como única posibilidad recoger un garrote, sí está alojado en nuestra casilla, para usarlo más tarde en un posible ataque físico.
 
 \subsection*{Ataque físico}
-Al igual que el ataque físico el Mech deberá tener en cuenta unos condicionantes para calcular la estrategia a seguir  durante la fase de atques físicos:
+Al igual que el ataque físico el Mech deberá tener en cuenta unos condicionantes para calcular la estrategia a seguir  durante la fase de ataques físicos:
 \begin{enumerate}
 \item Se realiza ataque.
 \begin{enumerate}
@@ -730,14 +730,15 @@ En primer lugar, al igual que en el ataque con armas, debemos conocer cuales son
 A partir del conjunto de Mech objetivos que cumplan la condición para ser atacados, localizaremos el más cercano a nosotros y será el objetivo final de nuestro ataque físico.
 \subsubsection*{Elección de las armas a usar en el ataque}
 Determinado finalmente el Mech objetivo, necesitamos saber con que lo atacaremos. En el caso del ataque físico las armas a usar contra el objetivo serán nuestras extremidades, patadas y puñetazos, o un garrote recogido en anteriores fases.
-Si disponemos del garrote, simplemente atacaremos con él, si no, procederemos a usar las extremidades. Para determinar que extremidades podemos usar en el ataque debemos  identificar cuales son las armas que usamos en el anterior ataque con armas, ya que si se ha usado un arma alojada en el brazo derecho, dicha extremidad ya no podrá ser usada en el ataque. Por tanto,  usando de nuevo el módulo de ataques con armas,  volveremos  a estimar  que armas fueron usada y en que extremidad  están  alojadas. Las extremidades que no fueron usadas en el ataque con armas serán utilizadas en el ataque físico. Si usamos los brazos nuestros ataques serán a base de puñetazos y de igual manera, si usamos las piernas, arrojaremos fuertes patadas a nuestro enemigo. Queda aclarar que si podemos usar las dos piernas, eligiremos una cualquiera, ya que no es posible dar una patada con dos piernas a la vez.
+Si disponemos del garrote, simplemente atacaremos con él, si no, procederemos a usar las extremidades. Para determinar que extremidades podemos usar en el ataque debemos  identificar cuales son las armas que usamos en el anterior ataque con armas, ya que si se ha usado un arma alojada en el brazo derecho, dicha extremidad ya no podrá ser usada en el ataque. Por tanto,  usando de nuevo el módulo de ataques con armas,  volveremos  a estimar  que armas fueron usada y en que extremidad  están  alojadas. Las extremidades que no fueron usadas en el ataque con armas podrán ser  utilizadas en el ataque físico. Si usamos los brazos debemos tener en cuenta que sólo se podrán usar los puños contra nuestro enemigo si no está tumbado en el suelo y si nuestro torso está en el ángulo correcto. De igual manera, si usamos las piernas,  el ángulo de ellas deberá ser correcto en relación al enemigo. Queda aclarar que si podemos usar las dos piernas, eligiremos una cualquiera, ya que no es posible dar una patada con dos piernas a la vez.
 \subsection*{No se realiza ataque}
 Si no se cumplen los requisitos para realizar un ataque físico el Mech no hará nada, pasando así a su fase de fin de turno.
 
 \section{Final de Turno}
 
-Esta fase nos brinda la posibilidad de apagar o encender radiadores,
-soltar garrote o expulsar municiones.
+En esta fase es de utlidad para estar preparado para el siguiente turno de forma idónea. Podemos arrojar al suelo útiles de nuestro Mech, tales como munición o un garrote.
+Además podremos apagar o encender radiadores, si disponemos de ellos, en función de nuestra temperatura.
+Nuestro jugador inteligente arrojará el garrote si lo posee y si ha perdido alguna extremidad, buscará munición de las armas contenidas en las extremidades perdidas, arrojándolas al exterior.
 
 \newpage
 \renewcommand{\baselinestretch}{1}

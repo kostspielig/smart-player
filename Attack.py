@@ -49,6 +49,7 @@ class Attack :
         self.__enemysAttack = [] #Lista de enemigos en linea de vision
         self.__finalWeapons = [] #Lista de armas usadas en el ataque con armas
         self.__stick = False #Indica si se cogi el garrote al final del ataque con armas
+        self.__log = ""
 
         #Creamos una lista de enemigos y seleccionamos al jugador actual
         for i in range(mechs.mechNumber) :
@@ -63,96 +64,102 @@ class Attack :
         distance = 0
         enemy = None
 
+        self.__log = self.__log + "FASE DE ATAQUE CON ARMAS =====================>\n"
+
     
 
         #Creamos una lista de enemigos atacables
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
-            if attack == True :
+            adyacentes = self.areAdjacent( (int(self.__player.getCell()[2:]), int(self.__player.getCell()[0:-2]) ) , (int(self.__enemys[i].getCell()[2:]), int(self.__enemys[i].getCell()[0:-2]) ))
+            diflevel = abs(self.__board.map[int(self.__player.getCell()[2:])][int(self.__player.getCell()[0:-2])].getLevel() - self.__board.map[int(self.__enemys[i].getCell()[2:])][int(self.__enemys[i].getCell()[0:-2])].getLevel())
+            print "diflevel = "+str(diflevel)
+            print "adyacentes = "+str(adyacentes)
+            if attack == True and adyacentes == True and diflevel == 0:
                 self.__enemysAttack.append(self.__enemys[i])
         
         if len(self.__enemysAttack) > 0 :
             choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
 
-            if self.areAdjacent((int(self.__player.getCell()[2:]), int(self.__player.getCell()[0:-2]) ) , (int(self.__enemysAttack[i].getCell()[2:]), int(self.__enemysAttack[i].getCell()[2:]))) == True :
-                if self.__stick == True :
-                    f.write("1" + "\n")
-                    f.write("BIBD" + "\n")
-                    f.write("3000" + "\n")
-                    f.write(enemy.getCell()+"\n")
-                    f.write("Mech" + "\n")
+            if self.__stick == True :
+                f.write("1" + "\n")
+                f.write("BIBD" + "\n")
+                f.write("3000" + "\n")
+                f.write(enemy.getCell()+"\n")
+                f.write("Mech" + "\n")
+                self.__log = self.__log + "Atacamos con el garrote al Mech que esta en la celda "+ enemy.getCell()+"\n"
                 #si no tenemos garrote pegamos punetazos
-                else :            
-                
-                    #debemos estimar que ataques se realizaron en el turno de ataqueArmas para saber que extremidad se puede usar
+            else :            
+                print "Enemigo esta "+self.__enemysAttack[choiseEnemy].getCell()
+                #debemos estimar que ataques se realizaron en el turno de ataqueArmas para saber que extremidad se puede usar
 
-                    enemy = self.__enemysAttack[choiseEnemy]
+                enemy = self.__enemysAttack[choiseEnemy]
                     
-                    #comprobamos que armas se pueden usar contra el enemigo elegido
-                    choiseWeapons = self.choiseWeapons(enemy)
+                #comprobamos que armas se pueden usar contra el enemigo elegido
+                choiseWeapons = self.choiseWeapons(enemy)
                    
                         
-                    #eleccion temperatura       
-                    temp = self.choiseTemperature(enemy)                        
-                    #eleccion definitiva de las armas a lanzar
-                    self.__finalWeapons = self.shootWeapons(enemy, temp, choiseWeapons)
+                #eleccion temperatura       
+                temp = self.choiseTemperature(enemy)                        
+                #eleccion definitiva de las armas a lanzar
+                self.__finalWeapons = self.shootWeapons(enemy, temp, choiseWeapons)
                     
+                BI = False
+                PI = False
+                BD = False
+                PD = False
+                used = 0
+                for i in range(len(self.__finalWeapons)):
+                    #localizacion del arma
+                    itemLocation = self.__finalWeapons[i].getItemLocation()
+                    if itemLocation == 0 : BI = True
+                    elif itemLocation == 2:PI = True
+                    elif itemLocation == 3: PD = True
+                    elif itemLocation == 5: BD = True
+                                
+                    #No se pueden dar dos patadas en el mismo turno (pegaremos con la pierna derecha)
+                    if PI == False and PD == False : PD = True
 
-                    BI = False
-                    PI = False
-                    BD = False
-                    PD = False
-                    used = 0
-                    for i in range(len(self.__finalWeapons)):
-                        #localizacion del arma
-                        itemLocation = self.__finalWeapons[i].getItemLocation()
-                        if itemLocation == 0 : BI = True
-                        elif itemLocation == 2:PI = True
-                        elif itemLocation == 3: PD = True
-                        elif itemLocation == 5: BD = True
+                            #numero de extremidades que se usaran para el ataque
+                    if BI == False : used = used + 1
+                    if PI == False : used = used + 1
+                    if BD == False : used = used + 1
+                    if PD == False : used = used + 1
+
+                    f.write(str(used) + "\n")
+                           
+                           
+                    if BI == False :
+                        f.write("BI" + "\n")
+                        f.write("1000" + "\n")
+                        f.write(enemy.getCell()+"\n")
+                        f.write("Mech" + "\n")
+                        log = log
+
+                    if BD == False :
+                        f.write("BD" + "\n")
+                        f.write("1000" + "\n")                        
+                        f.write(enemy.getCell()+"\n")
+                        f.write("Mech" + "\n")
                             
-                        #No se pueden dar dos patadas en el mismo turno (pegaremos con la pierna derecha)
-                        if PI == False and PD == False : PD = True
+                    if PI == False :
+                        f.write("PI" + "\n")
+                        f.write("2000" + "\n")
+                        f.write(enemy.getCell()+"\n")
+                        f.write("Mech" + "\n")
+                            
+                    if PD == False :
+                        f.write("PD" + "\n")
+                        f.write("2000" + "\n")
+                        f.write(enemy.getCell()+"\n")
+                        f.write("Mech" + "\n")
+                
+                   
 
-                        #numero de extremidades que se usaran para el ataque
-                        if BI == False : used = used + 1
-                        if PI == False : used = used + 1
-                        if BD == False : used = used + 1
-                        if PD == False : used = used + 1
-
-                        f.write(str(used) + "\n")
-                       
-                       
-                        if BI == False :
-                            f.write("BI" + "\n")
-                            f.write("1000" + "\n")
-                            f.write(enemy.getCell()+"\n")
-                            f.write("Mech" + "\n")
-
-                        if BD == False :
-                            f.write("BD" + "\n")
-                            f.write("1000" + "\n")                        
-                            f.write(enemy.getCell()+"\n")
-                            f.write("Mech" + "\n")
-                        
-                        if PI == False :
-                            f.write("PI" + "\n")
-                            f.write("2000" + "\n")
-                            f.write(enemy.getCell()+"\n")                               
-                            f.write("Mech" + "\n")
-                        
-                        if PD == False :
-                            f.write("PD" + "\n")
-                            f.write("2000" + "\n")
-                            f.write(enemy.getCell()+"\n")
-                            f.write("Mech" + "\n")
-            
-            #no se ataca
-            else:
-                f.write("0"+"\n")
         
         #no se ataca
         else:
+            self.__log = self.__log + "No realiza ningun ataque fisico\n"
             f.write("0"+"\n")
         
         f.close()
@@ -171,11 +178,16 @@ class Attack :
         #Creamos una lista de enemigos atacables
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
-            if attack == True :
+            goodf = self.relative_position( (int(self.__player.getCell()[2:]), int(self.__player.getCell()[0:-2]) ) , (int(self.__enemys[i].getCell()[2:]), int(self.__enemys[i].getCell()[0:-2])))
+            print str(goodf)+"\n"
+            print "Facing "+str(self.__player.facingSide - 1)+"\n"
+            if attack == True and ( ((((self.__player.facingSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
+                print str((((self.__player.facingSide - 1)+3)%6))+"\n"
                 self.__enemysAttack.append(self.__enemys[i])
 
         
         #Se puede atacar ?
+        print "numero de enemigos "+str(len(self.__enemysAttack))
         if len(self.__enemysAttack) > 0 :
             #seleccionamos el enemigo a atacar(mas cercano)
             choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
@@ -190,10 +202,11 @@ class Attack :
             self.__finalWeapons = self.shootWeapons(self.__enemysAttack[choiseEnemy], temp, choiseWeapons)
             
             #Escribimos el ataque que vamos a realizar en el fichero de AccionJ
+            print "Enemigo esta en "+self.__enemysAttack[choiseEnemy].getCell()
             self.writeWeaponsAttack(self.__finalWeapons, self.__enemysAttack[choiseEnemy], f)
         
         #si no se puede atacar lo escribimos en el fichero de AccionJ
-        else :
+        elif len(self.__enemysAttack) == 0 :
             self.writeNoAttack(self.__enemysAttack, f)
     
     def writeNoAttack(self, Enemys, f):
@@ -264,6 +277,8 @@ class Attack :
                         encontrado = True
                         f.write(str(j)+"\n")
                     j = j + 1
+
+                
                 
                 #Disparo a doble cadencia -> siempre false, no es buena estrategia
                 f.write("False"+"\n")
@@ -376,8 +391,9 @@ class Attack :
         i = 1
         min = 0
         distance = self.dist2((int(self.__player.getCell()[0:-2]), int(self.__player.getCell()[2:]) ) , (int(enemysList[0].getCell()[0:-2]), int(enemysList[0].getCell()[2:])))
+       
         while i < len(enemysList):
-            if (distance >  self.dist2((int(self.__player.getCell()[0:-2]), int(self.__player.getCell()[2:]) ) , (int(enemysList[i].getCell()[0:-2]), int(enemysList[i].getCell()[2:]))) ):
+            if (distance >  self.dist2((int(self.__player.getCell()[0:-2]), int(self.__player.getCell()[2:]) ) , (int(enemysList[i].getCell()[0:-2]), int(enemysList[i].getCell()[2:]))) ):    
                 distance =  distance = self.dist2((int(self.__player.getCell()[0:-2]), int(self.__player.getCell()[2:]) ) , (int(enemysList[i].getCell()[0:-2]), int(enemysList[i].getCell()[2:]))) 
                 min = i
             i = i +1
@@ -416,7 +432,7 @@ class Attack :
         file.close()
         return isVisionLine
 
-    def areAdjacent(c,c2):       
+    def areAdjacent(self, c, c2):       
         slist=[]
         for i in (-1,0,1):
             for j in (-1,0,1):
@@ -445,4 +461,31 @@ class Attack :
             factor = (c2[0]-1)%2
 
         return Vx + max(0, Vy- (Vx/2) - factor)
+
+    def relative_position(self, c1, c2):
+        if c1[0] > c2[0]: # Fila Norte
+            if c1[1] == c2[1]: # same col
+                return 0
+            if c1[1] > c2[1]: # col
+                return 5
+            if c1[1] < c2[1]: #  col
+                return 1
+        elif c1[0] < c2[0]: # Fila sur
+            if c1[1] == c2[1]:
+                return 3
+            if c1[1] > c2[1]:
+                return 4
+            if c1[1] < c2[1]:
+                return 2
+        else: # c1[0] == c2[0] # misma fila
+            if (c1[1]+1)%2 == 0: #columnas pares
+                if c1[1] > c2[1]:
+                    return 5
+                else: #c1[1] < c2[1]
+                    return 1
+            else: # columnas impares
+                if c1[1] > c2[1]:
+                    return 4
+                else: #c1[1] < c2[1]
+                    return 2
 

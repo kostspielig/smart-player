@@ -108,13 +108,11 @@ def weaponsAttack (actualPlayer, board, mechs, defM):
     attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
     attack.weaponsAttack ()
     attack.printLog ()
-    print "Atatck - W"
 
 def physicalAttack (actualPlayer, board, mechs, defM):
     attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
     attack.physicalAttack ()
     attack.printLog ()
-    print "Atatck - P"
 
 def turnEnd (actualPlayer, defM, mechs):
     end = EndTurn.EndTurn(actualPlayer, defM, mechs)

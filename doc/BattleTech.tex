@@ -1,3 +1,4 @@
+
 % 
 % Practica ICO - Smart Player
 % ------------------
@@ -30,7 +31,7 @@
 \usepackage{setspace}
 % \onehalfspacing
 \renewcommand{\baselinestretch}{1.5}
-%\doublespacing
+% \doublespacing
 
 % opening
 \title{Jugador Inteligente}
@@ -68,13 +69,11 @@
     \footnotesize 
     \emph{Curso 09/10} \par
   \end{center}
-
   \vfil\null
 \end{titlepage}
 
 
 \tableofcontents
-
 \pagebreak
 
 \chapter{Introducción}
@@ -212,35 +211,60 @@ el juego.
 
 \section {Abstracción del Problema}
 
+
 Para resolver nuestro problema podemos ver al jugador inteligente como
 un {\it ente}, que percibe el universo a través de un conjunto
 entradas - que nos indican el estado actual del juego -. Este ente
-debe ser capaz de escoger una acción a realizar.\\
+debe ser capaz de escoger una acción a realizar.
 
 Pero, ¿Cómo escoger cual de entre todas las posibles acciones a
 realizar? La respuesta es bastante subjetiva, ya dependerá de la
 estrategia a seguir. Según la escogida, se obtendrá un resultado mejor
 o peor, pero también depende del caso concreto que estemos estudiando,
-ya que si cambiamos ciertos parametros de nuestro universo, otra
-estrategia puede resultar más favorable.\\
+ya que si cambiamos ciertos parámetros de nuestro universo, otra
+estrategia puede resultar más favorable.
 
-A la hora de decidir sobre qué estrategia seguir, se debe de tener en
+A la hora de decidir qué estrategia seguir, se debe de tener en
 cuenta que tanto la {\bf experiencia} adquirida tras años de juego y
 el {\bf conocimiento} de las reglas del mismo, son puntos críticos a
 la hora de maxímizar nuestro rendimiento.
 
-Nuestro ente se mueve en un espacio temporal discreto, el juego se
-divide por turnos y estos a su vez, se ve dividido en segmentos más
-pequeños a los que llamaremos fases. Cada fase se utiliza para
+Nuestro ente se mueve en un espacio temporal discreto. El juego se
+divide por turnos y éstos a su vez, se ve dividido en segmentos más
+pequeños a los que llamamos fases. Cada fase se utiliza para
 realizar una acción determinada, y según la acción que queramos
-realizar seguiremos una manera de razonar distinta según los objetivos
-que queramos conseguir. Veamos entonces cada una de las fases.
+realizar, seguiremos una manera de razonar distinta dependiendo de los
+objetivos que queramos conseguir. Los {\it objetivos} últimos de nuestro
+ente podemos inferirlos de la definión del problema y son:
+\begin{enumerate}
+\item Sobrevivir hasta el final de la partida.
+\item Eliminar al resto de entidades que participan en la partida.\\
+\end{enumerate}
 
-\subsection{Fase de Movimiento}
-\subsection{Fase de Reacción}
-\subsection{Fase de Ataque con Armas}
-\subsection{Fase de Ataque Físico}
-\subsection{Fase de Final de turno}
+A partir de un {\it conjunto de percepciones}, a través de las cuales
+conocemos el estado del mundo en el que nos encontramos, debemos ser
+capaces de decidir la {\it actitud } de nuestro ente en la
+situación. Esta actitud podrá ser ofensiva, atacante o neutral. Una
+vez sepamos el estado futuro que queremos alcanzar, estaremos en
+condiciones de decidir un {\it plan futuro de acción}.
+
+También debemos tener en cuenta que nuestras acciones tienen una serie
+de consecuencias que producen un efeto en el ambiente. Así el estado
+en el que se encuentra el mundo cambia entre cada una de las fases. Es
+por ello que debemos actualizar las percepciones del mundo cada vez
+que nosotros u otor ente realiza una acción.
+
+La naturaleza episódica del mundo en el que se encuentra nuesto ente
+hace una tarea fácil la división en fases del comportamiento del
+ente. Para cada una de las fases necesitamos tener en cuenta distintas
+características del mundo que percibimos, las cuales nos ayudarán a
+llegar a cumplir los objetivos. 
+
+También debemos tener en cuenta que
+las decisiones que tomemos en una fase afectarán al resto de las
+fases, por ello a la hora de tomar decisiones siempre debemos tener en
+mente como van a cambiar el mundo  y como afectará al futuro.
+
 
 
 
@@ -287,9 +311,88 @@ por ello más adecuado que inteligencia (la cual sugiere entendimiento)
 para describir el comportamiento de los agentes inteligentes. Por este
 motivo es mayor el consenso en llamarlos {\it agentes racionales}.\\
 
-Nuestro {\bf jugador inteligente} se corresponde con un {\bf agente racional}, y
-por lo tanto debe poseer las características:
+Los agentes inteligentes deben tener una serie de propiedades que
+exponemos a continuación:
+\begin {itemize}
+\item {\bf Autonomía}\\
+  Actúan por cuenta propia en nombre del usuario.
+\item {\bf Inteligencia}\\
+  Cerrada o adaptable al entorno (aprendizaje)
+\item {\bf Reactividad – Proactividad}
+  \begin {itemize}
+  \item Reactivo\\
+    Actúa en función de los sucesos producidos en el entorno
+  \item Proactivo\\
+    Toma la decisión de actuar antes de que se den los sucesos
+  \end{itemize}
+\item {\bf Sociabilidad}\\
+  Comunicación con: usuario/s, sistema/s, agentes/s...
+
+\item {\bf Cooperación}\\
+  Con otros agentes para realizar tareas de  mayor complejidad
+\item {\bf Movilidad}\\
+  De un sistema a otro para acceder a
+  recursos remotos o para reunirse con otros
+  agentes
+\end {itemize}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=12.4cm]{images/funcion.png}
+  \caption{Esquema de funcionamiento.}
+\end{figure}
+
+\section{Ambientes}
+Existen diferentes tipos de ambientes:
 \begin{itemize}
+\item {\bf Accesibles vs. no accesibles.}
+Un ambiente accesible es aquel en el cuál el agente puede
+obtener información completa, precisa y actualizada sobre el
+estado del ambiente. La mayoría de los ambientes
+moderadamente complejos (incluyendo el mundo físico e
+Internet) son inaccesibles. Mientras más accesible sea el
+ambiente es más sencillo construir agentes que funcionen sobre el.
+
+\item {\bf Deterministas vs. no deterministas.}
+  Un ambiente determinístico es aquel en el cuál cualquier acción tiene un
+único efecto garantizado No hay incertidumbre sobre el estado que
+resultará de realizar una acción. El mundo físico es no
+determinístico. Los ambientes no determinísticos son un mayor reto
+para los diseñadores de agentes.
+
+\item {\bf Episódicos vs. no episódicos.}
+ En un ambiente episódico, el funcionamiento de un agente depende de
+ un número discreto de episodios, sin que halla relación entre el
+ funcionamiento del agente en diversos escenarios. Los ambientes episódicos son
+más simples desde la perspectiva del desarrollador del agente porque
+el agente puede decidir que acción tomar basándose sólo en el episodio
+actual - no necesita reaccionar sobre las interacciones entre el episodio actual y los futuros.
+
+\item {\bf Estáticos vs. dinámicos.} Si el abiente cambia mientras un
+  agente toma una acción a seguir, entonces se dice que el ambiente es
+  ``dinámico''. 
+\item {\bf Discretos vs. continuos.}                         
+Un ambiente es discreto si tiene un número fijo y finito de acciones y
+percepciones.\ref{russell}:
+\begin{itemize}
+   \item ajedrez → discreto.
+    \item conductor → contínuo.
+  \end{itemize}
+ Si existe una cantidad limitada de
+  percepciones y acciones distintas y discernibles, se dice que el
+  ambiente es discreto. Si no es posible enumerarlos, entonces es un
+  ambiente continuo.
+\end{itemize}
+
+
+\chapter{Justificación de la Idoneidad del Modelo Teórico}
+
+
+Nuestro {\bf jugador inteligente} se corresponde con un {\bf agente racional}, y
+por lo tanto debe poseer algunas de las características que éste posee:
+\begin{itemize}
+\item {\bf Sociable.} Interacciona con otros agentes por {\it paso de
+    mensajes}. De forma que pueden conocer el estdo entre ellos.
 \item {\bf Reactivo.} El jugador podrá responder a cambios en el
   entorno en el que se encuentra situado. Estos cambios se le indican
   al jugador mediante los ficheros, que en cada fase de la partida el
@@ -302,11 +405,8 @@ por lo tanto debe poseer las características:
   total sobre sus acciones y estados internos.
 \end{itemize}
 
-\begin{figure}[!h]
-  \centering
-  \includegraphics[width=12.4cm]{images/funcion.png}
-  \caption{Esquema de funcionamiento.}
-\end{figure}
+
+
 Hemos de diferenciar nuestro sistema de los sistemas Multi-Agente
 (SMA). Éstos son grupos de agentes que interaccionan entre sí para
 conseguir objetivos comunes, pero en nuestro entorno los distintos
@@ -329,6 +429,7 @@ correctas varia en complejidad.
   \includegraphics[width=13.5cm]{images/meta2.png}
   \caption{Agente basado en metas.}
 \end{figure}
+
 
 \section{Ambientes}
 Existen diferentes tipos de ambientes:
@@ -369,6 +470,9 @@ Los agentes se diseñan para que funcionen dentro de un conjunto de
 ambientes diversos. Para poder medir el desempeño de un agente es
 necesario contar con un simulador que seleccione ambientes
 particulares en los que se pueda probar al agente.
+
+
+
 
 \chapter{Descripción de la Solución}
 
@@ -472,8 +576,8 @@ todos sus hijos, los inserta en abiertos, y pasa el nodo evaluado a cerrados.
   {\bf Output:} Lista con nodos que forman el camino (si existe).\\  \hline     
 
   \hline  \hline 
-\renewcommand{\baselinestretch}{1}
-\normalsize
+  \renewcommand{\baselinestretch}{1}
+  \normalsize
   \begin{lstlisting}
 
     closed_set = {}
@@ -714,7 +818,7 @@ Determinado $P$ (umbral de temperatura) ya tenemos las armas que usaremos en el 
 \subsection*{No se realiza ataque}
 Si no hay ningún enemigo dentro de nuestra línea de visión no realizaremos ningún ataque, quedando como única posibilidad recoger un garrote, sí está alojado en nuestra casilla, para usarlo más tarde en un posible ataque físico.
 
-\subsection*{Ataque físico}
+\section{Módulo de Ataque Físico}
 Al igual que el ataque físico el Mech deberá tener en cuenta unos condicionantes para calcular la estrategia a seguir  durante la fase de ataques físicos:
 \begin{enumerate}
 \item Se realiza ataque.
@@ -735,10 +839,11 @@ Si disponemos del garrote, simplemente atacaremos con él, si no, procederemos a
 Si no se cumplen los requisitos para realizar un ataque físico el Mech no hará nada, pasando así a su fase de fin de turno.
 
 \section{Final de Turno}
-
+ 
 En esta fase es de utlidad para estar preparado para el siguiente turno de forma idónea. Podemos arrojar al suelo útiles de nuestro Mech, tales como munición o un garrote.
 Además podremos apagar o encender radiadores, si disponemos de ellos, en función de nuestra temperatura.
 Nuestro jugador inteligente arrojará el garrote si lo posee y si ha perdido alguna extremidad, buscará munición de las armas contenidas en las extremidades perdidas, arrojándolas al exterior.
+
 
 \newpage
 \renewcommand{\baselinestretch}{1}
@@ -762,3 +867,4 @@ Nuestro jugador inteligente arrojará el garrote si lo posee y si ha perdido alg
 \end{thebibliography}
 
 \end{document}
+

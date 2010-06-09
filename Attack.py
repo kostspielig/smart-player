@@ -74,14 +74,20 @@ class Attack :
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
             
+            ensuelo = self.enemys[i].ground
+            
             goodf = self.relative_position( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2])-1 ) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1))
             
+            brazos = ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ))
+            
+            piernas = ( ((((self.__player.facingSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf+1)%6) ))
+
             adyacentes = self.areAdjacent( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2])-1 ) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1 ))
             
             diflevel = abs(self.__board.map[int(self.__player.getCell()[2:])-1][int(self.__player.getCell()[0:-2])-1].getLevel() - self.__board.map[int(self.__enemys[i].getCell()[2:])-1][int(self.__enemys[i].getCell()[0:-2])-1].getLevel())
 			
-			if attack == True and adyacentes == True and diflevel == 0 and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ):
-                self.__enemysAttack.append(self.__enemys[i])
+	    if attack == True and adyacentes == True and diflevel == 0 :
+        	self.__enemysAttack.append(self.__enemys[i])
         
         if len(self.__enemysAttack) > 0 :
             choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
@@ -132,9 +138,9 @@ class Attack :
 
                     
                 f.write(str(used) + "\n")
-                           
-                        
-                if BI == False :
+
+                                       
+                if BI == False and brazos == True and ensuelo == False:
                     f.write("BI" + "\n")
                     f.write("1000" + "\n")
                     f.write(enemy.getCell()+"\n")
@@ -142,21 +148,21 @@ class Attack :
                     self.__log = self.__log + "Atacamos con el puño izquierdo al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
 
 
-                if BD == False :
+                if BD == False and  brazos == True and ensuelo == False:
                     f.write("BD" + "\n")
                     f.write("1000" + "\n")                        
                     f.write(enemy.getCell()+"\n")
                     f.write("Mech" + "\n")
                     self.__log = self.__log + "Atacamos con el puño derecho al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
-                if PI == False :
+                if PI == False and piernas == True:
                     f.write("PI" + "\n")
                     f.write("2000" + "\n")
                     f.write(enemy.getCell()+"\n")
                     f.write("Mech" + "\n")
                     self.__log = self.__log + "Atacamos con la pierna izquierda al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
-                if PD == False :
+                if PD == False and piernas == True:
                     f.write("PD" + "\n")
                     f.write("2000" + "\n")
                     f.write(enemy.getCell()+"\n")
@@ -193,7 +199,7 @@ class Attack :
             
             goodf = self.relative_position( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2]) -1) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1))
 			
-			if attack == True and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
+	    if attack == True and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
                 self.__enemysAttack.append(self.__enemys[i])
 
         
@@ -335,7 +341,7 @@ class Attack :
                                             f.write(str(j)+"\n")
                                         j = j +1
 
-                                else:   h = h +1
+                        		h = h +1
                         k = k + 1
 
                 #Hexagono objetivo del arma
@@ -345,8 +351,6 @@ class Attack :
                 self.__log = self.__log + "Disparamos el arma "+ finalWeapons[i].getName() +" al enemigo posicionado en la casilla "+Enemy.getCell()+"\n"
 
         
-        
-
         f.close()
                                 
     

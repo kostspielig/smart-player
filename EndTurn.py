@@ -34,14 +34,14 @@ class EndTurn:
             
         	
     	cont = 0
-    	
+    	numComponents = self.dmech.mech.equippedComponentsNumber
         weaponsTrash = []
         if self.dmech.mech.getLArm() == False :
             j = 0	
-            while j < numComponents :
-        		h = 0
+            while j < numComponents:
+                h = 0
             	encontrado = False
-        		encontrado2 = False
+                encontrado2 = False
                 if 0 == self.dmech.mech.component[j].getItemLocation() :
             	    ammunitionCode = self.dmech.mech.component[j].getWeaponCode()
             	    weaponsTrash.append(self.dmech.mech.component[j])
@@ -54,8 +54,8 @@ class EndTurn:
                 j = j +1
             
         elif self.dmech.mech.getRArm() == False :
-	    	j = 0
-        	while j < numComponents :
+            j = 0
+            while j < numComponents :
                 h = 0
                 encontrado = False
                 encontrado2 = False
@@ -70,24 +70,24 @@ class EndTurn:
                     h = h + 1
                 j = j +1
             
-		if cont > 0 :
-	    	f.write(str(cont)+"\n")
-	    	if cont == 1 :
+        if cont > 0 :
+            f.write(str(cont)+"\n")
+            if cont == 1 :
                 self.log += "Nos deshacemos de "+str(cont)+" munición\n"
-	    	else:
+            else:
                 self.log += "Nos deshacemos de "+str(cont)+" municiones\n"
 
             j = 0
             while j < len(weaponsTrash) :
-        		h = 0
-        		encontrado = False
-        		encontrado2 = False
+                h = 0
+                encontrado = False
+                encontrado2 = False
             	ammunitionCode = weaponsTrash[j].getWeaponCode()
              	
              	while h < numComponents and not(encontrado):
                     if self.dmech.mech.component[h].getCode() == ammunitionCode:
                     	encontrado = True
-	    				itemLocation = self.dmech.mech.component[h].getItemLocation()
+                        itemLocation = self.dmech.mech.component[h].getItemLocation()
                         if itemLocation == 0  : f.write("BI"+"\n")
                         elif itemLocation == 1: f.write("TI"+"\n")
                         elif itemLocation == 2: f.write("PI"+"\n")
@@ -104,16 +104,14 @@ class EndTurn:
                         while k < loca.getSlotNumber() and not(encontrado2):
                	            if loca.slot[j].getCode() == ammunitionCode :
                                 encontrado2 = True
-                                log += "Munición arrojada\n"
+                                self.log += "Munición arrojada\n"
                                 f.write(str(k)+"\n")
                             k = k +1
-
-		    		h = h +1
-                          
-                j = j+1
+                        h = h +1
+                    j = j+1
 			
-		else:
-            self.log += "=====================>\n\n"
+            else:
+                self.log += "=====================>\n\n"
 	    	f.write(str(0) +"\n")    
 
         f.close()
@@ -121,3 +119,4 @@ class EndTurn:
     def printLog(self):
         file = open("x50608460.log", "a")
         file.write (self.log)
+        file.close()

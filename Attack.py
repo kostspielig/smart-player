@@ -75,18 +75,14 @@ class Attack :
         #Creamos una lista de enemigos atacables
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
+            
             goodf = self.relative_position( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2])-1 ) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1))
+            
             adyacentes = self.areAdjacent( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2])-1 ) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1 ))
+            
             diflevel = abs(self.__board.map[int(self.__player.getCell()[2:])-1][int(self.__player.getCell()[0:-2])-1].getLevel() - self.__board.map[int(self.__enemys[i].getCell()[2:])-1][int(self.__enemys[i].getCell()[0:-2])-1].getLevel())
-            print "celda YO "+self.__player.getCell()
-            print "celda EL "+self.__enemys[i].getCell()
-            print "level YO "+str(self.__board.map[int(self.__player.getCell()[2:])][int(self.__player.getCell()[0:-2])].getLevel())
-            print "level EL "+str(self.__board.map[int(self.__enemys[i].getCell()[2:])][int(self.__enemys[i].getCell()[0:-2])].getLevel())
-            print str(goodf)+"\n"
-            print "Facing "+str(self.__player.facingSide - 1)+"\n"
-            print "dif "+str(diflevel)
-            if attack == True and adyacentes == True and diflevel == 0 and ( ((((self.__player.facingSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf+1)%6) ) ):
-                print str((((self.__player.facingSide - 1)+3)%6))+"\n"
+			
+			if attack == True and adyacentes == True and diflevel == 0 and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ):
                 self.__enemysAttack.append(self.__enemys[i])
         
         if len(self.__enemysAttack) > 0 :
@@ -101,7 +97,6 @@ class Attack :
                 self.__log = self.__log + "Atacamos con el garrote al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                 #si no tenemos garrote pegamos punetazos
             else :            
-                print "Enemigo esta "+self.__enemysAttack[choiseEnemy].getCell()
                 #debemos estimar que ataques se realizaron en el turno de ataqueArmas para saber que extremidad se puede usar
 
                 enemy = self.__enemysAttack[choiseEnemy]
@@ -179,7 +174,7 @@ class Attack :
             f.write("0"+"\n")
         
         f.close()
-        self.__log = self.__log + "=============================>\n"
+        self.__log = self.__log + "=============================>\n\n"
         
      
     def weaponsAttack (self):
@@ -197,16 +192,14 @@ class Attack :
         #Creamos una lista de enemigos atacables
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
+            
             goodf = self.relative_position( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2]) -1) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1))
-            print str(goodf)+"\n"
-            print "Facing "+str(self.__player.facingSide - 1)+"\n"
-            if attack == True and ( ((((self.__player.facingSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
-                print str((((self.__player.facingSide - 1)+3)%6))+"\n"
+           
+            if attack == True and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
                 self.__enemysAttack.append(self.__enemys[i])
 
         
         #Se puede atacar ?
-        print "numero de enemigos "+str(len(self.__enemysAttack))
         if len(self.__enemysAttack) > 0 :
             #seleccionamos el enemigo a atacar(mas cercano)
             choiseEnemy = int(self.enemyMoreNear(self.__enemysAttack, distance) )
@@ -221,7 +214,6 @@ class Attack :
             self.__finalWeapons = self.shootWeapons(self.__enemysAttack[choiseEnemy], temp, choiseWeapons)
             
             #Escribimos el ataque que vamos a realizar en el fichero de AccionJ
-            print "Enemigo esta en "+self.__enemysAttack[choiseEnemy].getCell()
             self.writeWeaponsAttack(self.__finalWeapons, self.__enemysAttack[choiseEnemy], f)
         
         #si no se puede atacar lo escribimos en el fichero de AccionJ
@@ -229,7 +221,7 @@ class Attack :
             self.__log = self.__log + "No se realiza ningún ataque con armas debido a que no se cumplen las condiciones óptimas para realizarlo\n"
             self.writeNoAttack(self.__enemysAttack, f)
         
-        self.__log = self.__log + "=============================>\n"
+        self.__log = self.__log + "=============================>\n\n"
             
         
     
@@ -237,8 +229,6 @@ class Attack :
         f = open (f, "w")
         distance = None
 
-        print "No ataca"
-        
         #comprobamos si hay un garrote en la casilla del jugador
         if self.__board.map[int(self.__player.getCell()[2:])-1][int(self.__player.getCell()[0:-2])-1] == True :   
             #buscamos el enemigo mas cercano
@@ -305,7 +295,6 @@ class Attack :
                     j = j + 1
 
                 
-                
                 #Disparo a doble cadencia -> siempre false, no es buena estrategia
                 f.write("False"+"\n")
 
@@ -356,9 +345,7 @@ class Attack :
                 
                 self.__log = self.__log + "Disparamos el arma "+ finalWeapons[i].getName() +" al enemigo posicionado en la casilla "+Enemy.getCell()+"\n"
 
-        
-        
-
+       
         f.close()
                                 
     

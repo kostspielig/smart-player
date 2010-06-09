@@ -70,8 +70,6 @@ class Attack :
 
         self.__log = self.__log + "FASE DE ATAQUE FISICO =====================>\n"
 
-    
-
         #Creamos una lista de enemigos atacables
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
@@ -194,8 +192,8 @@ class Attack :
             attack = self.visionLine(self.__enemys[i])
             
             goodf = self.relative_position( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2]) -1) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1))
-           
-            if attack == True and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
+			
+			if attack == True and ( ((((self.__player.facingTorsoSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingTorsoSide - 1)+3)%6) != ((goodf+1)%6) ) ) : 
                 self.__enemysAttack.append(self.__enemys[i])
 
         
@@ -221,14 +219,14 @@ class Attack :
             self.__log = self.__log + "No se realiza ningún ataque con armas debido a que no se cumplen las condiciones óptimas para realizarlo\n"
             self.writeNoAttack(self.__enemysAttack, f)
         
-        self.__log = self.__log + "=============================>\n\n"
+        self.__log = self.__log + "=============================>n\n"
             
         
     
     def writeNoAttack(self, Enemys, f):
         f = open (f, "w")
         distance = None
-
+        
         #comprobamos si hay un garrote en la casilla del jugador
         if self.__board.map[int(self.__player.getCell()[2:])-1][int(self.__player.getCell()[0:-2])-1] == True :   
             #buscamos el enemigo mas cercano
@@ -295,6 +293,7 @@ class Attack :
                     j = j + 1
 
                 
+                
                 #Disparo a doble cadencia -> siempre false, no es buena estrategia
                 f.write("False"+"\n")
 
@@ -345,7 +344,9 @@ class Attack :
                 
                 self.__log = self.__log + "Disparamos el arma "+ finalWeapons[i].getName() +" al enemigo posicionado en la casilla "+Enemy.getCell()+"\n"
 
-       
+        
+        
+
         f.close()
                                 
     

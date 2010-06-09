@@ -49,26 +49,26 @@ def main():
 
         # Reading the options
         config = Options.Options()
-        config.readOptions("../ficheros/configJ"+str(actualPlayer)+".sbt")
+        config.readOptions("configJ"+str(actualPlayer)+".sbt")
 
         # Reading the mech file
         mechs = MechFile.MechFile()
-        mechs.readMechFile("../ficheros/mechsJ"+str(actualPlayer)+".sbt")
+        mechs.readMechFile("mechsJ"+str(actualPlayer)+".sbt")
 
         # Reading the board
         board = Board.Board(mechs.enemys_cell())
-        board.readBoard("../ficheros/mapaJ"+str(actualPlayer)+".sbt")
+        board.readBoard("mapaJ"+str(actualPlayer)+".sbt")
 
         # Reading initiative file
         ini = Initiative.Initiative()
-        ini.readInitiative("../ficheros/iniciativaJ"+str(actualPlayer)+".sbt")
+        ini.readInitiative("iniciativaJ"+str(actualPlayer)+".sbt")
 
 
         # Reading defMechs
         defM = []
         for x in range(mechs.mechNumber):
             M = DefMech.DefMech()
-            M.readDefMech("../ficheros/defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
+            M.readDefMech("defmechJ" + str(actualPlayer) + "-" + str(x) + ".sbt")
             defM.append(M)
             M = None
 
@@ -85,7 +85,7 @@ def main():
         elif phase == "AtaqueFisico":
             physicalAttack (actualPlayer, board, mechs, defM)
         elif phase == "FinalTurno":
-            turnEnd (actualPlayer)
+            turnEnd (actualPlayer, defM, mechs)
         else: 
             print "Incorrect Phase!!"
             return -2
@@ -107,15 +107,17 @@ def reaction (actualPlayer, board, mechs, ini):
 def weaponsAttack (actualPlayer, board, mechs, defM):
     attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
     attack.weaponsAttack ()
+    attack.printLog ()
     print "Atatck - W"
 
 def physicalAttack (actualPlayer, board, mechs, defM):
     attack = Attack.Attack(actualPlayer, mechs, defM, "mapaJ"+str(actualPlayer)+".sbt", board)
     attack.physicalAttack ()
+    attack.printLog ()
     print "Atatck - P"
 
-def turnEnd (actualPlayer):
-    end = EndTurn.EndTurn(actualPlayer)
+def turnEnd (actualPlayer, defM, mechs):
+    end = EndTurn.EndTurn(actualPlayer, defM, mechs)
     end.printAction()
 
 if __name__ == "__main__":

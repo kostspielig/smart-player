@@ -74,7 +74,7 @@ class Attack :
         for i in range(len(self.__enemys))  :
             attack = self.visionLine(self.__enemys[i])
             
-            ensuelo = self.enemys[i].ground
+            ensuelo = self.__enemys[i].ground
             
             goodf = self.relative_position( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2])-1 ) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1))
             
@@ -82,11 +82,14 @@ class Attack :
             
             piernas = ( ((((self.__player.facingSide - 1)+3)%6) != (goodf)%6) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf-1)%6) ) and ( (((self.__player.facingSide - 1)+3)%6) != ((goodf+1)%6) ))
 
+            brazoD = self.__dmech[self.__playerNumber].mech.rArm
+            brazoI = self.__dmech[self.__playerNumber].mech.lArm
+            
             adyacentes = self.areAdjacent( (int(self.__player.getCell()[2:])-1, int(self.__player.getCell()[0:-2])-1 ) , (int(self.__enemys[i].getCell()[2:])-1, int(self.__enemys[i].getCell()[0:-2])-1 ))
             
             diflevel = abs(self.__board.map[int(self.__player.getCell()[2:])-1][int(self.__player.getCell()[0:-2])-1].getLevel() - self.__board.map[int(self.__enemys[i].getCell()[2:])-1][int(self.__enemys[i].getCell()[0:-2])-1].getLevel())
 			
-	    if attack == True and adyacentes == True and diflevel == 0 :
+	    if attack == True and adyacentes == True and diflevel <= 1 :
         	self.__enemysAttack.append(self.__enemys[i])
         
         if len(self.__enemysAttack) > 0 :
@@ -119,6 +122,7 @@ class Attack :
                 BD = False
                 PD = False
                 used = 0
+                string = ""
                 for i in range(len(self.__finalWeapons)):
                     #localizacion del arma
                     itemLocation = self.__finalWeapons[i].getItemLocation()
@@ -130,45 +134,49 @@ class Attack :
                 #No se pueden dar dos patadas en el mismo turno (pegaremos con la pierna derecha)
                 if PI == False and PD == False : PD = True
 
-                #numero de extremidades que se usaran para el ataque
-                if BI == False : used = used + 1
-                if PI == False : used = used + 1
-                if BD == False : used = used + 1
-                if PD == False : used = used + 1
-
                     
-                f.write(str(used) + "\n")
 
                                        
-                if BI == False and brazos == True and ensuelo == False:
-                    f.write("BI" + "\n")
-                    f.write("1000" + "\n")
-                    f.write(enemy.getCell()+"\n")
-                    f.write("Mech" + "\n")
+                if BI == False and brazos == True and ensuelo == False and brazoI == True:
+                    used += 1
+                    string += "BI" + "\n"
+                    string += "1000" + "\n"
+                    string += enemy.getCell()+"\n"
+                    string += "Mech" + "\n"
                     self.__log = self.__log + "Atacamos con el puño izquierdo al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
 
 
-                if BD == False and  brazos == True and ensuelo == False:
-                    f.write("BD" + "\n")
-                    f.write("1000" + "\n")                        
-                    f.write(enemy.getCell()+"\n")
-                    f.write("Mech" + "\n")
+                if BD == False and  brazos == True and ensuelo == False and brazoD == True:
+                    used += 1
+                    string += "BD" + "\n"
+                    string += "1000" + "\n"                       
+                    string += enemy.getCell()+"\n"
+                    string += "Mech" + "\n"
                     self.__log = self.__log + "Atacamos con el puño derecho al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
                 if PI == False and piernas == True:
-                    f.write("PI" + "\n")
-                    f.write("2000" + "\n")
-                    f.write(enemy.getCell()+"\n")
-                    f.write("Mech" + "\n")
+                    used += 1
+                    string += "PI" + "\n"
+                    string += "2000" + "\n"
+                    string += enemy.getCell()+"\n"
+                    string += "Mech" + "\n"
                     self.__log = self.__log + "Atacamos con la pierna izquierda al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
                 if PD == False and piernas == True:
-                    f.write("PD" + "\n")
-                    f.write("2000" + "\n")
-                    f.write(enemy.getCell()+"\n")
-                    f.write("Mech" + "\n")
+                    used += 1
+                    string += "PD" + "\n"
+                    string += "2000" + "\n"
+                    string += enemy.getCell()+"\n"
+                    string += "Mech" + "\n"
                     self.__log = self.__log + "Atacamos con la pierna derecha al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
-                
+
+                if used > 0 :
+                    f.write(str(used)+"\n")
+                    f.write(string)
+                else:
+                    self.__log = self.__log + "No realiza ningún ataque físico por que no se cumplen los requisitos óptimos para realizarlo\n"
+                    f.write("0"+"\n")
+                    
                    
 
         

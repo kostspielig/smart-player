@@ -1,0 +1,5 @@
+#summary One-sentence summary of this page.
+
+= Smart-Player =
+
+Cualquiera que desee colaborar en el proyecto simplemente envie un correo cualquiera de los desarrolladores.

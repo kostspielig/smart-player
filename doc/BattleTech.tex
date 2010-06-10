@@ -138,7 +138,7 @@ dirigir a los BattleMechs. Para ello debe decidir la acción a
 realizar en cada momento por ellos. Nuestro problema se restringe
 únicamente a controlar a los Mechs, aunque existan muchos otros tipos
 de vehículos en los combates - BattleMech, vehículo, Pelotón de
-infantería o Punta o Escuadra de armaduras de combate -.
+infantería o Punta o Escuadra de armaduras de combate.
 
 \subsection{BattleMechs}
 Titanes humanoides de metal de 12 metros de altura cubiertos con
@@ -214,7 +214,7 @@ el juego.
 
 Para resolver nuestro problema podemos ver al jugador inteligente como
 un {\it ente}, que percibe el universo a través de un conjunto
-entradas - que nos indican el estado actual del juego -. Este ente
+entradas - que nos indican el estado actual del juego. Este ente
 debe ser capaz de escoger una acción a realizar.
 
 Pero, ¿Cómo escoger cual de entre todas las posibles acciones a
@@ -222,12 +222,12 @@ realizar? La respuesta es bastante subjetiva, ya dependerá de la
 estrategia a seguir. Según la escogida, se obtendrá un resultado mejor
 o peor, pero también depende del caso concreto que estemos estudiando,
 ya que si cambiamos ciertos parámetros de nuestro universo, otra
-estrategia puede resultar más favorable.
+estrategia puede resultar más favorable.\\
 
 A la hora de decidir qué estrategia seguir, se debe de tener en
 cuenta que tanto la {\bf experiencia} adquirida tras años de juego y
 el {\bf conocimiento} de las reglas del mismo, son puntos críticos a
-la hora de maxímizar nuestro rendimiento.
+la hora de maxímizar nuestro rendimiento.\\
 
 Nuestro ente se mueve en un espacio temporal discreto. El juego se
 divide por turnos y éstos a su vez, se ve dividido en segmentos más
@@ -246,24 +246,25 @@ conocemos el estado del mundo en el que nos encontramos, debemos ser
 capaces de decidir la {\it actitud } de nuestro ente en la
 situación. Esta actitud podrá ser ofensiva, atacante o neutral. Una
 vez sepamos el estado futuro que queremos alcanzar, estaremos en
-condiciones de decidir un {\it plan futuro de acción}.
+condiciones de decidir un {\it plan futuro de acción}.\\
 
 También debemos tener en cuenta que nuestras acciones tienen una serie
 de consecuencias que producen un efeto en el ambiente. Así el estado
 en el que se encuentra el mundo cambia entre cada una de las fases. Es
 por ello que debemos actualizar las percepciones del mundo cada vez
-que nosotros u otor ente realiza una acción.
+que nosotros u otor ente realiza una acción.\\
 
 La naturaleza episódica del mundo en el que se encuentra nuesto ente
 hace una tarea fácil la división en fases del comportamiento del
 ente. Para cada una de las fases necesitamos tener en cuenta distintas
 características del mundo que percibimos, las cuales nos ayudarán a
-llegar a cumplir los objetivos. 
+llegar a cumplir los objetivos. \\
 
-También debemos tener en cuenta que
-las decisiones que tomemos en una fase afectarán al resto de las
-fases, por ello a la hora de tomar decisiones siempre debemos tener en
-mente como van a cambiar el mundo  y como afectará al futuro.
+También debemos tener en cuenta que las decisiones que tomemos en una
+fase afectarán al resto de las fases, por ello a la hora de tomar
+decisiones siempre debemos tener en mente como van a cambiar el mundo
+y como afectará al futuro.
+
 
 
 
@@ -336,11 +337,17 @@ exponemos a continuación:
   agentes
 \end {itemize}
 
-\begin{figure}[!h]
-  \centering
-  \includegraphics[width=12.4cm]{images/funcion.png}
-  \caption{Esquema de funcionamiento.}
-\end{figure}
+\subsection{Clasificación}
+Es posible clasificar los agentes inteligentes en 5 categorías principales:
+\begin{enumerate} 
+ \item agentes reactivos
+ \item agentes reactivos basados en modelo
+ \item agentes basados en objetivos
+ \item agentes basados en utilidad
+ \item agentes que aprenden
+ \item agentes de consultas
+\end{enumerate}
+
 
 \section{Ambientes}
 Existen diferentes tipos de ambientes:
@@ -406,6 +413,12 @@ por lo tanto debe poseer algunas de las características que éste posee:
 \end{itemize}
 
 
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=12.4cm]{images/funcion.png}
+  \caption{Esquema de funcionamiento.}
+\end{figure}
+
 
 Hemos de diferenciar nuestro sistema de los sistemas Multi-Agente
 (SMA). Éstos son grupos de agentes que interaccionan entre sí para
@@ -432,31 +445,29 @@ correctas varia en complejidad.
 
 
 \section{Ambientes}
-Existen diferentes tipos de ambientes:
+Las características de nuestro ambiente son:
 \begin{itemize}
-\item {\bf Accesibles y no accesibles.} En nuestro caso se trata de un
-  ambiente accesible, ya que el agente tiene acceso al estado total
-  del ambiente.
-\item {\bf Deterministas y no deterministas.} Depende de si el estado
-  siguiente se determina a partir del estado y las acciones elegidas
-  por el agente.
-\item {\bf Episódicos y no episódicos.} En ambientes episódicos, como
-  es nuestro caso, la experiencia del agente se divide en
-  ``episodios''- o fases-. Cada episodio consta de un agente que
-  percibe y actúa.
-\item {\bf Estáticos y dinámicos.} Si el abiente cambia mientras un
-  agente toma una acción a seguir, entonces se dice que el ambiente es
-  ``dinámico''. Pero en nuestro caso tratamos con ambientes {\it
-    estáticos}, puesto que no se tiene que observar y pensar al mismo tiempo.
-\item {\bf Discretos y continuos.} Si existe una cantidad limitada de
-  percepciones y acciones distintas y discernibles, se dice que el
-  ambiente es discreto. Si no es posible enumerarlos, entonces es un
-  ambiente continuo. Nuestro problema abarca ambienes discretos, lo
-  cual nos facilita el trabajo.
+\item {\bf Accesibles.} En nuestro caso se trata de un
+  ambiente accesible ya que el agente tiene acceso al estado total
+  del ambiente. Mediante los ficheros de mapa obtenemos toda la
+  información necesaria.
+\item {\bf No deterministas.}                                                 
+Los estados futuros son una función probabilística del estado actual y
+las acciones del agente.
+\item {\bf Episódicos.} Es un ambiente episódico, la experiencia del
+  agente se divide en ``episodios''- o fases-. Cada episodio consta de
+  un agente que percibe y actúa.
+\item {\bf Estáticos.}   En nuestro caso tratamos con ambientes {\it
+    estáticos}, puesto que no se tiene que observar y pensar al mismo
+  tiempo. Esto quiere decir que en cada fase tenemos un ambiente y
+  para una cada agente, mientras decide su acción a realizar no
+  cambiará. Aunque si cambia en una misma fase de un agente a otro.
+\item {\bf Discretos.} Al existir una cantidad limitada de
+  percepciones y acciones distintas y discernibles podemos decir que el
+  ambiente es discreto, lo cual nos facilita el trabajo.
 \end{itemize}
 
 {\bf Programa de Ambientes.}
-
 
 Un simulador toma como entrada uno o más agentes y dispone de lo
 necesario para proporcionar las percepciones correctas una y otra vez
@@ -669,17 +680,17 @@ dice el coste real para movernos de un nodo a otro. \\
 
 Para implementar esta función hemos tenido en cuenta varios factores:
 \begin{itemize}
-\item {\it El tipo de movimiento:} Andar, correr o saltar. Cada tipo de
+\item {\it El tipo de movimiento.} Andar, correr o saltar. Cada tipo de
   movimiento tiene sus propias restricciones, las cuales hemos de tener en
   cuenta.
 \item {\it Los objetos.} Dependiendo del tipo de objeto(escombros, edificios ...) que se encuentre en una
   casilla, será más o menos costoso - o incluso imposible - el paso a través de
   ella.
-\item {\it El nivel o profundiad} . El máximo   desnivel posible andando y
+\item {\it El nivel o profundiad.} El máximo   desnivel posible andando y
   corriendo es 2, mientras que saltando es un desnivel no mayor a los
   $PM_{salto}$.
-\item {\it Tipo de terreno}. Cada tipo de terreno lleva asociado un coste distinto.
-\item {\it Cambio de encaramiento}. Cambiar nuestro encaramiento también tiene
+\item {\it Tipo de terreno.} Cada tipo de terreno lleva asociado un coste distinto.
+\item {\it Cambio de encaramiento.} Cambiar nuestro encaramiento también tiene
   un coste asociado, por lo tanto, debemos tener en cuenta el número de veces
   que giramos para poder desplazarnos a la casilla deseada.
 \end{itemize}

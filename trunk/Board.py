@@ -169,9 +169,9 @@ class Board(object):
             elif (self.map[p2[0]][p2[1]].objects == 6): # edif reforzados
                 costCell = 5
             difLevel = abs(self.map[p1[0]][p2[1]].level - self.map[p2[0]][p2[1]].level)
-            if difLevel  == 1: 
+            if difLevel  == 1 and self.map[p2[0]][p2[1]].ground != 2: 
                 costCell += 1
-            elif difLevel == 2:
+            elif difLevel == 2 and self.map[p2[0]][p2[1]].ground != 2:
                 costCell += 2
         elif movType == 2: # if salto, only 1 PM
             costCell = 1

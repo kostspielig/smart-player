@@ -490,7 +490,7 @@ particulares en los que se pueda probar al agente.
 
 \section {Módulo de Movimiento}
 
-\subsection{Lógica del movimiento}
+\subsection{Búsqueda de caminos}
 Uno de los mayores desafíos en el diseño de {\bf Inteligencia
   Artificial} realista en juegos de ordenador es el movimiento del
 agente. Las estrategias de busqueda de caminos o {\it pathfinding} son
@@ -564,7 +564,6 @@ Donde:
 \item {\bf g(n)} Coste real del camino recorrido para llegar a dicho nodo, n.
 \end {itemize}
 
-
 A* mantiene dos estructuras de datos auxiliares:
 \begin {itemize}
 \item {\bf Abiertos}. Cola de prioridad, ordenada por el valor f(n) de
@@ -577,9 +576,7 @@ abiertos, y en caso de que no sea un nodo objetivo, calcula la f(n) de
 todos sus hijos, los inserta en abiertos, y pasa el nodo evaluado a cerrados.
 
 
-
 \subsection {Implementación}
-
 
 \begin{tabular}{  p{13cm}  }
   \hline    \hline                    
@@ -758,8 +755,80 @@ O(log N). En cambio, cuando ya existe, su prioridad se comprueba con
 el nuevo elemento en O(1). Si la prioridad del nuevo elemento es
 menor, se actualiza en la cola. Esto lleva un tiempo O(N).
 
-\
+\subsection{Lógica del movimiento}
 
+Todo esto de cómo encontrar el camino óptimo está muy bien, y además
+nos ayuda en gran parte a decidir como movernos, pero ¿Cómo hacerlo?
+
+Nos basamos en conseguir una meta, una vez observado el ambiente,
+tendremos que decidir a qué casilla nos vamos a mover. Lo primero que
+vamos ha hacer será fijarnos un {\bf objetivo enemigo}, y a partir de ahí
+seguiremos razonando según las observaciones que hagamos del mundo.
+Decidimos que nuestro objetivo sería el jugador más cercano al
+nuestro. Esto es así ya que según nuestra experiencia adquirida en el
+juego, vimos que era la mejor opción.
+
+Una vez hemos fijado un objetivo enemigo, debemos determinar la {\bf
+  posición objetivo}. Uno de los factores más importantes a la hora de
+elegir la posición a la que queremos movernos es saber si tenemos
+iniciativa o no en la fase actual. Si tenemos iniciativa - esto quiere
+decir que nos movemos antes que nuestro enemigo -, intentaremos elegir
+una posición estrategica, no demasiado cercana, a la que le resulte
+más complicado dispararnos.
+Si en cambio no tenemos la iniciativa, vamos a intentar acercarnos lo
+más posible a nuestro enemigo, y además queremos quedar encarados de
+forma que nuestro enemigo quede dentro de linea de visión.
+
+También debemos tener en cuenta la distancia a la que esté nuestro
+objetivo, ya que todo esto influirá también en nuestra decisión.
+
+Pero otra pregunta que surge inevitablemente una vez que hemos
+decidido la posición futura es, ¿Cómo nos vamos a mover?.
+Para responder utilizamos una serie de reglas de producción que
+basamos en heurísticas muy simples:
+\begin{itemize}
+\item Si tenemos puntos suficientes para llegar andando, andamos.
+\item Si tenemos puntos suficientes para llegar corriendo, corremos.
+\item Si tenemos puntos suficientes para llegar saltando, saltamos.
+\end{itemize}
+
+Si ninguna de estas reglas se cumplen, decidiremos intentar llegar a
+la posición más cercana a la posición objetivo andando. Damos una
+prioridad al movimiento de andar ya que es el movimiento más
+benévolo. Genera menos calor y nos deja con un disparo más limpio.
+
+¿Como llegar ahora a esa posición objetivo?
+Si ya estamos en la posición que queremos, nos quedamos {\it
+  inmóviles}. Si podemos llegar andando, entonces andamos. En caso
+contrario, si podemos llegar al destino corriendo, entonces
+corremos. Si podemos llegar de un salto, entonces saltamos. La última
+decisión es si no podemos llegar de ninguna de las tres formas,
+entonces calcularemos una semi-ruta en la que nos moveremos andando.
+
+
+{\bf Mech en suelo.}\\
+Otra situación muy común durante una partida de BattleTech es que los
+Mechs caigan al suelo. Aunque esto puede suceder por varios motivos,
+siendo uno de ellos la decisión propia, en nuestro caso esta última no
+se da. Esto es debido a que pensamos que no nos compensa realizar esta
+acción y por lo tanto no favorece para logar los objetivos marcados.
+
+Por tanto, nuestro agente siempre intentará permanecer de pie. Nuestro
+comportamiento es entonces muy sencillo en estas situaciones:
+ \begin{enumerate}
+   \item Si nuestro jugador esta en el suelo y tiene puntos
+     suficientes para poder levantarse, entonces nos levantamos antes
+     de intentar realizar cualquier otro movimiento:
+     $$PM(andar) \ge 2$$
+    \item En caso contrario no realizar ninguna acción.
+ \end {enumerate}
+Aunque según la documentación del juego existe una regla especial que
+nos dice que al quedarnos $PM(andar) == 1$, tendrémos una oportunidad
+especial para hacer un intento de levantarnos, la experiencia con la
+interfaz de nuestro juego nos ha revelado muchos problemas. Así que,
+decidimos quitar esta opción.
+
+ 
 \section{Módulo de Reacción}
 
 El módulo de reacción es inmediatamente posterior al módulo de
@@ -810,7 +879,7 @@ Para la resolución de este problema usaremos el enfoque teórico del algoritmo 
 \subsubsection*{Algoritmo de la mochila}
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=10cm]{images/mochila.png}
+  \includegraphics[width=5cm]{images/mochila.png}
   \caption{Algoritmo de la mochila}
 \end{figure}
 \begin{center}
@@ -828,7 +897,9 @@ Debe quedar claro que lanzar todas las armas posibles a nuestro enemigo no es un
 \item Si la temperatura del Mech está comprendida entre 20º y 26º el umbral será 4º.
 \item Si la temperatura del Mech es mayor que 26º el umbral será 2º
 \end{itemize}
-Determinado $P$ (umbral de temperatura) ya tenemos las armas que usaremos en el ataque dentro de nuestra \textit{mochila}.
+Determinado $P$ (umbral de temperatura) ya tenemos las armas que
+usaremos en el ataque dentro de nuestra \textit{mochila}.
+
 \subsection*{No se realiza ataque}
 Si no hay ningún enemigo dentro de nuestra línea de visión no realizaremos ningún ataque, quedando como única posibilidad recoger un garrote, sí está alojado en nuestra casilla, para usarlo más tarde en un posible ataque físico.
 
@@ -849,15 +920,42 @@ A partir del conjunto de Mech objetivos que cumplan la condición para ser ataca
 \subsubsection*{Elección de las armas a usar en el ataque}
 Determinado finalmente el Mech objetivo, necesitamos saber con que lo atacaremos. En el caso del ataque físico las armas a usar contra el objetivo serán nuestras extremidades, patadas y puñetazos, o un garrote recogido en anteriores fases.
 Si disponemos del garrote, simplemente atacaremos con él, si no, procederemos a usar las extremidades. Para determinar que extremidades podemos usar en el ataque debemos  identificar cuales son las armas que usamos en el anterior ataque con armas, ya que si se ha usado un arma alojada en el brazo derecho, dicha extremidad ya no podrá ser usada en el ataque. Por tanto,  usando de nuevo el módulo de ataques con armas,  volveremos  a estimar  que armas fueron usada y en que extremidad  están  alojadas. Las extremidades que no fueron usadas en el ataque con armas podrán ser  utilizadas en el ataque físico. Si usamos los brazos debemos tener en cuenta que sólo se podrán usar los puños contra nuestro enemigo si no está tumbado en el suelo y si nuestro torso está en el ángulo correcto. De igual manera, si usamos las piernas,  el ángulo de ellas deberá ser correcto en relación al enemigo. Queda aclarar que si podemos usar las dos piernas, eligiremos una cualquiera, ya que no es posible dar una patada con dos piernas a la vez.
+
 \subsection*{No se realiza ataque}
 Si no se cumplen los requisitos para realizar un ataque físico el Mech no hará nada, pasando así a su fase de fin de turno.
 
 \section{Final de Turno}
  
-En esta fase es de utlidad para estar preparado para el siguiente turno de forma idónea. Podemos arrojar al suelo útiles de nuestro Mech, tales como munición o un garrote.
-Además podremos apagar o encender radiadores, si disponemos de ellos, en función de nuestra temperatura.
+En esta fase es de utlidad para estar preparado para el siguiente
+turno de forma idónea. Podemos arrojar al suelo útiles de nuestro
+Mech, tales como munición o un garrote.
+
+
+Además podremos apagar o encender radiadores, si disponemos de ellos,
+en función de nuestra temperatura.
+
+
 Nuestro jugador inteligente arrojará el garrote si lo posee y si ha perdido alguna extremidad, buscará munición de las armas contenidas en las extremidades perdidas, arrojándolas al exterior.
 
+
+\chapter{Conclusión}
+Esta memoria relata el largo proceso de diseño y creación de un {\bf
+  agente inteligente}. Para logarlo, nos hemos basado en los
+fundamentos teóricos que nos han explicado en la asignatura, y
+haciendo elecciones de entre todas las posibilidades ofertadas, hemos
+llegado a desarrollar una arquitectura que nos ha permitido dotar a
+nuestro jugador de inteligencia.
+
+Primero realizamos un proceso de búsqueda de información que nos
+resultase necesaria para entende el proceso que ibamos a llevar acabo
+en la práctica, más tarde, nos dimos cuenta de que la necesidad de
+aprender a jugar de forma mas ``avanzada'', para poder llegar a
+entender la lógica de cada una de las fases del juego. Después de
+mucho tiempo y ayuda, conseguimos entender qué debiamos hacer en el
+juego y cómo hacerlo. Así al conseguir una visión abstracta del
+conjunto, ya empezamos a la programación de la práctica. 
+
+Una decisión muy importante fue la el lenguaje de programación a utilizar.
 
 \newpage
 \renewcommand{\baselinestretch}{1}
@@ -876,7 +974,6 @@ Nuestro jugador inteligente arrojará el garrote si lo posee y si ha perdido alg
     Modern Approach''} $3^{rd}$ed. \\ \label{russell}
 \bibitem{4}  \url{http://www.policyalmanac.org/games/aStarTutorial.htm}\\
 \bibitem{5}  \url{http://www.solaris7.com/ }\\
-\bibitem{6}  \url{ }\\
 \bibitem{7}  \url{http://code.google.com/p/smart-player/ } \label{googlecode}
 \end{thebibliography}
 

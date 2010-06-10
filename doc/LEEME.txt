@@ -1,0 +1,42 @@
+   _____                      _   _____  _                       
+  / ____|                    | | |  __ \| |                      
+ | (___  _ __ ___   __ _ _ __| |_| |__) | | __ _ _   _  ___ _ __ 
+  \___ \| '_ ` _ \ / _` | '__| __|  ___/| |/ _` | | | |/ _ \ '__|
+  ____) | | | | | | (_| | |  | |_| |    | | (_| | |_| |  __/ |   
+ |_____/|_| |_| |_|\__,_|_|   \__|_|    |_|\__,_|\__, |\___|_|   
+                                                  __/ |          
+                                                 |___/            
+
+Autores:
+   * María Carrasco Rodríguez
+   * Francisco Manuel Herrero Pérez
+
+ ____________________________________________________
+|				                     |
+|   Instrucciones para recompilar el código: Py2exe  |
+|____________________________________________________|
+
+Como ya todos sabemos Python es un lenguaje interpretado y que por 
+lo tanto no tiene necesidad de ser compilado, pero esto no quiere 
+decir que no sea capaz de hacerlo. Existe una extensión para distutils
+que, como su nombre indica, permite crear ejecutables para Windows a 
+partir de código Python, y que permite ejecutar estas aplicaciones
+sin necesidad de tener instalado el intérprete de Python en el sistema.
+
+*Hemos incluido tanto el intérprete de python como esta aplicación en 
+el CD-ROM para mayor comididad.
+
+Para crear el ejecutable, utilizamos una nueva opción de línea de 
+comandos para setup.py (se encuentra en la carpeta ./smart-player/trunk/)
+disponible tras importar el módulo y llamada, cómo no, py2exe:
+
+	   >>> python setup.py py2exe
+
+Con esto py2exe generará un directorio build , con las librerías 
+compiladas, y un directorio dist, con los archivos que conforman nuestra
+aplicación.
+
+ __             _                
+(_ __  _  ___|_|_) |  _  \/ _  __
+__)|||(_| |  |_|   | (_| / (/_ | 
+

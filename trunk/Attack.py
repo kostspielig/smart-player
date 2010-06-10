@@ -348,8 +348,8 @@ class Attack :
                                             encontrado3 = True
                                             f.write(str(j)+"\n")
                                         j = j +1
-                                    h = h +1
-                                k = k + 1
+                                h = h +1
+                        k = k + 1
 
                 #Hexagono objetivo del arma
                 f.write(Enemy.getCell()+"\n")

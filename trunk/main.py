@@ -116,6 +116,7 @@ def physicalAttack (actualPlayer, board, mechs, defM):
 
 def turnEnd (actualPlayer, defM, mechs):
     end = EndTurn.EndTurn(actualPlayer, defM, mechs)
+    end.printAction()
     end.printLog()
 
 if __name__ == "__main__":

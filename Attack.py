@@ -154,7 +154,7 @@ class Attack :
                     string += "Mech" + "\n"
                     self.__log = self.__log + "Atacamos con el puño derecho al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
-                if PI == False and piernas == True:
+                if PI == False and piernas == True and diflevel == 0:
                     used += 1
                     string += "PI" + "\n"
                     string += "2000" + "\n"
@@ -162,7 +162,7 @@ class Attack :
                     string += "Mech" + "\n"
                     self.__log = self.__log + "Atacamos con la pierna izquierda al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
-                if PD == False and piernas == True:
+                if PD == False and piernas == True and diflevel == 0:
                     used += 1
                     string += "PD" + "\n"
                     string += "2000" + "\n"
@@ -233,7 +233,7 @@ class Attack :
             self.__log = self.__log + "No se realiza ningún ataque con armas debido a que no se cumplen las condiciones óptimas para realizarlo\n"
             self.writeNoAttack(self.__enemysAttack, f)
         
-        self.__log = self.__log + "=============================>n\n"
+        self.__log = self.__log + "<=============================\n\n"
             
         
     

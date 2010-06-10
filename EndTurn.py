@@ -107,12 +107,13 @@ class EndTurn:
                                 self.log += "Municion arrojada\n"
                                 f.write(str(k)+"\n")
                             k = k +1
-                        h = h +1
-                    j = j+1
+                    h = h +1
+                j = j+1
 			
-            else:
-                self.log += "=====================>\n\n"
-	    	f.write(str(0) +"\n")    
+        else:
+	    f.write(str(0) +"\n")
+
+	self.log += "=====================>\n\n"
 
         f.close()
 

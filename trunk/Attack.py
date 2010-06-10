@@ -143,7 +143,7 @@ class Attack :
                     string += "1000" + "\n"
                     string += enemy.getCell()+"\n"
                     string += "Mech" + "\n"
-                    self.__log = self.__log + "Atacamos con el puño izquierdo al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
+                    self.__log = self.__log + "Atacamos con el puno izquierdo al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
 
 
                 if BD == False and  brazos == True and ensuelo == False and brazoD == True:
@@ -152,7 +152,7 @@ class Attack :
                     string += "1000" + "\n"                       
                     string += enemy.getCell()+"\n"
                     string += "Mech" + "\n"
-                    self.__log = self.__log + "Atacamos con el puño derecho al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
+                    self.__log = self.__log + "Atacamos con el puno derecho al Mech posicionado en la casilla "+ enemy.getCell()+"\n"
                             
                 if PI == False and piernas == True and diflevel == 0:
                     used += 1
@@ -174,7 +174,7 @@ class Attack :
                     f.write(str(used)+"\n")
                     f.write(string)
                 else:
-                    self.__log = self.__log + "No realiza ningún ataque físico por que no se cumplen los requisitos óptimos para realizarlo\n"
+                    self.__log = self.__log + "No realiza ningun ataque fisico por que no se cumplen los requisitos optimos para realizarlo\n"
                     f.write("0"+"\n")
                     
                    
@@ -182,7 +182,7 @@ class Attack :
         
         #no se ataca
         else:
-            self.__log = self.__log + "No realiza ningún ataque físico por que no se cumplen los requisitos óptimos para realizarlo\n"
+            self.__log = self.__log + "No realiza ningun ataque fisico por que no se cumplen los requisitos optimos para realizarlo\n"
             f.write("0"+"\n")
         
         f.close()
@@ -230,7 +230,7 @@ class Attack :
         
         #si no se puede atacar lo escribimos en el fichero de AccionJ
         elif len(self.__enemysAttack) == 0 :
-            self.__log = self.__log + "No se realiza ningún ataque con armas debido a que no se cumplen las condiciones óptimas para realizarlo\n"
+            self.__log = self.__log + "No se realiza ningun ataque con armas debido a que no se cumplen las condiciones optimas para realizarlo\n"
             self.writeNoAttack(self.__enemysAttack, f)
         
         self.__log = self.__log + "<=============================\n\n"
@@ -270,7 +270,7 @@ class Attack :
             f.write ("False" +"\n")
             f.write ("0000" +"\n")
             f.write ("0" +"\n")
-            self.__log = self.__log + "No se realiza ningún ataque con armas debido a que no se cumplen las condiciones óptimas para realizarlo\n"
+            self.__log = self.__log + "No se realiza ningun ataque con armas debido a que no se cumplen las condiciones optimas para realizarlo\n"
         else :
             #No cogemos el garrote
             f.write("False"+ "\n")

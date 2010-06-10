@@ -55,7 +55,7 @@ class Reaction:
             file.write ("Cambiamos el encaramiento moviendonos hacia la "+ self.newFace + "\n")
         else:
             file.write ("Nos quedamos con el mismo encaramiento \n")
-        file.write ("<=======================================\n")
+        file.write ("<=======================================\n\n")
         file.close ()
 
 

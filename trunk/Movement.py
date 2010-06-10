@@ -223,7 +223,7 @@ class Movement:
         file.write ("Tipo de movimiento :  " +str(mov[self.movType])+ "\n")
         file.write (" ___Camino___ \n")
         file.write (str(self.path) + " \n")
-        file.write ("<========================================\n")
+        file.write ("<========================================\n\n")
         file.close ()
         
 

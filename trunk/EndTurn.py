@@ -73,7 +73,7 @@ class EndTurn:
         if cont > 0 :
             f.write(str(cont)+"\n")
             if cont == 1 :
-                self.log += "Nos deshacemos de "+str(cont)+" munición\n"
+                self.log += "Nos deshacemos de "+str(cont)+" municion\n"
             else:
                 self.log += "Nos deshacemos de "+str(cont)+" municiones\n"
 
@@ -104,7 +104,7 @@ class EndTurn:
                         while k < loca.getSlotNumber() and not(encontrado2):
                	            if loca.slot[j].getCode() == ammunitionCode :
                                 encontrado2 = True
-                                self.log += "Munición arrojada\n"
+                                self.log += "Municion arrojada\n"
                                 f.write(str(k)+"\n")
                             k = k +1
                         h = h +1

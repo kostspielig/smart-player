@@ -71,24 +71,16 @@ class Movement:
                 continue
             d = dist2((int(self.player.cell[0:-2]),
                        int(self.player.cell[2:])),(int(m.cell[0:-2]),int( m.cell[2:])))
-            print "distance to " + str(m.playerNumber) + "equals to " +str(d)
             if d < distance:
                 t = m.playerNumber
                 distance = d
         return t, distance
 
     def nextMove(self):
-        print "puntos de andar correr saltar"
-        print self.player.walk
-        print self.player.run
-        print self.player.jump
         enemy,distance = self.setTarjet()
         faceTorsoEnemy = (self.mechs.mechSet[enemy].facingSide+2 )%6 #[0-5]
-        print "DISTANCE"+ str(distance)
 
         enemyCell = int(self.mechs.mechSet[enemy].cell[2:])-1,int(self.mechs.mechSet[enemy].cell[0:-2])-1
-        print "enemigo"
-        print self.mechs.mechSet[enemy].cell
  
         # Si estamos en el suelo -> Nos levantamos
         if self.player.ground == True and self.player.walk >= 2:
@@ -127,8 +119,7 @@ class Movement:
             face = relative_position (x, enemy)
             B = Pos(x, face)
             path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
-            print "Can???" + str(can)
-            print "Coste para walk: " + str(cost)
+
             if can == True: return (path,0)
             if can == False and self.player.run != 0:
                 path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
@@ -174,12 +165,10 @@ class Movement:
         if A == B: return ([], 3)
 
         path, can, cost = pf.compute_path_until_PM (A, B, 0, self.player.walk)
-        print "Can???" + str(can)
-        print "Coste para walk: " + str(cost)        
+
         if can == False and self.player.run != 0:
             path2, can2, cost2 = pf.compute_path_until_PM(A, B, 1, self.player.run)
-            print "Can???" + str(can2)
-            print "Coste para run: " + str(cost)
+
             if can2 == True:
                 return (path2, 1)
         if can == False and self.player.jump != 0:

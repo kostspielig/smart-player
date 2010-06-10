@@ -151,13 +151,15 @@ class Board(object):
             face = facing_side(p1, p2)
             # Total cost of changing the facing side
             costFace = min( (c1.face - face)%6, (face - c1.face)%6 )
-            
+            difLevel = abs(self.map[p1[0]][p2[1]].level - self.map[p2[0]][p2[1]].level)            
             obj = self.map[p2[0]][p2[1]].objects
             if (self.map[p2[0]][p2[1]].ground == 2): # Agua
                 if (self.map[p2[0]][p2[1]].level == -1):
                     costCell = 2
                 elif (self.map[p2[0]][p2[1]].level <= -2):
                     costCell = 4
+                elif difLevel == 2:
+                    costCell = 2
                 else:
                     costCell = 1
             elif ( (obj == 3) or (obj== 0) or (obj==1) ): # Escombros o edif pequenios o bosque ligero
@@ -168,11 +170,11 @@ class Board(object):
                 costCell = 4
             elif (self.map[p2[0]][p2[1]].objects == 6): # edif reforzados
                 costCell = 5
-            difLevel = abs(self.map[p1[0]][p2[1]].level - self.map[p2[0]][p2[1]].level)
-            if difLevel  == 1 and self.map[p2[0]][p2[1]].ground != 2: 
-                costCell += 1
-            elif difLevel == 2 and self.map[p2[0]][p2[1]].ground != 2:
+
+            if difLevel  == 2 and self.map[p2[0]][p2[1]].ground != 2: 
                 costCell += 2
+            elif self.map[p2[0]][p2[1]].ground != 2:
+                costCell += 1
         elif movType == 2: # if salto, only 1 PM
             costCell = 1
         return (int(costFace+costCell), face)

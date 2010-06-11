@@ -1,5 +1,3 @@
-#¿Te apuntas?.
-
 = Smart-Player =
 
 Cualquiera que desee colaborar en el proyecto simplemente envie un correo cualquiera de los desarrolladores.

@@ -1,0 +1,5 @@
+BattleTech is a game that focuses on enormous robotic, semi-humanoid battle machines called BattleMechs.
+
+The game is played on a map sheet composed of hexagon-shaped terrain tiles. The combat units are 30 foot tall humanoid armored combat units called BattleMechs, powered by fusion reactors, armed with lasers, particle projection cannons, autocannons, and both short and long range missiles.
+
+The game is played in turns, with each turn composed of multiple stages. During each stage players alternate back and forth playing the game. The stages are initiative, movement, attack declaration, attacks, physical attacks, and end phase. Winning initiative actually means the winning player moves second, advantageous because the player can react to the movements and attack declarations of the losing player.
